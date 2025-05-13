@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>schemas &#8212; venv  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../_static/documentation_options.js?v=c033477b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">schemas</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>schemas のソースコード</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;レスポンスのスキーマを定義するモジュール&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">EmailStr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestValidationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">db_env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+
+
+<div class="viewcode-block" id="LengthMismatchError">
+<a class="viewcode-back" href="../schemas.html#schemas.LengthMismatchError">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LengthMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;文字列の長さが一致しないエラーを表すカスタム例外&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+
+<span class="c1"># SwaggerUIのParametersに表示される</span>
+<div class="viewcode-block" id="ArticleBase">
+<a class="viewcode-back" href="../schemas.html#schemas.ArticleBase">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleBase</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;pydanticのベースモデルを継承して、記事情報のスキーマを定義する。</span>
+
+<span class="sd">    :param article_id: 記事のID</span>
+<span class="sd">    :param title: 記事のタイトル</span>
+<span class="sd">    :param body: 記事の本文</span>
+<span class="sd">    :param user_id: 記事を作成したユーザーのID</span>
+<span class="sd">    :param ConfigDict: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用</span>
+<span class="sd">    :param model_config: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ドキュメント表示用にmax_lengthは残し、カスタムバリデーションを使用</span>
+    <span class="c1"># user_id: int | None = Field(None, title=&quot;ユーザーID&quot;, description=&quot;ユーザーID&quot;)</span>
+    <span class="n">article_id</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;記事ID&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;記事ID&quot;</span>
+        <span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;タイトル&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;30文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;本文&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;100文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ArticleBase.ConfigDict">
+<a class="viewcode-back" href="../schemas.html#schemas.ArticleBase.ConfigDict">[ドキュメント]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Article">
+<a class="viewcode-back" href="../schemas.html#schemas.Article">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">ArticleBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ArticleBaseを継承して、記事情報のスキーマを定義する。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Article.ConfigDict">
+<a class="viewcode-back" href="../schemas.html#schemas.Article.ConfigDict">[ドキュメント]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># 環境変数の取得</span>
+<span class="n">db_env</span>
+<span class="n">key_06</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_06&quot;</span><span class="p">)</span>
+<span class="c1"># print(f&quot;ファイル名: {key_06}&quot;)</span>
+<span class="n">key_08</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_08&quot;</span><span class="p">)</span>
+<span class="c1"># print(f&quot;ファイル名: {key_08}&quot;)</span>
+
+<span class="c1"># FastAPIのエンドポイントで使用する例外ハンドラ</span>
+<div class="viewcode-block" id="validation_exception_handler">
+<a class="viewcode-back" href="../schemas.html#schemas.validation_exception_handler">[ドキュメント]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validation_exception_handler</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">exc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RequestValidationErrorをキャッチしてログに記録する例外ハンドラ</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># バリデーションエラーの情報を取得してログとコンソールに記録</span>
+    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">():</span>
+        <span class="n">locations</span> <span class="o">=</span> <span class="n">error</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">locations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;body&quot;</span><span class="p">:</span>
+            <span class="n">field_parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+            <span class="n">field_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">field_parts</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">field_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">)</span>
+
+        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">の検証エラー: </span><span class="si">{</span><span class="n">error</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;バリデーションエラー: </span><span class="si">{</span><span class="n">error_message</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">key_06</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+
+    <span class="c1"># デフォルトのエラーハンドラを呼び出す</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.exception_handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">request_validation_exception_handler</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">request_validation_exception_handler</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="User">
+<a class="viewcode-back" href="../schemas.html#schemas.User">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザーモデル</span>
+
+<span class="sd">    :param id: ユーザーのID</span>
+<span class="sd">    :param name: ユーザー名</span>
+<span class="sd">    :param email: メールアドレス</span>
+<span class="sd">    :param password: パスワード</span>
+<span class="sd">    :param is_active: ユーザーの有効状態</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># id: int | None = Field(None, id=&quot;ユーザーID&quot;, description=&quot;ユーザーID&quot;)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ユーザー名&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;20文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;メールアドレス&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;50文字以内で入力してください&quot;</span><span class="p">)</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;パスワード&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;10文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">is_active</span><span class="o">=</span><span class="s2">&quot;アクティブ&quot;</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TrueまたはFalseで入力してください&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="User.ConfigDict">
+<a class="viewcode-back" href="../schemas.html#schemas.User.ConfigDict">[ドキュメント]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ShowUser">
+<a class="viewcode-back" href="../schemas.html#schemas.ShowUser">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowUser</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザー表示用モデル</span>
+
+<span class="sd">    :param id: ユーザーのID</span>
+<span class="sd">    :param name: ユーザー名</span>
+<span class="sd">    :param email: メールアドレス</span>
+<span class="sd">    :param is_active: ユーザーの有効状態</span>
+<span class="sd">    :param blogs: ユーザーが作成したブログ記事のリスト</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ユーザーのID&quot;</span>
+        <span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ユーザー名&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;20文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;メールアドレス&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;50文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;アクティブ&quot;</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TrueまたはFalseで入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">blogs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ArticleBase</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ブログ記事&quot;</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ユーザーが作成したブログ記事のリスト&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ShowUser.ConfigDict">
+<a class="viewcode-back" href="../schemas.html#schemas.ShowUser.ConfigDict">[ドキュメント]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ShowArticle">
+<a class="viewcode-back" href="../schemas.html#schemas.ShowArticle">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShowArticle</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;記事表示用モデル</span>
+
+<span class="sd">    :param id: 記事のID</span>
+<span class="sd">    :param title: 記事のタイトル</span>
+<span class="sd">    :param body: 記事の本文</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;記事のID&quot;</span>
+        <span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;タイトル&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;30文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">body</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;本文&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;100文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ShowArticle.ConfigDict">
+<a class="viewcode-back" href="../schemas.html#schemas.ShowArticle.ConfigDict">[ドキュメント]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Login">
+<a class="viewcode-back" href="../schemas.html#schemas.Login">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Login</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ログイン用モデル</span>
+
+<span class="sd">    :param email: メールアドレス</span>
+<span class="sd">    :param password: パスワード</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;メールアドレス&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;50文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;パスワード&quot;</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> \
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;10文字以内で入力してください&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Login.ConfigDict">
+<a class="viewcode-back" href="../schemas.html#schemas.Login.ConfigDict">[ドキュメント]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
+        <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Token">
+<a class="viewcode-back" href="../schemas.html#schemas.Token">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Token</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークン用モデル</span>
+
+<span class="sd">    :param access_token: アクセストークン</span>
+<span class="sd">    :param token_type: トークンの種類</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">token_type</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="TokenData">
+<a class="viewcode-back" href="../schemas.html#schemas.TokenData">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TokenData</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンデータ用モデル</span>
+
+<span class="sd">    :param email: メールアドレス</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">schemas</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; 著作権 2025, Author.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,592 @@
+2025-04-18 15:00:25,033 - ERROR - セッション作成に失敗しました。: getenv() missing 1 required positional argument: 'key'
+2025-04-18 15:53:59,566 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:54:54,808 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:54:58,752 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:55:05,257 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:55:05,655 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:55:09,313 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:56:08,794 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:56:09,915 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:56:16,139 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:56:19,081 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:56:19,821 - ERROR - 環境変数:Noneが設定されていません。
+2025-04-18 15:56:27,060 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:56:27,407 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:56:30,639 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:56:34,731 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:56:58,672 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:56:59,000 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:56:59,780 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:05,507 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:10,332 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:20,206 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:20,549 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:23,897 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:24,324 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:26,865 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:32,125 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:32,485 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:33,513 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:38,324 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:41,582 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:42,768 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:45,279 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:57:49,226 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:58:26,830 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:58:29,946 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:58:39,086 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:58:40,510 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:58:45,742 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:58:49,513 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:02,366 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:06,592 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:12,815 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:13,189 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:17,683 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:21,921 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:23,981 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:25,013 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:25,562 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:29,952 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:32,659 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:46,137 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 15:59:50,132 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:00:00,926 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:00:04,486 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:00:13,986 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:00:14,392 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:00:19,732 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:00:23,278 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:01:13,967 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:01:19,062 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:01:23,894 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:01:29,628 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:02:04,053 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-18 16:02:08,197 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-21 16:27:30,780 - ERROR - DBセッションのコミットに失敗しました。: 404: Article not found 55
+2025-04-21 16:36:29,330 - ERROR - DBセッションのコミットに失敗しました。: 404: Article not found 4
+2025-04-21 16:37:03,674 - ERROR - DBセッションのコミットに失敗しました。: 404: Article not found id:4
+2025-04-21 16:37:29,401 - ERROR - DBセッションのコミットに失敗しました。: 404: Article not found Article_id:4
+2025-04-21 16:37:41,602 - ERROR - DBセッションのコミットに失敗しました。: 404: Article not found -> Article_id:4
+-----------------------------------------------------------------------------------------------------
+2025-04-23 15:13:23,812 - ERROR - 不明なエラーが発生しました: Class 'schemas.User' is not mapped
+2025-04-23 15:13:23,838 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-23 15:14:01,928 - ERROR - 不明なエラーが発生しました: Class 'schemas.User' is not mapped
+2025-04-23 15:14:01,930 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-23 15:15:51,352 - ERROR - 不明なエラーが発生しました: Class 'schemas.User' is not mapped
+2025-04-23 15:15:51,357 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-23 15:26:06,543 - ERROR - 不明なエラーが発生しました: Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 3477, in add
+    state = attributes.instance_state(instance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/pydantic/main.py", line 984, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'User' object has no attribute '_sa_instance_state'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/routers/user.py", line 98, in create_user
+    db.add(new_user)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 3479, in add
+    raise exc.UnmappedInstanceError(instance) from err
+sqlalchemy.orm.exc.UnmappedInstanceError: Class 'schemas.User' is not mapped
+
+2025-04-23 15:26:06,571 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-23 15:33:20,652 - ERROR - 不明なエラーが発生しました: Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 3477, in add
+    state = attributes.instance_state(instance)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/pydantic/main.py", line 984, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'User' object has no attribute '_sa_instance_state'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/routers/user.py", line 98, in create_user
+    db.add(new_user)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 3479, in add
+    raise exc.UnmappedInstanceError(instance) from err
+sqlalchemy.orm.exc.UnmappedInstanceError: Class 'schemas.User' is not mapped
+
+2025-04-23 15:33:20,684 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-23 16:04:18,537 - ERROR - 不明なエラーが発生しました: Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: table users has no column named password
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/routers/user.py", line 103, in create_user
+    db.commit()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table users has no column named password
+[SQL: INSERT INTO users (name, email, password, is_active) VALUES (?, ?, ?, ?)]
+[parameters: ('string', 'user@example.com', 'string', None)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-04-23 16:04:18,541 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-23 16:06:55,425 - ERROR - 不明なエラーが発生しました: Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: table users has no column named password
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/routers/user.py", line 103, in create_user
+    db.commit()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table users has no column named password
+[SQL: INSERT INTO users (name, email, password, is_active) VALUES (?, ?, ?, ?)]
+[parameters: ('string', 'user@example.com', 'string', 1)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-04-23 16:06:55,451 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+2025-04-23 16:07:52,165 - ERROR - 不明なエラーが発生しました: Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: table users has no column named password
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/routers/user.py", line 103, in create_user
+    db.commit()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/tatu/Documents/GitHub/blog-site/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 945, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table users has no column named password
+[SQL: INSERT INTO users (name, email, password, is_active) VALUES (?, ?, ?, ?)]
+[parameters: ('string', 'user@example.com', 'string', 1)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-04-23 16:07:52,166 - ERROR - DBセッションのコミットに失敗しました。: 500: 予期しないエラーが発生しました。
+2025-04-24 13:31:30,649 - ERROR - DBセッションのコミットに失敗しました。: 1 validation errors:
+  {'type': 'string_too_long', 'loc': ('response', 'password'), 'msg': 'String should have at most 10 characters', 'input': '$2b$12$zTmAi1GW3TSCq61Z6zKHh.ZvfENvGnHnXpLYBhaPyajcWFaEshHL2', 'ctx': {'max_length': 10}}
+
+2025-04-24 13:33:04,775 - ERROR - DBセッションのコミットに失敗しました。: 1 validation errors:
+  {'type': 'string_too_long', 'loc': ('response', 'password'), 'msg': 'String should have at most 50 characters', 'input': '$2b$12$XxI5i1AJbjX8g089F9FE3.KldkUCRFSmg2G9cSvrTK7Fu1TVA/87G', 'ctx': {'max_length': 50}}
+
+2025-04-24 16:24:35,398 - ERROR - DBセッションのコミットに失敗しました。: __init__() got an unexpected keyword argument 'user_id'
+2025-04-24 16:25:22,394 - ERROR - DBセッションのコミットに失敗しました。: 'ArticleBase' object has no attribute 'user_id'
+2025-04-24 16:25:47,320 - ERROR - DBセッションのコミットに失敗しました。: __init__() got an unexpected keyword argument 'user_id'
+2025-04-24 16:26:37,193 - ERROR - DBセッションのコミットに失敗しました。: __init__() got an unexpected keyword argument 'user_id'
+2025-04-24 16:27:47,385 - ERROR - DBセッションのコミットに失敗しました。: 1 validation errors:
+  {'type': 'string_too_long', 'loc': ('response', 'password'), 'msg': 'String should have at most 50 characters', 'input': '$2b$12$7E.EdYr1JikVFEnTA3gg2O6YrIKrXMuWlBbHOLdeINmlzo.rCasg.', 'ctx': {'max_length': 50}}
+
+2025-04-24 16:30:50,776 - ERROR - DBセッションのコミットに失敗しました。: __init__() got an unexpected keyword argument 'user_id'
+2025-04-24 16:35:51,440 - ERROR - DBセッションのコミットに失敗しました。: 'ArticleBase' object has no attribute 'user_id'
+2025-04-25 19:00:40,314 - ERROR - セッション作成に失敗しました。: name 'bindengine' is not defined
+2025-04-26 17:33:56,955 - ERROR - DBセッションのコミットに失敗しました。: 'Login' object has no attribute 'username'
+2025-04-26 17:35:40,595 - ERROR - DBセッションのコミットに失敗しました。: 'Login' object has no attribute 'username'
+2025-04-26 17:37:04,340 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:37:07,535 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:38:08,923 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:38:11,627 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:38:17,210 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:38:18,395 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:38:20,429 - ERROR - 環境変数:Noneが設定されていません。None
+2025-04-26 17:39:29,747 - ERROR - DBセッションのコミットに失敗しました。: 'Login' object has no attribute 'username'
+2025-04-26 17:41:15,815 - ERROR - DBセッションのコミットに失敗しました。: type object 'Hash' has no attribute 'verify'
+2025-04-26 17:41:27,327 - ERROR - DBセッションのコミットに失敗しました。: type object 'Hash' has no attribute 'verify'
+2025-04-26 17:43:33,593 - ERROR - DBセッションのコミットに失敗しました。: type object 'Hash' has no attribute 'verify'
+2025-04-26 18:05:45,436 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-04-26 18:22:55,462 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+----------------------------------------------------------------
+2025-04-26 18:44:16,960 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-04-26 23:36:12,686 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-04-26 23:59:19,346 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-04-27 00:07:24,200 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なパスワードです
+2025-04-27 00:09:42,644 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-04-29 18:09:24,377 - ERROR - 無効なユーザー名です: test01
+2025-04-29 18:09:24,379 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-04-29 18:09:55,073 - ERROR - 無効なユーザー名です: admin
+2025-04-29 18:09:55,075 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-04-29 18:10:39,836 - ERROR - 無効なパスワードです: xxx123
+2025-04-29 18:10:39,838 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なパスワードです
+2025-04-29 18:11:08,363 - ERROR - 無効なパスワードです: xxx
+2025-04-29 18:11:08,364 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なパスワードです
+2025-04-29 18:11:35,022 - ERROR - 無効なパスワードです: admin
+2025-04-29 18:11:35,024 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なパスワードです
+2025-04-29 18:11:47,054 - ERROR - 無効なパスワードです: xxx
+2025-04-29 18:11:47,055 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なパスワードです
+2025-04-29 18:50:37,063 - ERROR - usernameの検証エラー: Field required
+2025-04-29 18:50:37,064 - ERROR - passwordの検証エラー: Field required
+2025-04-29 18:56:54,307 - ERROR - usernameの検証エラー: Field required
+2025-04-29 18:56:54,307 - ERROR - passwordの検証エラー: Field required
+2025-04-29 19:00:19,183 - ERROR - usernameの検証エラー: Field required
+2025-04-29 19:00:19,183 - ERROR - passwordの検証エラー: Field required
+---------------------------------------------------------------------
+2025-04-30 09:45:20,159 - ERROR - usernameの検証エラー: Field required
+2025-04-30 09:45:20,164 - ERROR - passwordの検証エラー: Field required
+2025-04-30 10:43:36,114 - ERROR - usernameの検証エラー: Field required
+2025-04-30 10:43:36,115 - ERROR - passwordの検証エラー: Field required
+2025-04-30 10:59:53,167 - ERROR - usernameの検証エラー: Field required
+2025-04-30 10:59:53,169 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:13:00,846 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:13:00,846 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:14:50,589 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:14:50,590 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:23:32,452 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:23:32,453 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:26:41,579 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:26:41,580 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:29:35,902 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:29:35,903 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:30:45,143 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:30:45,143 - ERROR - passwordの検証エラー: Field required
+2025-04-30 11:57:46,942 - ERROR - usernameの検証エラー: Field required
+2025-04-30 11:57:46,942 - ERROR - passwordの検証エラー: Field required
+2025-04-30 15:08:35,372 - ERROR - usernameの検証エラー: Field required
+2025-04-30 15:08:35,373 - ERROR - passwordの検証エラー: Field required
+2025-04-30 15:20:20,755 - ERROR - usernameの検証エラー: Field required
+2025-04-30 15:20:20,755 - ERROR - passwordの検証エラー: Field required
+2025-04-30 15:21:45,416 - ERROR - DBセッションのコミットに失敗しました。: 'OAuth2PasswordRequestForm' object has no attribute 'json'
+2025-04-30 15:23:10,550 - ERROR - grant_typeの検証エラー: String should match pattern '^password$'
+2025-04-30 15:23:37,121 - ERROR - DBセッションのコミットに失敗しました。: 'OAuth2PasswordRequestForm' object has no attribute 'json'
+2025-04-30 15:23:48,001 - ERROR - grant_typeの検証エラー: String should match pattern '^password$'
+2025-04-30 15:24:10,913 - ERROR - DBセッションのコミットに失敗しました。: 'OAuth2PasswordRequestForm' object has no attribute 'json'
+2025-04-30 15:25:33,235 - ERROR - DBセッションのコミットに失敗しました。: name 'body' is not defined
+2025-04-30 16:05:37,090 - ERROR - usernameの検証エラー: Field required
+2025-04-30 16:05:37,092 - ERROR - passwordの検証エラー: Field required
+2025-04-30 16:15:47,056 - ERROR - usernameの検証エラー: Field required
+2025-04-30 16:15:47,056 - ERROR - passwordの検証エラー: Field required
+2025-04-30 16:24:18,357 - ERROR - usernameの検証エラー: Field required
+2025-04-30 16:24:18,358 - ERROR - passwordの検証エラー: Field required
+kk2025-05-01 13:16:16,046 - ERROR - usernameの検証エラー: Field required
+2025-05-01 13:16:16,047 - ERROR - passwordの検証エラー: Field required
+2025-05-01 13:19:50,641 - ERROR - DBセッションのコミットに失敗しました。: 'ArticleBase' object has no attribute 'user_id'
+2025-05-01 13:22:09,042 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 13:22:59,864 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 13:24:42,374 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 13:25:33,611 - ERROR - DBセッションのコミットに失敗しました。: 'ArticleBase' object has no attribute 'user_id'
+2025-05-01 13:31:22,945 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 13:31:36,341 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 13:48:50,526 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 14:22:45,238 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 14:42:24,940 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 14:42:24,957 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 14:43:28,192 - ERROR - 無効なユーザー名です: stringadmin@gmail.com
+2025-05-01 14:43:28,193 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-01 14:44:42,432 - ERROR - DBセッションのコミットに失敗しました。: name 'skip' is not defined
+2025-05-01 14:44:55,073 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 14:46:11,816 - ERROR - DBセッションのコミットに失敗しました。: name 'skip' is not defined
+2025-05-01 14:56:04,090 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 14:56:04,099 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 15:07:36,158 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-01 15:08:15,915 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 15:08:15,922 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 15:12:00,515 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 15:12:00,518 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 15:13:05,184 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 15:13:05,190 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 15:13:06,352 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 15:13:06,352 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 15:34:52,398 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 15:34:52,416 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 16:30:20,598 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:20,607 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:25,630 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:25,637 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:30,066 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:30,084 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:34,320 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:30:34,334 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-01 16:39:58,340 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 16:39:58,360 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 16:39:58,366 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 16:39:58,374 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-01 16:39:58,408 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-01 16:39:58,420 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 09:40:26,074 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-07 09:50:53,685 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 09:50:53,686 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 09:59:01,672 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 09:59:01,729 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 10:14:41,057 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 10:14:41,060 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 10:14:52,248 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 10:14:52,255 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 10:14:59,756 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 10:14:59,763 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 10:15:31,682 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 10:15:31,694 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 10:15:44,431 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 10:15:44,435 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:02:09,836 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:02:09,841 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:08:12,236 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:08:12,255 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:08:23,117 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:08:23,121 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:12:14,325 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:12:14,334 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:17:44,981 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:17:45,043 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:18:04,448 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:18:04,454 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:18:11,464 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:18:11,468 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:42:25,304 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 11:42:25,310 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 11:42:25,820 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 11:42:25,824 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 11:42:36,976 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 11:42:37,015 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 11:44:00,261 - ERROR - DBセッションのコミットに失敗しました。: 404: Article not found 22
+2025-05-07 11:49:30,245 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 11:49:30,259 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 11:49:30,337 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 11:49:30,344 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 11:49:48,134 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:49:48,137 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:53:36,200 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:53:36,224 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:53:41,409 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:53:41,415 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:53:48,071 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:53:48,078 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:55:14,667 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:55:14,671 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:55:18,294 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 11:55:18,324 - ERROR - path.idの検証エラー: Input should be a valid integer, unable to parse string as an integer
+2025-05-07 16:12:50,238 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 16:12:50,242 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 16:12:58,588 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-07 16:12:58,589 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-07 16:21:19,330 - ERROR - DBセッションのコミットに失敗しました。: (sqlite3.OperationalError) no such column: articles.article_id
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT articles.id AS articles_id, articles.article_id AS articles_article_id, articles.title AS articles_title, articles.body AS articles_body, articles.user_id AS articles_user_id 
+FROM articles 
+WHERE articles.user_id = ?) AS anon_1]
+[parameters: (6,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-05-07 16:23:51,679 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-07 16:24:08,521 - ERROR - DBセッションのコミットに失敗しました。: (sqlite3.OperationalError) no such column: articles.article_id
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT articles.id AS articles_id, articles.article_id AS articles_article_id, articles.title AS articles_title, articles.body AS articles_body, articles.user_id AS articles_user_id 
+FROM articles 
+WHERE articles.user_id = ?) AS anon_1]
+[parameters: (6,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-05-07 16:27:09,586 - ERROR - 無効なユーザー名です: admin@gmail.com
+2025-05-07 16:27:09,589 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-07 16:27:16,213 - ERROR - 無効なユーザー名です: admin@gmail.com
+2025-05-07 16:27:16,214 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-07 16:27:26,798 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-07 16:27:37,959 - ERROR - 無効なユーザー名です: admin@gmail.com
+2025-05-07 16:27:37,960 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-07 16:27:51,056 - ERROR - 無効なユーザー名です: admin@gmail.com
+2025-05-07 16:27:51,059 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-07 16:27:55,627 - ERROR - 無効なユーザー名です: admin@gmail.com
+2025-05-07 16:27:55,628 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-07 16:29:50,163 - ERROR - ユーザーID: 1 のブログ記事が見つかりませんでした。
+2025-05-07 16:52:19,955 - ERROR - DBセッションのコミットに失敗しました。: name 'func' is not defined
+2025-05-07 16:53:47,708 - ERROR - DBセッションのコミットに失敗しました。: type object 'Article' has no attribute 'article_id'
+2025-05-07 16:53:59,954 - ERROR - DBセッションのコミットに失敗しました。: type object 'Article' has no attribute 'article_id'
+2025-05-08 10:06:49,660 - ERROR - 無効なユーザー名です: admin@gmail.com
+2025-05-08 10:06:49,663 - ERROR - DBセッションのコミットに失敗しました。: 404: 無効なユーザー名です
+2025-05-08 10:08:00,225 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 10:26:43,532 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 10:26:43,539 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 10:30:11,165 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 10:30:11,167 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 10:43:45,652 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 10:43:45,667 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:07:38,927 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 11:07:38,936 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:11:43,875 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 11:11:43,877 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:18:34,203 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 11:18:34,205 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:29:18,687 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 11:29:18,688 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:48:05,672 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 11:48:05,691 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:49:54,145 - ERROR - DBセッションのコミットに失敗しました。: Session.delete() got an unexpected keyword argument 'synchronize_session'
+2025-05-08 11:50:11,883 - ERROR - DBセッションのコミットに失敗しました。: Session.delete() got an unexpected keyword argument 'synchronize_session'
+2025-05-08 11:52:46,615 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 11:52:46,618 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 11:57:39,994 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 12:05:07,219 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 12:05:07,252 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 12:21:35,569 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 12:21:35,574 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 12:24:31,479 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 12:24:31,482 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 14:22:11,964 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 14:22:11,985 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 14:22:13,557 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:22:14,506 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:22:15,368 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:32:06,131 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:32:10,146 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:32:35,829 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:32:36,750 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:32:37,408 - ERROR - DBセッションのコミットに失敗しました。: 401: Not authenticated
+2025-05-08 14:37:54,953 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 14:37:54,958 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 14:37:54,974 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 14:37:54,976 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 15:49:01,249 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 15:49:01,268 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
+2025-05-08 15:49:01,273 - ERROR - JWTErrorが発生しました: Signature has expired.
+2025-05-08 15:49:01,275 - ERROR - DBセッションのコミットに失敗しました。: 401: 認証情報が無効です
