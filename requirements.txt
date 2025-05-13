@@ -10,6 +10,8 @@ ecdsa==0.19.1
 email_validator==2.2.0
 fastapi==0.115.12
 fastapi-cli==0.0.7
+# Development dependencies
+gunicorn==21.2.0
 h11==0.14.0
 httpcore==1.0.7
 httptools==0.6.4
