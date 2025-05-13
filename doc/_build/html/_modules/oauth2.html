@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>oauth2 &#8212; venv  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../_static/documentation_options.js?v=c033477b"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=4755f45a"></script>
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">oauth2</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>oauth2 のソースコード</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;認証トークンモジュール&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">HTTPException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordBearer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">custom_token</span><span class="w"> </span><span class="kn">import</span> <span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">ALGORITHM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">db_env</span><span class="p">,</span> <span class="n">session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">routers.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_user</span>
+
+<span class="n">oauth2_scheme</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearer</span><span class="p">(</span><span class="n">tokenUrl</span><span class="o">=</span><span class="s2">&quot;api/v1/login&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># 環境変数の取得</span>
+<span class="n">db_env</span>
+<span class="c1"># print(db_env)</span>
+<span class="n">db_url</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database_url&quot;</span><span class="p">)</span>
+<span class="n">key03</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_03&quot;</span><span class="p">)</span>
+<span class="n">key10</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_10&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="check_environment_variable">
+<a class="viewcode-back" href="../oauth2.html#oauth2.check_environment_variable">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_environment_variable</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;環境変数設定ファイルからデータベースのURLを取得する</span>
+
+<span class="sd">  :param db_env: 環境変数設定ファイル</span>
+<span class="sd">  :return: データベースURL</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">db_env</span><span class="p">:</span>
+    <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">db_env</span><span class="si">}</span><span class="s2">が設定されていません。</span><span class="si">{</span><span class="n">db_env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。-&gt; </span><span class="si">{</span><span class="n">db_env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># print(f&quot;STEP14：環境変数：{db_env}を取得しました。 -&gt; {db_env}&quot;)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP14：環境変数：</span><span class="si">{</span><span class="n">key10</span><span class="si">}</span><span class="s2">を取得しました。 -&gt; </span><span class="si">{</span><span class="n">key10</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数</span><span class="si">{</span><span class="n">db_env</span><span class="si">}</span><span class="s2">を取得しました。:&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">db_env</span></div>
+
+<span class="n">check_environment_variable</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="check_db_url">
+<a class="viewcode-back" href="../oauth2.html#oauth2.check_db_url">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_db_url</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;データベースURLを取得して、データベースと接続する</span>
+
+<span class="sd">  :param db_url: データベースURL</span>
+<span class="sd">  :return: データベースURL</span>
+<span class="sd">  :raises ValueError: 環境変数が設定されていない場合</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">db_url</span><span class="p">:</span>
+    <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">が設定されていません。 -&gt; </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。</span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP15：環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。&quot;</span><span class="p">)</span>
+  <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。 -&gt; </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">db_url</span></div>
+
+
+
+<span class="n">check_db_url</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP16：ユーザを作成します。Swaggerで確認してください。&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------------------&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_db">
+<a class="viewcode-back" href="../oauth2.html#oauth2.get_db">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;データベースセッションを取得するための依存関数</span>
+
+<span class="sd">  :param db: データベースセッション</span>
+<span class="sd">  :return: データベースセッション</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">db</span> <span class="o">=</span> <span class="n">session</span><span class="p">()</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">yield</span> <span class="n">db</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+    <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+  <span class="k">finally</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_current_user">
+<a class="viewcode-back" href="../oauth2.html#oauth2.get_current_user">[ドキュメント]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_current_user</span><span class="p">(</span>
+  <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">oauth2_scheme</span><span class="p">),</span>
+  <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+  <span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;トークンを検証し、現在のユーザーを取得する</span>
+
+<span class="sd">  :param token: 認証トークン</span>
+<span class="sd">  :param db: データベースセッション</span>
+<span class="sd">  :param id: トークンから取得したユーザーID</span>
+<span class="sd">  :return: ユーザー情報</span>
+<span class="sd">  :raises HTTPException: 認証情報が無効な場合</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">credentials_exception</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span>
+      <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+      <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;認証情報が無効です&quot;</span><span class="p">,</span>
+      <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;WWW-Authenticate&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer&quot;</span><span class="p">},</span>
+  <span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+      <span class="c1"># トークンを検証してペイロードを取得</span>
+      <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="n">ALGORITHM</span><span class="p">])</span>
+      <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sub&quot;</span><span class="p">)</span>
+      <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;emailがNoneです&quot;</span><span class="p">)</span>
+          <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;emailがNoneです&quot;</span><span class="p">)</span>
+          <span class="k">raise</span> <span class="n">credentials_exception</span>
+
+      <span class="n">token_data</span> <span class="o">=</span> <span class="n">TokenData</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+  <span class="k">except</span> <span class="n">JWTError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;JWTErrorが発生しました&quot;</span><span class="p">)</span>
+      <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JWTErrorが発生しました: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="n">credentials_exception</span>
+
+  <span class="n">user</span> <span class="o">=</span> <span class="n">show_user</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">user</span></div>
+
+
+<span class="c1"># ユーザー情報をデータベースから取得</span>
+<span class="c1"># user = db.query(User).filter(User.email == token_data.email).first()</span>
+
+<span class="c1"># if user is None:</span>
+<span class="c1">#     print(&quot;ユーザーが見つかりません&quot;)</span>
+<span class="c1">#     create_error_logger(&quot;ユーザーが見つかりません&quot;)</span>
+<span class="c1">#     raise credentials_exception</span>
+<span class="c1"># return user</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">oauth2</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; 著作権 2025, Author.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>
