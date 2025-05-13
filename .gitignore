@@ -22,7 +22,7 @@ rad.json
 TestResults.xml
 
 # 設定関連
-.env
+# .env
 
 # ソースコードをコンパイルしたバイトコードをキャッシュするためのディレクトリ
 **/__pycache__/
