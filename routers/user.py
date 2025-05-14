@@ -98,14 +98,14 @@ class UserRouter:
     "/user",
     status_code=status.HTTP_201_CREATED,
     response_model=UserSchema,
-    summary="ユーザー作成API",
-    description="ユーザーを作成するAPIです。"
+    summary="User Create",
+    description="ユーザーを作成するエンドポイント",
     )
     async def create_user(
         user: UserSchema,
         db: Session = Depends(get_db)
     ) -> UserModel:
-        """ユーザーを作成するAPIエンドポイント
+        """ユーザーを作成するエンドポイント
 
         :param user: ユーザー情報を含むPydanticモデル
         :type user: UserSchema
@@ -158,7 +158,7 @@ class UserRouter:
             db.close()
 
 
-def show_user(
+async def show_user(
     id: int, db:
     Session = Depends(get_db)
     ) -> UserModel:
