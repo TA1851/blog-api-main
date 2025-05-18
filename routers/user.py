@@ -158,7 +158,7 @@ class UserRouter:
             db.close()
 
 
-def show_user(
+async def show_user(
     id: int, db:
     Session = Depends(get_db)
     ) -> UserModel:
