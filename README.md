@@ -141,3 +141,4 @@ sphinx-autobuild \
 設定ファイルを読み込んで、SQLAlchemyを使用してデータベース接続を確立し、セッションを作成する
 
 venv削除
+更新
