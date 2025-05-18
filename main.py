@@ -18,17 +18,18 @@ app = FastAPI()
 
 # 許可するオリジン（フロントエンドのURLを指定）
 origins = [
-    "http://127.0.0.1:3000",  # ReactやNext.jsのローカル開発環境
-    "http://localhost:3000",  # ReactやNext.jsのローカル開発環境
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "https://nextjs-app-khaki-two.vercel.app",
 ]
 
 # CORSミドルウェアの設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 全てのオリジンを許可
+    allow_origins=origins,  # 指定したオリジンのみ許可
     allow_credentials=True,  # Cookieを含むリクエストを許可
-    allow_methods=["GET", "POST", "PUT", "DELETE"],     # 許可するHTTPメソッド（GET, POSTなど）
-    allow_headers=["*"],     # 許可するHTTPヘッダー
+    allow_methods=["GET", "POST", "PUT", "DELETE"],  # 許可するHTTPメソッド
+    allow_headers=["*"],  # 許可するHTTPヘッダー
 )
 
 
