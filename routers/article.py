@@ -170,7 +170,7 @@ async def get_article(
     :raises HTTPException: 記事が見つからない場合
     """
     try:
-        id_blog = db.query(Article).filter(Article.id == id).first()
+        id_blog = db.query(Article).filter(Article.article_id == id).first()
         print(id_blog)
         create_logger("指定したIDのブログ記事を取得しました。")
     except ValueError as e:
