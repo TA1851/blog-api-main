@@ -107,7 +107,7 @@ async def get_current_user(
       create_error_logger(f"JWTErrorが発生しました: {str(e)}")
       raise credentials_exception
 
-  user = show_user(id, db)
+  user = await show_user(id, db)
   return user
 
 # ユーザー情報をデータベースから取得
