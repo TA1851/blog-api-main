@@ -158,23 +158,23 @@ class UserRouter:
             db.close()
 
 
-async def show_user(
-    id: int, db:
-    Session = Depends(get_db)
-    ) -> UserModel:
-    """ユーザー情報を表示するエンドポイント
+# async def show_user(
+#     id: int, db:
+#     Session = Depends(get_db)
+#     ) -> UserModel:
+#     """ユーザー情報を表示するエンドポイント
 
-    :param id: ユーザーID
-    :type id: int
-    :param db: データベースセッション
-    :type db: Session
-    :return: ユーザー情報を含むSQLAlchemyモデル
-    :rtype: UserModel
-    :raises HTTPException: ユーザーが見つからない場合
-    """
-    user = db.query(UserModel).filter(UserModel.id == id).first()
-    if not user:
-        print(f"ユーザーが見つかりません。: {id}")
-        create_error_logger(f"ユーザーが見つかりません。: {id}")
-        raise HTTPException(status_code=404, detail="ユーザーが見つかりません。")
-    return user
+#     :param id: ユーザーID
+#     :type id: int
+#     :param db: データベースセッション
+#     :type db: Session
+#     :return: ユーザー情報を含むSQLAlchemyモデル
+#     :rtype: UserModel
+#     :raises HTTPException: ユーザーが見つからない場合
+#     """
+#     user = db.query(UserModel).filter(UserModel.id == id).first()
+#     if not user:
+#         print(f"ユーザーが見つかりません。: {id}")
+#         create_error_logger(f"ユーザーが見つかりません。: {id}")
+#         raise HTTPException(status_code=404, detail="ユーザーが見つかりません。")
+#     return user
