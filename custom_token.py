@@ -1,13 +1,14 @@
 """カスタムトークンの作成"""
-
-from fastapi import APIRouter, Depends, status, HTTPException
-from jose import JWTError, jwt
-from datetime import datetime, timedelta, timezone
 from typing import Optional
+from datetime import datetime, timedelta, timezone
+from jose import JWTError, jwt
+from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy.orm import Session
+
+from database import db_env
 from schemas import Login
 from models import User
 from hashing import Hash
-from sqlalchemy.orm import Session
 from logger.custom_logger import create_logger, create_error_logger
 from routers.user import get_db
 
@@ -18,10 +19,12 @@ router = APIRouter(
 
 # TODO:環境変数設定ファイルに移行する
 
-# SECRET_KEY = db_env.get("secret_key")
-SECRET_KEY = "1cf296882c7c9a8b1dc448dab881e44fe1de6e279930d48dc1790a160cab8a0d"
-# ALGORITHM = db_env.get("algorithm")
-ALGORITHM = "HS256"
+db_env
+print(db_env)
+SECRET_KEY = db_env.get("secret_key")
+# SECRET_KEY = "1cf296882c7c9a8b1dc448dab881e44fe1de6e279930d48dc1790a160cab8a0d"
+ALGORITHM = db_env.get("algorithm")
+# ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def create_access_token(

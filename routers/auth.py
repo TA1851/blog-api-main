@@ -49,7 +49,7 @@ check_environment_variable()
 
 def check_db_url():
     """データベースURLを取得する
-    
+
     :param key03: auth.pyの環境変数
     :type key03: str
     :param db_url: auth.pyの環境変数
