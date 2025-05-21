@@ -18,9 +18,9 @@ router = APIRouter(
 
 # TODO:環境変数設定ファイルに移行する
 
-# SECRET_KEY = db_env.get("secret_key")
+# SECRET_KEY = db_env.get("SECRET_KEY", "default_secret_key")
 SECRET_KEY = "1cf296882c7c9a8b1dc448dab881e44fe1de6e279930d48dc1790a160cab8a0d"
-# ALGORITHM = db_env.get("algorithm")
+# ALGORITHM = db_env.get("ALGORITHM")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
