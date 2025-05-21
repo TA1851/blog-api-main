@@ -10,7 +10,6 @@ from schemas import ArticleBase, ShowArticle, User
 from database import session, db_env
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
-# from ..functions import check_environment_variable, check_db_url
 
 
 router = APIRouter(
@@ -18,9 +17,7 @@ router = APIRouter(
     tags=["articles"],  # SwaggerUIのタグを指定
 )
 
-# 環境変数の取得
-db_env
-# print(db_env)
+
 db_url = db_env.get("database_url")
 key03 = db_env.get("file_id_03")
 key07 = db_env.get("file_id_07")
@@ -95,7 +92,10 @@ def get_db():
 async def all_fetch(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user), # 現在のユーザーを取得
-    limit: Optional[int] = Query(None, ge=1, description="取得する最大記事数（指定しない場合は全件取得）") # 制限をオプションに変更
+    limit: Optional[int] = Query(
+        None, ge=1,
+        description="取得する最大記事数（指定しない場合は全件取得）"
+        )
 ) -> List[ArticleBase]:
     """ログインユーザーが作成した記事のみを取得するエンドポイント
 
@@ -122,11 +122,15 @@ async def all_fetch(
         # limitが指定されている場合のみ適用
         if limit:
             user_blogs = query.limit(limit).all()
-            create_logger(f"ユーザーID: {current_user.id} のブログ記事を取得しました。全{total_count}件中{len(user_blogs)}件表示")
+            create_logger(
+                f"ユーザーID: {current_user.id} のブログ記事を取得しました。 \
+                全{total_count}件中{len(user_blogs)}件表示")
         else:
             # 制限なしで全件取得
             user_blogs = query.all()
-            create_logger(f"ユーザーID: {current_user.id} のブログ記事を全件取得しました。全{total_count}件")
+            create_logger(
+                f"ユーザーID: {current_user.id}  \
+                のブログ記事を全件取得しました。全{total_count}件")
     except ValueError as e:
         pprint.pprint(str(e))
         create_error_logger(f"ブログ記事の取得に失敗しました。{key07}")
@@ -135,22 +139,29 @@ async def all_fetch(
             detail=f"Articles not found {key07}"
         )
 
-    # 記事が見つからない場合は空のリストを返す（404ではなく）
+    # 記事が見つからない場合は空のリストを返す
     if not user_blogs:
         print(f"ユーザーID: {current_user.id} の記事が見つかりませんでした")
-        create_error_logger(f"ユーザーID: {current_user.id} のブログ記事が見つかりませんでした。")
+        create_error_logger(
+            f"ユーザーID: {current_user.id} のブログ記事が見つかりませんでした。"
+            )
         return []
 
     # ログメッセージを条件によって変更
     if limit:
-        print(f"ユーザーID: {current_user.id} のブログ記事 {len(user_blogs)}件を取得しました。(制限: {limit}, 総数: {total_count})")
+        print(
+            f"ユーザーID: {current_user.id} のブログ記事 \
+            {len(user_blogs)}件を取得しました。 \
+            (制限: {limit}, 総数: {total_count})")
     else:
-        print(f"ユーザーID: {current_user.id} のブログ記事 全{len(user_blogs)}件を取得しました。(総数: {total_count})")
+        print(
+            f"ユーザーID: {current_user.id} のブログ記事 \
+            全{len(user_blogs)}件を取得しました。(総数: {total_count})"
+            )
 
     return user_blogs
 
 
-# TODO: 記事idを指定して記事を取得しているがキーワードでも取得できるように変更する。
 @router.get(
     "/articles/{id}",
     status_code=status.HTTP_200_OK,
@@ -209,12 +220,12 @@ async def create_article(
     :return: 作成された記事
     :rtype: ArticleBase
     """
-    # 最大のarticle_idを取得して+1する
+    # 自動採番処理
     max_article_id = db.query(func.max(Article.article_id)).scalar() or 0
     new_article_id = max_article_id + 1
 
     new_blog = Article(
-        article_id=new_article_id,  # 明示的に設定
+        article_id=new_article_id,
         title=blog.title,
         body=blog.body,
         user_id=current_user.id
@@ -230,10 +241,10 @@ async def create_article(
     response_model=ArticleBase
 )
 async def update_article(
-    article_id: int,  # idではなくarticle_idを受け取るように変更
+    article_id: int,
     blog: ArticleBase,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)  # ユーザー認証を追加
+    current_user: User = Depends(get_current_user)
     ) -> ArticleBase:
     """指定したIDの記事を更新するエンドポイント
 
@@ -251,17 +262,17 @@ async def update_article(
     :raises ValueError: データベースのクエリに失敗した場合
     """
     try:
-        # article_idとuser_idでフィルタリングして記事を取得
-        # これにより、自分の記事だけを更新できるようになります
+        # article_idとuser_idでフィルタリングして記事を取得(ログインユーザーの記事を更新)
         update_blog = db.query(Article).filter(
             Article.article_id == article_id,
-            Article.user_id == current_user.id  # 自分の記事のみを更新可能に
+            Article.user_id == current_user.id
         ).first()
 
         if not update_blog:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Article not found or you do not have permission -> Article_id:{article_id}"
+                detail=f"Article not found or you do not have permission \
+                -> Article_id:{article_id}"
             )
         # 記事の内容を更新
         update_blog.title = blog.title
@@ -272,11 +283,15 @@ async def update_article(
         db.refresh(update_blog)
 
         print(f"記事を更新しました。article_id: {article_id}, {key07}")
-        create_logger(f"記事を更新しました。article_id: {article_id}, user_id: {current_user.id}, {key07}")
+        create_logger(
+            f"記事を更新しました。article_id: {article_id}, \
+            user_id: {current_user.id}, {key07}")
 
     except ValueError as e:
         pprint.pprint(str(e))
-        create_error_logger(f"記事の更新に失敗しました。article_id: {article_id}, {key07}")
+        create_error_logger(
+            f"記事の更新に失敗しました。 \
+            article_id: {article_id}, {key07}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Article not updated. article_id: {article_id}, {key07}"
@@ -288,9 +303,9 @@ async def update_article(
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_article(
-    article_id: int,  # idではなくarticle_idを受け取るように変更
+    article_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)  # ユーザー認証を追加
+    current_user: User = Depends(get_current_user)
     ) -> None:
     """指定したIDの記事を削除するエンドポイント
 
@@ -303,16 +318,15 @@ async def delete_article(
     :return: None
     """
     try:
-        # article_idとuser_idでフィルタリングして記事を取得
-        # これにより、自分の記事だけを削除できるようになります
         delete_blog = db.query(Article).filter(
             Article.article_id == article_id,
-            Article.user_id == current_user.id  # 自分の記事のみを削除可能に
+            Article.user_id == current_user.id
         ).first()
         if not delete_blog:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Article not found or you do not have permission -> Article_id:{article_id}"
+                detail=f"Article not found or you do not have permission \
+                -> Article_id:{article_id}"
             )
         db.delete(delete_blog)
         db.commit()
@@ -325,4 +339,4 @@ async def delete_article(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Article not deleted. article_id: {article_id}, {key07}"
         )
-    return None  # 204 NO CONTENT のため、戻り値は不要
+    return None

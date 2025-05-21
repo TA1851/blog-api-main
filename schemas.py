@@ -12,7 +12,6 @@ class LengthMismatchError(Exception):
     pass
 
 
-# SwaggerUIのParametersに表示される
 class ArticleBase(BaseModel, validate_assignment=True):
     """pydanticのベースモデルを継承して、記事情報のスキーマを定義する。
 
