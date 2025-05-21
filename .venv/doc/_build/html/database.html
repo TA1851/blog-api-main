@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>database module &#8212; venv  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=c033477b"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/translations.js?v=4755f45a"></script>
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="functions package" href="functions.html" />
+    <link rel="prev" title="custom_token module" href="custom_token.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="functions.html" title="functions package"
+             accesskey="N">次へ</a> |</li>
+        <li class="right" >
+          <a href="custom_token.html" title="custom_token module"
+             accesskey="P">前へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">database module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-database">
+<span id="database-module"></span><h1>database module<a class="headerlink" href="#module-database" title="Link to this heading">¶</a></h1>
+<p>データベース接続モジュール</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="database.DatabaseConnectionError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">DatabaseConnectionError</span></span><a class="reference internal" href="_modules/database.html#DatabaseConnectionError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.DatabaseConnectionError" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>データベース接続エラーを表すカスタム例外</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="database.check_env_file">
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">check_env_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#check_env_file"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.check_env_file" title="Link to this definition">¶</a></dt>
+<dd><p>ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>default_env_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- str | Path</p>
+</dd>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="database.create_database_engine">
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_database_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#create_database_engine"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.create_database_engine" title="Link to this definition">¶</a></dt>
+<dd><p>環境変数からデータベースURLを取得し、データベースエンジンを作成する。</p>
+<p>データベースURLが設定されていない場合は、DatabaseConnectionErrorをスローします。</p>
+<p>connect_args = {&quot;check_same_thread&quot;: False} : SQLite固有の接続オプション</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="database.create_session">
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#create_session"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.create_session" title="Link to this definition">¶</a></dt>
+<dd><p>SQLAlchemyのセッションを作成：データベースに接続し、データの操作を行う前処理を行う。</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>engine</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></span>) -- SQLAlchemyのエンジンオブジェクト</p></li>
+<li><p><strong>SessionLocal</strong> -- <p>・autocommit=False（デフォルト値）:
+CRUD操作をグループ化して、全ての処理が成功した場合、データベースに反映されるようにできます。</p>
+<p>　エラーが発生した場合はrollback()を呼び出して全ての変更を取り消せます。</p>
+<p>・autoflush=False:
+大量のオブジェクトを追加/更新する場合、各オペレーションでフラッシュが発生するのを避けられます。
+デフォルト値はTrueです。</p>
+<p>・bind=engine: エンジンを生成する呼び出し可能オブジェクト</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="database.read_env_var">
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">read_env_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#read_env_var"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.read_env_var" title="Link to this definition">¶</a></dt>
+<dd><p>dotenvモジュールのload_dotenv関数でENVファイルから環境変数を取得し、ログに記録する。</p>
+<p>file_id: 環境変数から取得したファイルID</p>
+<p>database_url: 環境変数から取得したDB_URL</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">目次</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">database module</a><ul>
+<li><a class="reference internal" href="#database.DatabaseConnectionError"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError</span></code></a></li>
+<li><a class="reference internal" href="#database.check_env_file"><code class="docutils literal notranslate"><span class="pre">check_env_file()</span></code></a></li>
+<li><a class="reference internal" href="#database.create_database_engine"><code class="docutils literal notranslate"><span class="pre">create_database_engine()</span></code></a></li>
+<li><a class="reference internal" href="#database.create_session"><code class="docutils literal notranslate"><span class="pre">create_session()</span></code></a></li>
+<li><a class="reference internal" href="#database.read_env_var"><code class="docutils literal notranslate"><span class="pre">read_env_var()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>前のトピックへ</h4>
+    <p class="topless"><a href="custom_token.html"
+                          title="前の章へ">custom_token module</a></p>
+  </div>
+  <div>
+    <h4>次のトピックへ</h4>
+    <p class="topless"><a href="functions.html"
+                          title="次の章へ">functions package</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>このページ</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/database.rst.txt"
+            rel="nofollow">ソースコードを表示</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="right" >
+          <a href="functions.html" title="functions package"
+             >次へ</a> |</li>
+        <li class="right" >
+          <a href="custom_token.html" title="custom_token module"
+             >前へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">database module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; 著作権 2025, Author.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

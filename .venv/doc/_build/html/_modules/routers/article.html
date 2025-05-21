@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>routers.article &#8212; venv  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../../_static/documentation_options.js?v=c033477b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=4755f45a"></script>
+    
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">routers.article</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>routers.article のソースコード</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;エンドポイントのルーティングを定義するモジュール&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">Query</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArticleBase</span><span class="p">,</span> <span class="n">ShowArticle</span><span class="p">,</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">session</span><span class="p">,</span> <span class="n">db_env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">func</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">oauth2</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_current_user</span>
+<span class="c1"># from ..functions import check_environment_variable, check_db_url</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span>  <span class="c1"># APIのバージョンを指定</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;articles&quot;</span><span class="p">],</span>  <span class="c1"># SwaggerUIのタグを指定</span>
+<span class="p">)</span>
+
+<span class="c1"># 環境変数の取得</span>
+<span class="n">db_env</span>
+<span class="c1"># print(db_env)</span>
+<span class="n">db_url</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database_url&quot;</span><span class="p">)</span>
+<span class="n">key03</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_03&quot;</span><span class="p">)</span>
+<span class="n">key07</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_07&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_environment_variable">
+<a class="viewcode-back" href="../../routers.html#routers.article.check_environment_variable">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_environment_variable</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;環境変数を取得する</span>
+
+<span class="sd">    :param key07: artile.pyの環境変数</span>
+<span class="sd">    :type key07: str</span>
+<span class="sd">    :return: 環境変数の値</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">key07</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">が設定されていません。</span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。-&gt; </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP17：環境変数：</span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">を取得しました。 -&gt; </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数</span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">を取得しました。:&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">key07</span></div>
+
+
+<span class="n">check_environment_variable</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="check_db_url">
+<a class="viewcode-back" href="../../routers.html#routers.article.check_db_url">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_db_url</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースのURLを取得する</span>
+
+<span class="sd">    :param db_url: データベースのURL</span>
+<span class="sd">    :type db_url: str</span>
+<span class="sd">    :return: データベースのURL</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_url</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">が設定されていません。 -&gt; </span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。</span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP18：環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。&quot;</span><span class="p">)</span>
+    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。 -&gt; </span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_url</span></div>
+
+
+<span class="n">check_db_url</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;STEP19：ルートを取得しました。Swaggerを確認してください。&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------------------&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_db">
+<a class="viewcode-back" href="../../routers.html#routers.article.get_db">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースセッションを取得する</span>
+
+<span class="sd">    :return: データベースセッション</span>
+<span class="sd">    :rtype: Session</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">session</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">db</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DBセッションのコミットに失敗しました。: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズしました&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズしました&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="all_fetch">
+<a class="viewcode-back" href="../../routers.html#routers.article.all_fetch">[ドキュメント]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">&quot;/articles&quot;</span><span class="p">,</span>
+    <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">,</span>
+    <span class="n">response_model</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ArticleBase</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">all_fetch</span><span class="p">(</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">),</span> <span class="c1"># 現在のユーザーを取得</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;取得する最大記事数（指定しない場合は全件取得）&quot;</span><span class="p">)</span> <span class="c1"># 制限をオプションに変更</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ArticleBase</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ログインユーザーが作成した記事のみを取得するエンドポイント</span>
+
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :param current_user: 現在のユーザー</span>
+<span class="sd">    :type current_user: User</span>
+<span class="sd">    :param limit: 取得する最大記事数（指定しない場合は全件取得）</span>
+<span class="sd">    :type limit: Optional[int]</span>
+<span class="sd">    :return: 記事のリスト</span>
+<span class="sd">    :rtype: List[ArticleBase]</span>
+<span class="sd">    :raises HTTPException: 記事が見つからない場合</span>
+<span class="sd">    :raises ValueError: データベースのクエリに失敗した場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 記事の総数を取得</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="c1"># クエリ作成</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="c1"># limitが指定されている場合のみ適用</span>
+        <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="n">user_blogs</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーID: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> のブログ記事を取得しました。全</span><span class="si">{</span><span class="n">total_count</span><span class="si">}</span><span class="s2">件中</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">user_blogs</span><span class="p">)</span><span class="si">}</span><span class="s2">件表示&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 制限なしで全件取得</span>
+            <span class="n">user_blogs</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーID: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> のブログ記事を全件取得しました。全</span><span class="si">{</span><span class="n">total_count</span><span class="si">}</span><span class="s2">件&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ブログ記事の取得に失敗しました。</span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Articles not found </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 記事が見つからない場合は空のリストを返す（404ではなく）</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user_blogs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーID: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> の記事が見つかりませんでした&quot;</span><span class="p">)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーID: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> のブログ記事が見つかりませんでした。&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># ログメッセージを条件によって変更</span>
+    <span class="k">if</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーID: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> のブログ記事 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">user_blogs</span><span class="p">)</span><span class="si">}</span><span class="s2">件を取得しました。(制限: </span><span class="si">{</span><span class="n">limit</span><span class="si">}</span><span class="s2">, 総数: </span><span class="si">{</span><span class="n">total_count</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーID: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> のブログ記事 全</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">user_blogs</span><span class="p">)</span><span class="si">}</span><span class="s2">件を取得しました。(総数: </span><span class="si">{</span><span class="n">total_count</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">user_blogs</span></div>
+
+
+
+<span class="c1"># TODO: 記事idを指定して記事を取得しているがキーワードでも取得できるように変更する。</span>
+<div class="viewcode-block" id="get_article">
+<a class="viewcode-back" href="../../routers.html#routers.article.get_article">[ドキュメント]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">&quot;/articles/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">,</span>
+    <span class="n">response_model</span><span class="o">=</span><span class="n">ArticleBase</span>
+    <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_article</span><span class="p">(</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArticleBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;指定したIDのブログ記事を取得するエンドポイント</span>
+
+<span class="sd">    :param id: 記事のID</span>
+<span class="sd">    :type id: int</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :return: 記事の詳細</span>
+<span class="sd">    :rtype: ArticleBase</span>
+<span class="sd">    :raises HTTPException: 記事が見つからない場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">id_blog</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">id_blog</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;指定したIDのブログ記事を取得しました。&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;指定したIDのブログ記事に失敗しました。</span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># エラー発生時に明示的な４０４を返す</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span> \
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Article not found </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="c1"># id_blogがNoneの場合は、HTTPExceptionを発生させる</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">id_blog</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span> \
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Article not found </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">id_blog</span></div>
+
+
+<div class="viewcode-block" id="create_article">
+<a class="viewcode-back" href="../../routers.html#routers.article.create_article">[ドキュメント]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;/articles&quot;</span>
+    <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span>
+    <span class="n">blog</span><span class="p">:</span> <span class="n">ArticleBase</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArticleBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;新しい記事を作成するエンドポイント</span>
+
+<span class="sd">    :param blog: 記事の内容</span>
+<span class="sd">    :type blog: ArticleBase</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :param current_user: 現在のユーザー</span>
+<span class="sd">    :type current_user: User</span>
+<span class="sd">    :return: 作成された記事</span>
+<span class="sd">    :rtype: ArticleBase</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 最大のarticle_idを取得して+1する</span>
+    <span class="n">max_article_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">article_id</span><span class="p">))</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">0</span>
+    <span class="n">new_article_id</span> <span class="o">=</span> <span class="n">max_article_id</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">new_blog</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span>
+        <span class="n">article_id</span><span class="o">=</span><span class="n">new_article_id</span><span class="p">,</span>  <span class="c1"># 明示的に設定</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">blog</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+        <span class="n">body</span><span class="o">=</span><span class="n">blog</span><span class="o">.</span><span class="n">body</span><span class="p">,</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span>
+    <span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_blog</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">new_blog</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_blog</span></div>
+
+
+<div class="viewcode-block" id="update_article">
+<a class="viewcode-back" href="../../routers.html#routers.article.update_article">[ドキュメント]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+    <span class="s2">&quot;/articles&quot;</span><span class="p">,</span>
+    <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_202_ACCEPTED</span><span class="p">,</span>
+    <span class="n">response_model</span><span class="o">=</span><span class="n">ArticleBase</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_article</span><span class="p">(</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>  <span class="c1"># idではなくarticle_idを受け取るように変更</span>
+    <span class="n">blog</span><span class="p">:</span> <span class="n">ArticleBase</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>  <span class="c1"># ユーザー認証を追加</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArticleBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;指定したIDの記事を更新するエンドポイント</span>
+
+<span class="sd">    :param article_id: 記事のID</span>
+<span class="sd">    :type article_id: int</span>
+<span class="sd">    :param blog: 更新する記事の内容</span>
+<span class="sd">    :type blog: ArticleBase</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :param current_user: 現在のユーザー</span>
+<span class="sd">    :type current_user: User</span>
+<span class="sd">    :return: 更新された記事</span>
+<span class="sd">    :rtype: ArticleBase</span>
+<span class="sd">    :raises HTTPException: 記事が見つからない場合</span>
+<span class="sd">    :raises ValueError: データベースのクエリに失敗した場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># article_idとuser_idでフィルタリングして記事を取得</span>
+        <span class="c1"># これにより、自分の記事だけを更新できるようになります</span>
+        <span class="n">update_blog</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">article_id</span> <span class="o">==</span> <span class="n">article_id</span><span class="p">,</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># 自分の記事のみを更新可能に</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">update_blog</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
+                <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Article not found or you do not have permission -&gt; Article_id:</span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># 記事の内容を更新</span>
+        <span class="n">update_blog</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">blog</span><span class="o">.</span><span class="n">title</span>
+        <span class="n">update_blog</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">blog</span><span class="o">.</span><span class="n">body</span>
+
+        <span class="c1"># DBに反映</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">update_blog</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;記事を更新しました。article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;記事を更新しました。article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, user_id: </span><span class="si">{</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;記事の更新に失敗しました。article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Article not updated. article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">update_blog</span></div>
+
+
+<div class="viewcode-block" id="delete_article">
+<a class="viewcode-back" href="../../routers.html#routers.article.delete_article">[ドキュメント]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+    <span class="s2">&quot;/articles&quot;</span><span class="p">,</span>
+    <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_204_NO_CONTENT</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_article</span><span class="p">(</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>  <span class="c1"># idではなくarticle_idを受け取るように変更</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>  <span class="c1"># ユーザー認証を追加</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;指定したIDの記事を削除するエンドポイント</span>
+
+<span class="sd">    :param article_id: 記事のID</span>
+<span class="sd">    :type article_id: int</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :param current_user: 現在のユーザー</span>
+<span class="sd">    :type current_user: User</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># article_idとuser_idでフィルタリングして記事を取得</span>
+        <span class="c1"># これにより、自分の記事だけを削除できるようになります</span>
+        <span class="n">delete_blog</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">article_id</span> <span class="o">==</span> <span class="n">article_id</span><span class="p">,</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># 自分の記事のみを削除可能に</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delete_blog</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
+                <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Article not found or you do not have permission -&gt; Article_id:</span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">delete_blog</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;記事を削除しました。article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;記事を削除しました。article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;記事の削除に失敗しました。article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Article not deleted. article_id: </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">key07</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># 204 NO CONTENT のため、戻り値は不要</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">routers.article</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; 著作権 2025, Author.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

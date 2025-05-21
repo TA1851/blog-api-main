@@ -20,7 +20,5 @@ rad.json
 TestResults.xml
 # 設定関連
 .env
-# デバック用
-.venv/
 # ソースコードをコンパイルしたバイトコードをキャッシュするためのディレクトリ
 **/__pycache__/

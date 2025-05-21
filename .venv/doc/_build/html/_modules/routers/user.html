@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="ja" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>routers.user &#8212; venv  ドキュメント</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../../_static/documentation_options.js?v=c033477b"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=4755f45a"></script>
+    
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="検索" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">routers.user</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>routers.user のソースコード</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;ユーザ認証機能を実装するためのルーターモジュール&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">Depends</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserSchema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">db_env</span><span class="p">,</span> <span class="n">session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span>  <span class="c1"># APIのバージョンを指定</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span>  <span class="c1"># SwaggerUIのタグを指定</span>
+<span class="p">)</span>
+
+
+<span class="c1"># 環境変数の取得</span>
+<span class="n">db_env</span>
+<span class="c1"># print(db_env)</span>
+<span class="n">db_url</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database_url&quot;</span><span class="p">)</span>
+<span class="n">key03</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_03&quot;</span><span class="p">)</span>
+<span class="n">key08</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_08&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_environment_variable">
+<a class="viewcode-back" href="../../routers.html#routers.user.check_environment_variable">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_environment_variable</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;環境変数を取得する</span>
+
+<span class="sd">    :param key08: user.pyの環境変数</span>
+<span class="sd">    :type key08: str</span>
+<span class="sd">    :return: 環境変数の値</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">key08</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">key08</span><span class="si">}</span><span class="s2">が設定されていません。</span><span class="si">{</span><span class="n">key08</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。-&gt; </span><span class="si">{</span><span class="n">key08</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP11：環境変数：</span><span class="si">{</span><span class="n">key08</span><span class="si">}</span><span class="s2">を取得しました。 -&gt; </span><span class="si">{</span><span class="n">key08</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数</span><span class="si">{</span><span class="n">key08</span><span class="si">}</span><span class="s2">を取得しました。:&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">key08</span></div>
+
+
+<span class="n">check_environment_variable</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="check_db_url">
+<a class="viewcode-back" href="../../routers.html#routers.user.check_db_url">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_db_url</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースURLを取得する</span>
+
+<span class="sd">    :param key03: user.pyの環境変数</span>
+<span class="sd">    :type key03: str</span>
+<span class="sd">    :param db_url: user.pyの環境変数</span>
+<span class="sd">    :type db_url: str</span>
+<span class="sd">    :return: 環境変数の値</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_url</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">が設定されていません。 -&gt; </span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。</span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP12：環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。&quot;</span><span class="p">)</span>
+    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。 -&gt; </span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_url</span></div>
+
+
+<span class="n">check_db_url</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP13：ユーザを作成します。Swaggerで確認してください。&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------------------&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_db">
+<a class="viewcode-back" href="../../routers.html#routers.user.get_db">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースセッションを取得するための依存関数&quot;&quot;&quot;</span>
+
+    <span class="n">db</span> <span class="o">=</span> <span class="n">session</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">db</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DBセッションのコミットに失敗しました。: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズしました&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズしました&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="IntegrityError">
+<a class="viewcode-back" href="../../routers.html#routers.user.IntegrityError">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntegrityError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;主にユニーク制約違反（メールアドレスが既に使用されている場合など）を示すエラー&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SQLAlchemyError">
+<a class="viewcode-back" href="../../routers.html#routers.user.SQLAlchemyError">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SQLAlchemyError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベース関連のエラー&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="UserRouter">
+<a class="viewcode-back" href="../../routers.html#routers.user.UserRouter">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserRouter</span><span class="p">:</span>
+<div class="viewcode-block" id="UserRouter.create_user">
+<a class="viewcode-back" href="../../routers.html#routers.user.UserRouter.create_user">[ドキュメント]</a>
+    <span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;/user&quot;</span><span class="p">,</span>
+    <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">,</span>
+    <span class="n">response_model</span><span class="o">=</span><span class="n">UserSchema</span><span class="p">,</span>
+    <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;ユーザー作成API&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ユーザーを作成するAPIです。&quot;</span>
+    <span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_user</span><span class="p">(</span>
+        <span class="n">user</span><span class="p">:</span> <span class="n">UserSchema</span><span class="p">,</span>
+        <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserModel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザーを作成するAPIエンドポイント</span>
+
+<span class="sd">        :param user: ユーザー情報を含むPydanticモデル</span>
+<span class="sd">        :type user: UserSchema</span>
+<span class="sd">        :param db: データベースセッション</span>
+<span class="sd">        :type db: Session</span>
+<span class="sd">        :return: 作成されたユーザー情報を含むSQLAlchemyモデル</span>
+<span class="sd">        :rtype: UserModel</span>
+<span class="sd">        :raises HTTPException: ユーザーの作成に失敗した場合</span>
+<span class="sd">        :raises IntegrityError: ユーザーの作成に失敗した場合</span>
+<span class="sd">        :raises SQLAlchemyError: データベースエラーが発生した場合</span>
+<span class="sd">        :raises Exception: その他のエラーが発生した場合</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_user</span> <span class="o">=</span> <span class="n">UserModel</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">email</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                <span class="n">password</span><span class="o">=</span><span class="n">Hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP17：新規ユーザーを作成します。: </span><span class="si">{</span><span class="n">new_user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;新規ユーザーを作成します。: </span><span class="si">{</span><span class="n">new_user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_user</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_user</span><span class="o">.</span><span class="n">email</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_user</span><span class="o">.</span><span class="n">password</span><span class="p">:</span>
+                <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;ユーザーの作成に失敗しました。必須フィールドが不足しています。&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ユーザー情報が不足しています。&quot;</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_user</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">new_user</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP17：ユーザーが作成されました。: </span><span class="si">{</span><span class="n">new_user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーが作成されました。: </span><span class="si">{</span><span class="n">new_user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_user</span>
+        <span class="k">except</span> <span class="n">HTTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーの作成に失敗しました。重複データが存在します: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;ユーザーの作成に失敗しました。メールアドレスが既に使用されています。&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;パスワードが不正です: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;パスワードが不正です。&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">SQLAlchemyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;データベースエラーが発生しました: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;データベースエラーが発生しました。&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">error_detail</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;不明なエラーが発生しました: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># create_error_logger(f&quot;不明なエラーが発生しました: {str(e)}&quot;)</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;予期しないエラーが発生しました。&quot;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズします&quot;</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="show_user">
+<a class="viewcode-back" href="../../routers.html#routers.user.show_user">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_user</span><span class="p">(</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span>
+    <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザー情報を表示するAPIエンドポイント</span>
+
+<span class="sd">    :param id: ユーザーID</span>
+<span class="sd">    :type id: int</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :return: ユーザー情報を含むSQLAlchemyモデル</span>
+<span class="sd">    :rtype: UserModel</span>
+<span class="sd">    :raises HTTPException: ユーザーが見つからない場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">UserModel</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">UserModel</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーが見つかりません。: </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ユーザーが見つかりません。: </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;ユーザーが見つかりません。&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">クイック検索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="検索" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Pythonモジュール索引"
+             >モジュール</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >モジュールコード</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">routers.user</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; 著作権 2025, Author.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>
