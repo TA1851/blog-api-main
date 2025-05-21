@@ -91,11 +91,9 @@ def get_db():
 @router.post('/login')
 async def login(
     request: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db),
-    description: str = "https://blog-api-main.onrender.com/api/v1/login",
-    dest: str = "ログインに成功した場合、アクセストークンを返します。token_type:bearer"
+    db: Session = Depends(get_db)
     ) -> dict:
-    """ログインエンドポイント
+    """ログインエンドポイント：https://blog-api-main.onrender.com/api/v1/login
 
     :param request: OAuth2PasswordRequestForm
 
@@ -105,7 +103,7 @@ async def login(
 
     :type db: Session
 
-    :return: アクセストークンとトークンタイプ
+    :return: ログインに成功した場合、アクセストークンを返します。token_type:bearer
 
     :rtype: dict
 
