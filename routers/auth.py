@@ -93,7 +93,6 @@ async def login(
     request: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
     description: str = "https://blog-api-main.onrender.com/api/v1/login",
-    summary: str = "ログインエンドポイント",
     dest: str = "ログインに成功した場合、アクセストークンを返します。token_type:bearer"
     ) -> dict:
     """ログインエンドポイント
