@@ -1,5 +1,3 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
 #launch.json folder
 .vscode/
 #Cache folder
@@ -23,6 +21,6 @@ TestResults.xml
 # 設定関連
 .env
 # デバック用
-.venv
+.venv/
 # ソースコードをコンパイルしたバイトコードをキャッシュするためのディレクトリ
 **/__pycache__/
