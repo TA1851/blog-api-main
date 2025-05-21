@@ -1,5 +1,6 @@
 """カスタムトークンの作成"""
 from typing import Optional
+import pprint
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
@@ -18,6 +19,9 @@ router = APIRouter(
 )
 
 # TODO:環境変数設定ファイルに移行する
+print("")
+pprint.pprint(db_env)
+print("")
 
 SECRET_KEY = db_env.get("SECRET_KEY", "default_secret_key")
 # SECRET_KEY = "1cf296882c7c9a8b1dc448dab881e44fe1de6e279930d48dc1790a160cab8a0d"

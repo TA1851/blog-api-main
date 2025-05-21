@@ -118,6 +118,20 @@ def read_env_var(env_path: Path) -> dict:
         print("DB_URLが取得できませんでした。")
         create_error_logger("DB_URLが取得できませんでした。")
 
+    if secret_key:
+        print(f"STEP4：SECRET_KEYを取得しました。 -> {secret_key}")
+        create_logger(f"SECRET_KEYを取得しました。: {secret_key}")
+        result["secret_key"] = secret_key
+    else:
+        print("SECRET_KEYが取得できませんでした。")
+        create_error_logger("SECRET_KEYが取得できませんでした。")
+    if algo:
+        print(f"STEP4：ALGORITHMを取得しました。 -> {algo}")
+        create_logger(f"ALGORITHMを取得しました。: {algo}")
+        result["algo"] = algo
+    else:
+        print("ALGORITHMが取得できませんでした。")
+        create_error_logger("ALGORITHMが取得できませんでした。")
     if not result:
         print("環境変数の取得に失敗しました。")
         create_error_logger("環境変数の取得に失敗しました。")
