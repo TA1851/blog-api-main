@@ -1,6 +1,6 @@
 """パスワードのハッシュ化と検証を行うためのクラスを定義。"""
-
 from passlib.context import CryptContext
+
 
 password_context = CryptContext(
     schemes=["bcrypt"],

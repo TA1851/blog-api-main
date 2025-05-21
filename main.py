@@ -1,15 +1,15 @@
 """FastAPIのエントリーポイント"""
-
 from fastapi import FastAPI, Depends, status, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+import pprint
+
 from models import Article, User
 from schemas import ArticleBase, validation_exception_handler, User
 from database import Base, engine, session
-from sqlalchemy.orm import Session
 from logger.custom_logger import create_logger, create_error_logger
-import pprint
 from routers import article, user, auth
 
 # FastAPIのインスタンスを作成

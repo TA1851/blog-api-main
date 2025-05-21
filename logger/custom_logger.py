@@ -1,5 +1,4 @@
 """カスタムロガーパッケージ"""
-
 from logging import getLogger, FileHandler, Formatter, INFO, ERROR
 from pathlib import Path
 
