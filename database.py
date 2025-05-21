@@ -107,6 +107,9 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。 {id_A009}")
 
     database_url = os.getenv("DATABASE_URL")
+    secret_key = os.getenv("SECRET_KEY")
+    algo = os.getenv("ALGORITHM")
+
     if database_url:
         print(f"STEP4：DB_URLを取得しました。 -> {database_url}")
         create_logger(f"DB_URLを取得しました。: {database_url}")
