@@ -103,7 +103,7 @@ async def login(
 
     :type db: Session
 
-    :return: ログインに成功した場合、アクセストークンを返します。token_type:bearer
+    :return: アクセストークンを返します。token_type:bearer
 
     :rtype: dict
 
@@ -191,13 +191,18 @@ async def logout(
         oauth2_scheme
         )
     ):
-    """ログアウトエンドポイント
+    """ログアウトエンドポイント:https://blog-api-main.onrender.com/api/v1/logout
 
     :param token: 認証トークン（ヘッダーから自動取得）
-    :type token: str
+
+    :type token: Bearer
+
     :raises HTTPException: トークンが無効な場合
-    :return: ログアウトメッセージ
+
+    :return: ログアウトしました。
+
     :rtype: dict
+
     :raises HTTPException: トークンが無効化されている場合
     """
     # トークンをブラックリストに追加して無効化
