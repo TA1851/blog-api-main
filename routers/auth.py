@@ -15,14 +15,12 @@ from logger.custom_logger import create_logger, create_error_logger
 
 
 router = APIRouter(
-    prefix="/api/v1",  # APIのバージョンを指定
-    tags=["auth"],  # SwaggerUIのタグを指定
+    prefix="/api/v1",
+    tags=["auth"],
 )
 
 
 # 環境変数の取得
-db_env
-# print(db_env)
 db_url = db_env.get("database_url")
 key03 = db_env.get("file_id_03")
 key09 = db_env.get("file_id_09")
@@ -93,16 +91,23 @@ def get_db():
 @router.post('/login')
 async def login(
     request: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    description: str = "ログインエンドポイント"
     ) -> dict:
     """ログインエンドポイント
 
     :param request: OAuth2PasswordRequestForm
+
     :type request: OAuth2PasswordRequestForm
+
     :param db: データベースセッション
+
     :type db: Session
+
     :return: アクセストークンとトークンタイプ
+
     :rtype: dict
+
     :raises HTTPException: ユーザー名またはパスワードが無効な場合
     """
     print(f"Login attempt with username: {request.username}")

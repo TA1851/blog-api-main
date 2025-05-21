@@ -13,8 +13,8 @@ from oauth2 import get_current_user
 
 
 router = APIRouter(
-    prefix="/api/v1",  # APIのバージョンを指定
-    tags=["articles"],  # SwaggerUIのタグを指定
+    prefix="/api/v1",
+    tags=["articles"],
 )
 
 
@@ -116,17 +116,16 @@ async def all_fetch(
         total_count = db.query(Article).filter(
             Article.user_id == current_user.id).count()
 
-        # クエリ作成
         query = db.query(Article).filter(Article.user_id == current_user.id)
 
-        # limitが指定されている場合のみ適用
+        # limitが指定されている場合の処理
         if limit:
             user_blogs = query.limit(limit).all()
             create_logger(
                 f"ユーザーID: {current_user.id} のブログ記事を取得しました。 \
                 全{total_count}件中{len(user_blogs)}件表示")
         else:
-            # 制限なしで全件取得
+            # 全件取得
             user_blogs = query.all()
             create_logger(
                 f"ユーザーID: {current_user.id}  \
@@ -307,7 +306,7 @@ async def delete_article(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
     ) -> None:
-    """指定したIDの記事を削除するエンドポイント
+    """記事を削除するエンドポイント
 
     :param article_id: 記事のID
     :type article_id: int
