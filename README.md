@@ -52,7 +52,7 @@
 参考にしました。プロジェクト管理やドキュメント作成にはNotionを利用しました。
 カバレッジ測定にはCoverage.pyを採用しています。
 
-[ドキュメント](/Users/tatu/Documents/GitHub/blog-api-main/doc/_build/html/index.html)
+[ドキュメント](doc/_build/html/index.html)
 
 ### 今後の課題
 
