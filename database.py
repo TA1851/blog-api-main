@@ -1,14 +1,17 @@
 """データベース接続モジュール"""
 import os
+import pprint
 from pathlib import Path
+from dotenv import load_dotenv
+
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
-from dotenv import load_dotenv
 from logger.custom_logger import create_logger, create_error_logger
-import pprint
 
 
-def check_env_file(default_env_path: Path | str=None) -> Path | None:
+def check_env_file(
+    default_env_path: Path | str=None
+    ) -> Path | None:
     """ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。
 
     :param default_env_path: str | Path
@@ -19,16 +22,24 @@ def check_env_file(default_env_path: Path | str=None) -> Path | None:
         default_env_path = Path(default_env_path) \
         if isinstance(default_env_path, str) \
         else default_env_path
-    print(f"STEP1：ENVファイルの初期化に成功しました。 -> {default_env_path}")
+    print(
+        f"STEP1：ENVファイルの初期化に成功しました。 \
+        -> {default_env_path}"
+        )
 
     if not default_env_path.exists():
         print(".envファイルが見つかりません")
         create_error_logger(
             f".envファイルが見つかりません。PATHを確認して下さい。: \
-            {default_env_path}")
+            {default_env_path}"
+            )
     else:
-        print(f"STEP2：.envファイルが見つかりました -> {default_env_path}")
-        create_logger(f".envファイルが見つかりました: {default_env_path}")
+        print(
+            f"STEP2：.envファイルが見つかりました。 \
+                -> {default_env_path}"
+                )
+        create_logger(
+            f".envファイルが見つかりました: {default_env_path}")
     return default_env_path
 
 # test = check_env_file()
@@ -129,11 +140,12 @@ def read_env_var(env_path: Path) -> dict:
         return result
 
 db_env = read_env_var(env_var)
-# print(repr(db_env), type(db_env))
+
 
 class DatabaseConnectionError(Exception):
     """データベース接続エラーを表すカスタム例外"""
     pass
+
 
 # データベースエンジンを作成
 def create_database_engine() -> Engine:
@@ -167,7 +179,10 @@ def create_database_engine() -> Engine:
 
 
 # テーブルオブジェクトを生成するベースクラス
-Base = declarative_base()
+# Base = declarative_base()
+
+engine = create_database_engine()
+
 
 # セッションを作成
 def create_session(engine: Engine) -> Session:
@@ -188,11 +203,16 @@ def create_session(engine: Engine) -> Session:
         ・bind=engine: エンジンを生成する呼び出し可能オブジェクト
     """
     try:
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        # print(type(Session))
+        SessionLocal = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=engine
+            )
         session_id = os.getenv("AA03")
         if not session_id:
-            create_error_logger(f"{session_id}が環境変数に設定されていません。")
+            create_error_logger(
+                f"{session_id}が環境変数に設定されていません。"
+                )
         else:
             print(f"STEP9：セッションを確立しました。 -> {session_id}")
             create_logger(f"セッションを確立しました。 -> {session_id}")
@@ -202,6 +222,27 @@ def create_session(engine: Engine) -> Session:
         create_error_logger(f"セッション作成に失敗しました。: {str(e)}")
         raise
 
-# 関数の呼び出し
-engine = create_database_engine()
+
+def get_db():
+    """データベースセッションを取得する
+
+    :return: データベースセッション
+
+    :rtype: Session
+    """
+    db = session()
+    try:
+        yield db
+        print("DBセッションをコミットしました")
+        create_logger("DBセッションをコミットしました")
+    except Exception as e:
+        pprint.pprint(str(e))
+        create_error_logger(
+            f"DBセッションのコミットに失敗しました。: {str(e)}"
+            )
+        raise
+    finally:
+        db.close()
+        print("DBセッションをクローズしました")
+        create_logger("DBセッションをクローズしました")
 session = create_session(engine)

@@ -1,20 +1,16 @@
 """FastAPIのエントリーポイント"""
-
+import pprint
 from fastapi import FastAPI, Depends, status, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from models import Article, User
-from schemas import ArticleBase, validation_exception_handler, User
-from database import Base, engine, session
-from sqlalchemy.orm import Session
+
+from database import Base, engine
+from schemas import validation_exception_handler
 from logger.custom_logger import create_logger, create_error_logger
-import pprint
 from routers import article, user, auth
 
-# FastAPIのインスタンスを作成
 app = FastAPI()
-
 
 # 許可するオリジン（フロントエンドのURLを指定）
 origins = [
@@ -31,20 +27,26 @@ app.add_middleware(
     allow_headers=["*"],     # 許可するHTTPヘッダー
 )
 
-
-# SQLAlchemyを使用してデータベースのテーブルを作成
 Base.metadata.create_all(engine)
 
-@app.get("/")
-def read_root():
-    return {"HOME": "ブログサービスのAPIです"}
 
-@app.exception_handler(RequestValidationError)
-async def handler(request:Request, exc:RequestValidationError):
+@app.exception_handler(
+    RequestValidationError
+    )
+async def handler(
+    request:Request,
+    exc:RequestValidationError):
     pprint.pprint(exc.errors())
-    return JSONResponse(content={}, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    return JSONResponse(
+        content={},
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
+        )
+
 
 app.include_router(article.router)
-app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(
+    RequestValidationError,
+    validation_exception_handler
+    )
 app.include_router(user.router)
 app.include_router(auth.router)
