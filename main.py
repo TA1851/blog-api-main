@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
 from schemas import validation_exception_handler
-from logger.custom_logger import create_logger, create_error_logger
+# from logger.custom_logger import create_logger, create_error_logger
 from routers import article, user, auth
 
 app = FastAPI()
