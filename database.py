@@ -150,7 +150,7 @@ def read_env_var(env_path: Path) -> dict:
         print(f"STEP5：環境変数の取得に成功しました")
         create_logger(f"環境変数の取得に成功しました。: {result}")
 
-        # ENVファイルの設定値を構造化して表示する。
+        # 環境変数を構造化して表示する
         print("")
         pprint.pprint(result)
         print("")
@@ -195,9 +195,6 @@ def create_database_engine() -> Engine:
         raise
 
 
-# テーブルオブジェクトを生成するベースクラス
-# Base = declarative_base()
-
 engine = create_database_engine()
 
 
@@ -240,6 +237,9 @@ def create_session(engine: Engine) -> Session:
         raise
 
 
+session = create_session(engine)
+
+
 def get_db():
     """データベースセッションを取得する
 
@@ -262,4 +262,3 @@ def get_db():
         db.close()
         print("DBセッションをクローズしました")
         create_logger("DBセッションをクローズしました")
-session = create_session(engine)
