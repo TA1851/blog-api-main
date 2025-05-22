@@ -1,25 +1,22 @@
 """認証トークンモジュール"""
+from jose import JWTError, jwt
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from jose import JWTError, jwt
 
-from custom_token import SECRET_KEY, ALGORITHM
-from database import db_env, session
-from schemas import TokenData
+from database import db_env, session, get_db
 from models import User
+from schemas import TokenData
+from custom_token import SECRET_KEY, ALGORITHM
 from logger.custom_logger import create_logger, create_error_logger
 from routers.user import show_user
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
-
-# 環境変数の取得
-db_env
-# print(db_env)
 db_url = db_env.get("database_url")
 key03 = db_env.get("file_id_03")
 key10 = db_env.get("file_id_10")
+
 
 def check_environment_variable():
   """環境変数設定ファイルからデータベースのURLを取得する
@@ -35,6 +32,7 @@ def check_environment_variable():
     print(f"STEP14：環境変数：{key10}を取得しました。 -> {key10}")
     create_logger(f"環境変数{db_env}を取得しました。:")
   return db_env
+
 check_environment_variable()
 
 
@@ -57,20 +55,7 @@ check_db_url()
 print(f"STEP16：ユーザを作成します。Swaggerで確認してください。")
 print("---------------------------------------------------------------")
 
-def get_db():
-  """データベースセッションを取得するための依存関数
-
-  :param db: データベースセッション
-  :return: データベースセッション
-  """
-  db = session()
-  try:
-    yield db
-    print("DBセッションをコミットしました")
-    create_logger("DBセッションをコミットしました")
-  finally:
-    db.close()
-
+get_db()
 
 
 async def get_current_user(
@@ -92,7 +77,11 @@ async def get_current_user(
   )
   try:
       # トークンを検証してペイロードを取得
-      payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+      payload = jwt.decode(
+        token,
+        SECRET_KEY,
+        algorithms=[ALGORITHM]
+      )
       email: str = payload.get("sub")
       id: int = payload.get("id")
 
@@ -109,12 +98,3 @@ async def get_current_user(
 
   user = await show_user(id, db)
   return user
-
-# ユーザー情報をデータベースから取得
-# user = db.query(User).filter(User.email == token_data.email).first()
-
-# if user is None:
-#     print("ユーザーが見つかりません")
-#     create_error_logger("ユーザーが見つかりません")
-#     raise credentials_exception
-# return user

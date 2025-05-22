@@ -28,28 +28,9 @@ class Article(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     # 特定の記事を作成したユーザーの情報を取得する
     owner = relationship("User", back_populates="blogs")
-    # published: bool = Column(Boolean, default=True)  # 記事の公開状態（公開済みかどうか）を管理するために使用
     create_logger(f"Articleインスタンスが作成されました。")
 
-    # def __init__(self, id=None, title=None, body=None, user_id=None):
-    #     self.id = id
-    #     self.title = title
-    #     self.body = body
-    #     self.user_id = user_id # 追加
-    #     create_logger(f"Articleインスタンスが作成されました。")
-
-    # def __init__(self, id=None, title=None, body=None, published=True):
-    #     self.id = id
-    #     self.title = title
-    #     self.body = body
-    #     self.published = published
-    #     create_logger(f"Articleインスタンスが作成されました。")
-
-# database.pyのdb_envをインポート（環境変数の利用）
-db_env
-# print(type(db_env))
 key_05 = db_env.get("file_id_05")
-# print(key_05)
 print(f"STEP10：Articleインスタンスが作成されました。 -> {key_05}")
 
 
@@ -76,10 +57,6 @@ class User(Base):
     # 特定のユーザーが作成した記事の情報を全て取得する
     blogs = relationship("Article", back_populates="owner")
 
-
-db_env
-# print(type(db_env))
 key_08 = db_env.get("file_id_08")
-# print(key_08)
 print(f"STEP10：Articleインスタンスが作成されました。 -> {key_08}")
 print("---------------------------------------------------------------")

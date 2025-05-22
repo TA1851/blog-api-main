@@ -42,8 +42,7 @@ def check_env_file(
             f".envファイルが見つかりました: {default_env_path}")
     return default_env_path
 
-# test = check_env_file()
-# print(repr(test), type(test))
+
 env_var = check_env_file()
 
 def read_env_var(env_path: Path) -> dict:

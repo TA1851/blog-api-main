@@ -49,12 +49,8 @@ class Article(ArticleBase):
         model_config = ConfigDict(from_attributes=True)
 
 
-# 環境変数の取得
-db_env
 key_06 = db_env.get("file_id_06")
-# print(f"ファイル名: {key_06}")
 key_08 = db_env.get("file_id_08")
-# print(f"ファイル名: {key_08}")
 
 # FastAPIのエンドポイントで使用する例外ハンドラ
 async def validation_exception_handler(request, exc):
@@ -87,7 +83,6 @@ class User(BaseModel):
     :param password: パスワード
     :param is_active: ユーザーの有効状態
     """
-    # id: int | None = Field(None, id="ユーザーID", description="ユーザーID")
     name: str | None = Field(
         None, name="ユーザー名", max_length=20, \
         description="20文字以内で入力してください"
