@@ -372,7 +372,9 @@ async def delete_article(
         create_logger(f"記事を削除しました。article_id: {article_id}, {key07}")
     except ValueError as e:
         pprint.pprint(str(e))
-        create_error_logger(f"記事の削除に失敗しました。article_id: {article_id}, {key07}")
+        create_error_logger(
+            f"記事の削除に失敗しました。article_id: {article_id}, {key07}"
+        )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Article not deleted. article_id: {article_id}, {key07}"

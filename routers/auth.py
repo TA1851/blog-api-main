@@ -20,7 +20,6 @@ router = APIRouter(
 )
 
 
-# 環境変数の取得
 db_url = db_env.get("database_url")
 key03 = db_env.get("file_id_03")
 key09 = db_env.get("file_id_09")

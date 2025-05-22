@@ -127,8 +127,15 @@ class UserRouter:
             )
             print(f"STEP17：新規ユーザーを作成します。: {new_user}")
             create_logger(f"新規ユーザーを作成します。: {new_user}")
-            if not new_user.name or not new_user.email or not new_user.password:
-                create_error_logger("ユーザーの作成に失敗しました。必須フィールドが不足しています。")
+            if not new_user.name \
+                or not new_user.email \
+                or not new_user.password:
+                print(
+                    "ユーザーの作成に失敗しました。必須フィールドが不足しています。"
+                )
+                create_error_logger(
+                    "ユーザーの作成に失敗しました。必須フィールドが不足しています。"
+                )
                 raise ValueError("ユーザー情報が不足しています。")
             db.add(new_user)
             db.commit()
@@ -138,22 +145,38 @@ class UserRouter:
             return new_user
         except HTTPException as e:
             db.rollback()
-            create_error_logger(f"ユーザーの作成に失敗しました。重複データが存在します: {str(e)}")
-            raise HTTPException(status_code=401, detail="ユーザーの作成に失敗しました。メールアドレスが既に使用されています。")
+            print(
+                f"ユーザーの作成に失敗しました。: {str(e)}"
+            )
+            create_error_logger(
+                f"ユーザーの作成に失敗しました。重複データが存在します: {str(e)}"
+            )
+            raise HTTPException(
+                status_code=401,
+                detail="このメールアドレスは既に使用されています。"
+            )
         except ValidationError as e:
             db.rollback()
             create_error_logger(f"パスワードが不正です: {str(e)}")
-            raise ValidationError(status_code=409, detail="パスワードが不正です。")
+            raise ValidationError(
+                status_code=409, detail="パスワードが不正です。"
+            )
         except SQLAlchemyError as e:
             db.rollback()
             create_error_logger(f"データベースエラーが発生しました: {str(e)}")
-            raise HTTPException(status_code=500, detail="データベースエラーが発生しました。")
+            raise HTTPException(
+                status_code=500,
+                detail="データベースエラーが発生しました。"
+            )
         except Exception as e:
             db.rollback()
             error_detail = traceback.format_exc()
+            print(f"不明なエラーが発生しました: {error_detail}")
             create_error_logger(f"不明なエラーが発生しました: {error_detail}")
-            # create_error_logger(f"不明なエラーが発生しました: {str(e)}")
-            raise HTTPException(status_code=500, detail="予期しないエラーが発生しました。")
+            raise HTTPException(
+                status_code=500,
+                detail="予期しないエラーが発生しました。"
+            )
         finally:
             create_logger("DBセッションをクローズします")
             db.close()
@@ -177,5 +200,8 @@ async def show_user(
     if not user:
         print(f"ユーザーが見つかりません。: {id}")
         create_error_logger(f"ユーザーが見つかりません。: {id}")
-        raise HTTPException(status_code=404, detail="ユーザーが見つかりません。")
+        raise HTTPException(
+            status_code=404,
+            detail="ユーザーが見つかりません。"
+        )
     return user
