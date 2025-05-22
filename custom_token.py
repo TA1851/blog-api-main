@@ -89,6 +89,7 @@ def verify_token(
       create_logger(f"token_data: {token_data}")
   except JWTError:
       print("JWTErrorが発生しました")
+      create_error_logger(f"token_data: {token_data}")
       raise credentials_exception
   user = get_user_by_id(id, db)
   return user
