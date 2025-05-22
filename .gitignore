@@ -20,7 +20,11 @@ rad.json
 TestResults.xml
 # 設定関連
 .env
+<<<<<<< HEAD
 # Pythonの仮想環境
+=======
+# 仮想環境
+>>>>>>> dev
 .venv/
 # ソースコードをコンパイルしたバイトコードをキャッシュするためのディレクトリ
 **/__pycache__/

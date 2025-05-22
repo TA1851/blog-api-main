@@ -1,6 +1,6 @@
 """カスタムトークンの作成"""
-from typing import Optional
 import pprint
+from typing import Optional
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
@@ -23,10 +23,12 @@ print("")
 pprint.pprint(db_env)
 print("")
 
-SECRET_KEY = db_env.get("SECRET_KEY", "default_secret_key")
-# SECRET_KEY = "1cf296882c7c9a8b1dc448dab881e44fe1de6e279930d48dc1790a160cab8a0d"
-ALGORITHM = db_env.get("algo")
-# ALGORITHM = "HS256"
+
+db_env
+print(db_env)
+
+SECRET_KEY = db_env.get("secret_key")
+ALGORITHM = db_env.get("algorithm")
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def create_access_token(
