@@ -194,6 +194,8 @@ def create_database_engine() -> Engine:
         create_error_logger(f"データベース接続に失敗しました。: {str(e)}")
         raise
 
+# テーブルオブジェクトを生成するベースクラス
+Base = declarative_base()
 
 engine = create_database_engine()
 
