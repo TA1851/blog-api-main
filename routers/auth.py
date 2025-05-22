@@ -1,6 +1,6 @@
 """認証機能を実装するためのルーターモジュール"""
-from typing import List, Set
 import pprint
+from typing import List, Set
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
@@ -221,8 +221,11 @@ async def get_all_blogs(
     """全てのブログ記事を取得するエンドポイント
 
     :param db: データベースセッション
+
     :type db: Session
+
     :return: 記事のリスト
+
     :rtype: List[ShowArticle]
     """
     return db.query(ShowArticle).all()

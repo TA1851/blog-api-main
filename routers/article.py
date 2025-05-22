@@ -100,14 +100,23 @@ async def all_fetch(
     """ログインユーザーが作成した記事のみを取得するエンドポイント
 
     :param db: データベースセッション
+
     :type db: Session
+
     :param current_user: 現在のユーザー
+
     :type current_user: User
+
     :param limit: 取得する最大記事数（指定しない場合は全件取得）
+
     :type limit: Optional[int]
+
     :return: 記事のリスト
+
     :rtype: List[ArticleBase]
+
     :raises HTTPException: 記事が見つからない場合
+
     :raises ValueError: データベースのクエリに失敗した場合
     """
 
@@ -173,11 +182,17 @@ async def get_article(
     """指定したIDのブログ記事を取得するエンドポイント
 
     :param id: 記事のID
+
     :type id: int
+
     :param db: データベースセッション
+
     :type db: Session
+
     :return: 記事の詳細
+
     :rtype: ArticleBase
+
     :raises HTTPException: 記事が見つからない場合
     """
     try:
@@ -211,12 +226,19 @@ async def create_article(
     """新しい記事を作成するエンドポイント
 
     :param blog: 記事の内容
+
     :type blog: ArticleBase
+
     :param db: データベースセッション
+
     :type db: Session
+
     :param current_user: 現在のユーザー
+
     :type current_user: User
+
     :return: 作成された記事
+
     :rtype: ArticleBase
     """
     # 自動採番処理
@@ -248,16 +270,27 @@ async def update_article(
     """指定したIDの記事を更新するエンドポイント
 
     :param article_id: 記事のID
+
     :type article_id: int
+
     :param blog: 更新する記事の内容
+
     :type blog: ArticleBase
+
     :param db: データベースセッション
+
     :type db: Session
+
     :param current_user: 現在のユーザー
+
     :type current_user: User
+
     :return: 更新された記事
+
     :rtype: ArticleBase
+
     :raises HTTPException: 記事が見つからない場合
+
     :raises ValueError: データベースのクエリに失敗した場合
     """
     try:
@@ -309,11 +342,17 @@ async def delete_article(
     """記事を削除するエンドポイント
 
     :param article_id: 記事のID
+
     :type article_id: int
+
     :param db: データベースセッション
+
     :type db: Session
+
     :param current_user: 現在のユーザー
+
     :type current_user: User
+
     :return: None
     """
     try:
