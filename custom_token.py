@@ -50,6 +50,7 @@ def create_access_token(
       print(f"expire: {expire}")
       create_logger(f"expire: {expire}")
   to_encode.update({"exp": expire})
+  # TODO:条件判定を入れる
   encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
   return encoded_jwt
 

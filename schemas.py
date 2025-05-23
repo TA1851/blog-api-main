@@ -32,7 +32,7 @@ class ArticleBase(BaseModel, validate_assignment=True):
         description="30文字以内で入力してください"
         )
     body: str | None = Field(
-        None, title="本文", max_length=100, \
+        None, title="本文", max_length=1000, \
         description="100文字以内で入力してください"
         )
     user_id: Optional[int] = None
