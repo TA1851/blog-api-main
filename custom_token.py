@@ -23,7 +23,7 @@ print("")
 
 
 SECRET_KEY = db_env.get("secret_key")
-ALGORITHM = db_env.get("algorithm")
+ALGORITHM = db_env.get("algo")
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 def create_access_token(
