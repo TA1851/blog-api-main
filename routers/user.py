@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from schemas import User as UserSchema
 from models import User as UserModel
-from database import db_env, session
+from database import db_env, session, get_db
 from hashing import Hash
 from logger.custom_logger import create_logger, create_error_logger
 
@@ -67,23 +67,7 @@ check_db_url()
 print(f"STEP13：ユーザを作成します。Swaggerで確認してください。")
 print("---------------------------------------------------------------")
 
-def get_db():
-    """データベースセッションを取得するための依存関数"""
-
-    db = session()
-    try:
-        yield db
-        print("DBセッションをコミットしました")
-        create_logger("DBセッションをコミットしました")
-    except Exception as e:
-        pprint.pprint(str(e))
-        create_error_logger(f"DBセッションのコミットに失敗しました。: {str(e)}")
-        raise
-    finally:
-        db.close()
-        print("DBセッションをクローズしました")
-        create_logger("DBセッションをクローズしました")
-
+get_db()
 
 class IntegrityError(Exception):
     """主にユニーク制約違反（メールアドレスが既に使用されている場合など）を示すエラー"""

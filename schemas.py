@@ -1,9 +1,8 @@
 """レスポンスのスキーマを定義するモジュール"""
 from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
-from fastapi.exceptions import RequestValidationError
 
-from logger.custom_logger import create_logger, create_error_logger
+from logger.custom_logger import create_error_logger
 from database import db_env
 
 
@@ -54,8 +53,7 @@ key_08 = db_env.get("file_id_08")
 
 # FastAPIのエンドポイントで使用する例外ハンドラ
 async def validation_exception_handler(request, exc):
-    """RequestValidationErrorをキャッチしてログに記録する例外ハンドラ
-    """
+    """RequestValidationErrorをキャッチしてログに記録する例外ハンドラ"""
     # バリデーションエラーの情報を取得してログとコンソールに記録
     for error in exc.errors():
         locations = error["loc"]

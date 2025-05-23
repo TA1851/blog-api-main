@@ -12,9 +12,9 @@ sys.path.insert(0, '/Users/tatu/Documents/GitHub/blog-site/venv')
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'venv'
-copyright = '2025, Author'
-author = 'Author'
+project = 'Blog API'
+copyright = '2025, TA1851'
+author = 'TA1851'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
