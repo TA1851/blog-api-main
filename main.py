@@ -5,24 +5,37 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from database import Base, engine
+from database import Base, engine, db_env
 from schemas import validation_exception_handler
-# from logger.custom_logger import create_logger, create_error_logger
 from routers import article, user, auth
 
 app = FastAPI()
 
-# 許可するオリジン（フロントエンドのURLを指定）
-origins = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "https://nextjs-app-khaki-two.vercel.app",
-]
+# 環境変数から取得したCORS_ORIGINSリストを使用
+origins = db_env.get("cors_origins", [])
+local_origin = db_env.get("local_origin", [])
+
+# デバッグ用にオリジンの値を表示
+print(f"CORS origins: {origins}")
+print(f"Local origin: {local_origin}")
+
+# 両方のオリジンリストを結合
+allowed_origins = []
+if origins:
+    allowed_origins.extend(origins)
+if local_origin:
+    allowed_origins.extend(local_origin)
+
+# デフォルト値の設定（どちらも取得できなかった場合）
+if not allowed_origins:
+    print("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
+
+print(f"Allowed origins: {allowed_origins}")
 
 # CORSミドルウェアの設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # 指定したオリジンのみ許可
+    allow_origins=allowed_origins,  # 結合したオリジンリストを使用
     allow_credentials=True,  # Cookieを含むリクエストを許可
     allow_methods=["GET", "POST", "PUT", "DELETE"],  # 許可するHTTPメソッド
     allow_headers=["*"],  # 許可するHTTPヘッダー

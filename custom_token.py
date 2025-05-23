@@ -7,9 +7,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
 from database import db_env
-from schemas import Login
 from models import User
-from hashing import Hash
 from logger.custom_logger import create_logger, create_error_logger
 from routers.user import get_db
 
@@ -23,9 +21,6 @@ print("")
 pprint.pprint(db_env)
 print("")
 
-
-db_env
-print(db_env)
 
 SECRET_KEY = db_env.get("secret_key")
 ALGORITHM = db_env.get("algorithm")

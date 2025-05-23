@@ -55,7 +55,20 @@ def read_env_var(env_path: Path) -> dict:
     load_dotenv(dotenv_path=env_path)
     result = {}
 
+    # 環境変数を取得
     id_A003 = os.getenv("AA03")
+    id_A005 = os.getenv("AA05")
+    id_A006 = os.getenv("AA06")
+    id_A007 = os.getenv("AA07")
+    id_A008 = os.getenv("AA08")
+    id_A009 = os.getenv("AA09")
+    id_A010 = os.getenv("AA10")
+    database_url = os.getenv("DATABASE_URL")
+    secret_key = os.getenv("SECRET_KEY")
+    algo = os.getenv("ALGORITHM")
+    cors_origins = os.getenv("CORS_ORIGINS")
+    local_origin = os.getenv("LOCAL_CORS_ORIGINS")
+
     if id_A003:
         print(f"STEP3：ファイルIDを取得しました。 -> {id_A003}")
         create_logger(f"ファイルIDを取得しました。: {id_A003}")
@@ -64,7 +77,6 @@ def read_env_var(env_path: Path) -> dict:
         print("ファイルIDが取得できませんでした。")
         create_error_logger("ファイルIDが取得できませんでした。")
 
-    id_A005 = os.getenv("AA05")
     if id_A005:
         print(f"STEP3：ファイルIDを取得しました。 -> {id_A005}")
         create_logger(f"ファイルIDを取得しました。: {id_A005}")
@@ -73,7 +85,6 @@ def read_env_var(env_path: Path) -> dict:
         print("ファイルIDが取得できませんでした。")
         create_error_logger("ファイルIDが取得できませんでした。")
 
-    id_A006 = os.getenv("AA06")
     if id_A006:
         print(f"STEP3：ファイルIDを取得しました。 -> {id_A006}")
         create_logger(f"ファイルIDを取得しました。: {id_A006}")
@@ -82,7 +93,6 @@ def read_env_var(env_path: Path) -> dict:
         print("ファイルIDが取得できませんでした。")
         create_error_logger("ファイルIDが取得できませんでした。")
 
-    id_A007 = os.getenv("AA07")
     if id_A007:
         print(f"STEP3：ファイルIDを取得しました。 -> {id_A007}")
         create_logger(f"ファイルIDを取得しました。: {id_A007}")
@@ -91,7 +101,6 @@ def read_env_var(env_path: Path) -> dict:
         print("ファイルIDが取得できませんでした。")
         create_error_logger("ファイルIDが取得できませんでした。")
 
-    id_A008 = os.getenv("AA08")
     if id_A008:
         print(f"STEP4：ファイルIDを取得しました。 -> {id_A008}")
         create_logger(f"ファイルIDを取得しました。: {id_A008}")
@@ -100,13 +109,11 @@ def read_env_var(env_path: Path) -> dict:
         print("ファイルIDが取得できませんでした。 -> {id_A008}")
         create_error_logger("ファイルIDが取得できませんでした。 {id_A008}")
 
-    id_A009 = os.getenv("AA09")
     if id_A009:
         print(f"STEP4：ファイルIDを取得しました。 -> {id_A009}")
         create_logger(f"ファイルIDを取得しました。: {id_A009}")
         result["file_id_09"] = id_A009
 
-    id_A010 = os.getenv("AA10")
     if id_A010:
         print(f"STEP4：ファイルIDを取得しました。 -> {id_A010}")
         create_logger(f"ファイルIDを取得しました。: {id_A010}")
@@ -114,10 +121,6 @@ def read_env_var(env_path: Path) -> dict:
     else:
         print("ファイルIDが取得できませんでした。 -> {id_A009}")
         create_error_logger("ファイルIDが取得できませんでした。 {id_A009}")
-
-    database_url = os.getenv("DATABASE_URL")
-    secret_key = os.getenv("SECRET_KEY")
-    algo = os.getenv("ALGORITHM")
 
     if database_url:
         print(f"STEP4：DB_URLを取得しました。 -> {database_url}")
@@ -134,6 +137,7 @@ def read_env_var(env_path: Path) -> dict:
     else:
         print("SECRET_KEYが取得できませんでした。")
         create_error_logger("SECRET_KEYが取得できませんでした。")
+
     if algo:
         print(f"STEP4：ALGORITHMを取得しました。 -> {algo}")
         create_logger(f"ALGORITHMを取得しました。: {algo}")
@@ -141,6 +145,32 @@ def read_env_var(env_path: Path) -> dict:
     else:
         print("ALGORITHMが取得できませんでした。")
         create_error_logger("ALGORITHMが取得できませんでした。")
+
+    if cors_origins:
+        # 文字列をリストに変換（カンマ区切りでURLを追加した場合）
+        if "," in cors_origins:
+            result["cors_origins"] = [origin.strip() for origin in cors_origins.split(",")]
+        else:
+            print(f"STEP4：CORS_ORIGINSを取得しました。 -> {cors_origins}")
+            create_logger(f"CORS_ORIGINSを取得しました。: {cors_origins}")
+            # 単一の値の場合はリストに入れる（現在はこちらが処理される）
+            result["cors_origins"] = [cors_origins.strip()]
+    else:
+        print("CORS_ORIGINSが取得できませんでした。")
+        create_error_logger("CORS_ORIGINSが取得できませんでした。")
+
+    if local_origin:
+        if "," in local_origin:
+            result["local_origin"] = [origin.strip() for origin in local_origin.split(",")]
+        else:
+            print(f"STEP4：LOCAL_CORS_ORIGINSを取得しました。 -> {local_origin}")
+            create_logger(f"LOCAL_CORS_ORIGINSを取得しました。: {local_origin}")
+            # 単一の値の場合はリストに入れる（現在はこちらが処理される）
+            result["local_origin"] = [local_origin.strip()]
+    else:
+        print("LOCAL_CORS_ORIGINSが取得できませんでした。")
+        create_error_logger("LOCAL_CORS_ORIGINSが取得できませんでした。")
+
     if not result:
         print("環境変数の取得に失敗しました。")
         create_error_logger("環境変数の取得に失敗しました。")
@@ -174,7 +204,7 @@ def create_database_engine() -> Engine:
     try:
         DB_URL = db_env.get("database_url")
         if not DB_URL:
-            # print("DATABASE_URLが設定されていません。")
+            print("DATABASE_URLが設定されていません。")
             create_error_logger("DATABASE_URLが設定されていません。")
             raise DatabaseConnectionError("DATABASE_URLが設定されていません。")
         else:
