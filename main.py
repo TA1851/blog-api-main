@@ -26,10 +26,9 @@ if origins:
 if local_origin:
     allowed_origins.extend(local_origin)
 
-# デフォルト値の設定（どちらも取得できなかった場合）
+# デフォルト値の設定
 if not allowed_origins:
     print("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
-    # allowed_origins = ["https://nextjs-app-khaki-two.vercel.app"]
 else:
     print(f"STEP4：CORS_ORIGINSとLOCAL_ORIGINを取得しました。 -> {allowed_origins}")
 
