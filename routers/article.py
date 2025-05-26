@@ -241,6 +241,19 @@ async def create_article(
 
     :rtype: ArticleBase
     """
+    # タイトルと本文の検証 - 空やNULLの場合はエラー
+    if blog.title is None or blog.title.strip() == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="タイトルは必須項目です"
+        )
+    
+    if blog.body is None or blog.body.strip() == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="本文は必須項目です"
+        )
+        
     # 自動採番処理
     max_article_id = db.query(func.max(Article.article_id)).scalar() or 0
     new_article_id = max_article_id + 1
@@ -306,6 +319,20 @@ async def update_article(
                 detail=f"Article not found or you do not have permission \
                 -> Article_id:{article_id}"
             )
+            
+        # タイトルと本文の検証 - 空やNULLの場合はエラー
+        if blog.title is None or blog.title.strip() == "":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="タイトルは必須項目です"
+            )
+        
+        if blog.body is None or blog.body.strip() == "":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="本文は必須項目です"
+            )
+            
         # 記事の内容を更新
         update_blog.title = blog.title
         update_blog.body = blog.body

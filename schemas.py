@@ -21,18 +21,15 @@ class ArticleBase(BaseModel, validate_assignment=True):
     :param ConfigDict: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用
     :param model_config: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用
     """
-
-    # ドキュメント表示用にmax_lengthは残し、カスタムバリデーションを使用
-    # user_id: int | None = Field(None, title="ユーザーID", description="ユーザーID")
     article_id : int = Field(
         None, title="記事ID", description="記事ID"
         )
-    title: str | None = Field(
-        None, title="タイトル", max_length=30, \
+    title: str = Field(
+        ..., title="タイトル", max_length=30, \
         description="30文字以内で入力してください"
         )
-    body: str | None = Field(
-        None, title="本文", max_length=1000, \
+    body: str = Field(
+        ..., title="本文", max_length=1000, \
         description="100文字以内で入力してください"
         )
     user_id: Optional[int] = None

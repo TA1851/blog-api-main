@@ -22,8 +22,8 @@ class Article(Base):
     # データベースカラムを定義
     id: int = Column(Integer, primary_key=True, index=True)
     article_id: int = Column(Integer, nullable=False)
-    title: str = Column(String)
-    body: str = Column(String)
+    title: str = Column(String, nullable=False)
+    body: str = Column(String, nullable=False)
     # Userクラスのidを外部キーとして指定する
     user_id = Column(Integer, ForeignKey("users.id"))
     # 特定の記事を作成したユーザーの情報を取得する
