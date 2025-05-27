@@ -101,6 +101,19 @@ class UserRouter:
         :raises Exception: その他のエラーが発生した場合
         """
         try:
+            # メールアドレスの重複チェック
+            existing_user = db.query(UserModel).filter(
+                UserModel.email == user.email
+            ).first()
+
+            if existing_user:
+                print(f"STEP17：既存のメールアドレスが検出されました: {user.email}")
+                create_error_logger(f"既存のメールアドレスが検出されました: {user.email}")
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="このメールアドレスは既に使用されています。"
+                )
+
             new_user = UserModel(
                 name=user.name,
                 email=user.email,
@@ -108,6 +121,7 @@ class UserRouter:
             )
             print(f"STEP17：新規ユーザーを作成します。: {new_user}")
             create_logger(f"新規ユーザーを作成します。: {new_user}")
+
             if not new_user.name \
                 or not new_user.email \
                 or not new_user.password:
@@ -117,52 +131,70 @@ class UserRouter:
                 create_error_logger(
                     "ユーザーの作成に失敗しました。必須フィールドが不足しています。"
                 )
-                raise ValueError("ユーザー情報が不足しています。")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="ユーザー情報が不足しています。"
+                )
+
             db.add(new_user)
             db.commit()
             db.refresh(new_user)
             print(f"STEP17：ユーザーが作成されました。: {new_user}")
             create_logger(f"ユーザーが作成されました。: {new_user}")
             return new_user
-        except HTTPException as e:
+
+        except HTTPException:
+            # HTTPExceptionはそのまま再発生
             db.rollback()
-            print(
-                f"ユーザーの作成に失敗しました。: {str(e)}"
-            )
-            create_error_logger(
-                f"ユーザーの作成に失敗しました。重複データが存在します: {str(e)}"
-            )
+            raise
+
+        except IntegrityError as e:
+            # データベースレベルでの重複エラーもキャッチ（二重保護）
+            db.rollback()
+            print(f"データベース制約違反: {str(e)}")
+            create_error_logger(f"データベース制約違反（メールアドレス重複など）: {str(e)}")
             raise HTTPException(
-                status_code=401,
+                status_code=status.HTTP_409_CONFLICT,
                 detail="このメールアドレスは既に使用されています。"
             )
+
         except ValidationError as e:
             db.rollback()
             create_error_logger(f"パスワードが不正です: {str(e)}")
-            raise ValidationError(
-                status_code=409, detail="パスワードが不正です。"
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="パスワードが不正です。"
             )
+
         except SQLAlchemyError as e:
             db.rollback()
             create_error_logger(f"データベースエラーが発生しました: {str(e)}")
             raise HTTPException(
-                status_code=500,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="データベースエラーが発生しました。"
             )
+
         except Exception as e:
             db.rollback()
             error_detail = traceback.format_exc()
             print(f"不明なエラーが発生しました: {error_detail}")
             create_error_logger(f"不明なエラーが発生しました: {error_detail}")
             raise HTTPException(
-                status_code=500,
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="予期しないエラーが発生しました。"
             )
+
         finally:
             create_logger("DBセッションをクローズします")
             db.close()
 
 
+@router.get(
+    "/user/{id}",
+    response_model=UserModel,
+    summary="User Show",
+    description="ユーザー情報を表示するエンドポイント",
+    )
 async def show_user(
     id: int, db:
     Session = Depends(get_db)
