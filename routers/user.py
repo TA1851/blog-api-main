@@ -1,5 +1,5 @@
 """ユーザ認証機能を実装するためのルーターモジュール"""
-import pprint
+# import pprint
 import traceback
 from fastapi import APIRouter, status, HTTPException, Depends
 from sqlalchemy.orm import Session
@@ -18,9 +18,6 @@ router = APIRouter(
 )
 
 
-# 環境変数の取得
-db_env
-# print(db_env)
 db_url = db_env.get("database_url")
 key03 = db_env.get("file_id_03")
 key08 = db_env.get("file_id_08")

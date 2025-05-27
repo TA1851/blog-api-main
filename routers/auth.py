@@ -92,7 +92,26 @@ async def login(
     request: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
     ) -> dict:
-    """ログインエンドポイント：https://blog-api-main.onrender.com/api/v1/login
+    """ユーザー認証を行い、認証に成功した場合はアクセストークン（JWT）を返します。
+
+    ログインエンドポイント：
+    ```
+    http://127.0.0.1:8000/api/v1/login
+    ```
+
+    パラメータ：
+    ```
+    username: ユーザー名（メールアドレス）
+    password: パスワード
+    ```
+
+    レスポンス：成功時(200 OK), 失敗時(404 Not Found)
+    ```
+    {
+        "access_token": "JWTトークン文字列",
+        "token_type": "bearer"
+    }
+    ```
 
     :param request: OAuth2PasswordRequestForm
 
@@ -190,7 +209,32 @@ async def logout(
         oauth2_scheme
         )
     ):
-    """ログアウトエンドポイント:https://blog-api-main.onrender.com/api/v1/logout
+    """ログアウトエンドポイント:https://127.0.0.1:8000/api/v1/logout
+
+    リクエストヘッダー
+    ```
+    Authorization: Bearer <token>
+    Content-Type: application/json
+    ```
+    パラメータ：
+    ```
+    Authorizationヘッダーから自動取得
+    ```
+    
+    レスポンス：成功時(200 OK), 失敗時(401 Unauthorized)
+    ```
+    {
+        "message": "ログアウトしました"
+    }
+    ```
+    エラー時：
+    401 Unauthorized：トークンが無効な場合
+    422 Unprocessable Entity：トークンが既に無効化されている場合
+    ```
+    {
+        "detail": "トークンが無効化されています"
+    }
+    ```
 
     :param token: 認証トークン（ヘッダーから自動取得）
 
