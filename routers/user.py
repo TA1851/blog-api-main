@@ -191,7 +191,7 @@ class UserRouter:
 
 @router.get(
     "/user/{id}",
-    response_model=UserModel,
+    response_model=UserSchema,
     summary="User Show",
     description="ユーザー情報を表示するエンドポイント",
     )
