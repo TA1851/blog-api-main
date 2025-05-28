@@ -1,5 +1,5 @@
 """認証機能を実装するためのルーターモジュール"""
-import pprint
+# import pprint
 from typing import List, Set
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
@@ -37,7 +37,7 @@ def check_environment_variable():
         create_error_logger(f"環境変数:{key09}が設定されていません。{key09}")
         raise ValueError(f"環境変数が設定されていません。-> {key09}")
     else:
-        print(f"STEP20：環境変数：{key09}を取得しました。 -> {key09}")
+        # print(f"STEP20：環境変数：{key09}を取得しました。 -> {key09}")
         create_logger(f"環境変数{key09}を取得しました。:")
     return key09
 
@@ -58,13 +58,13 @@ def check_db_url():
         create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {key03}")
         raise ValueError(f"環境変数が設定されていません。{key03}")
     else:
-        print(f"STEP21：環境変数: {db_url}を読み込みました。")
-    create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
+        # print(f"STEP21：環境変数: {db_url}を読み込みました。")
+        create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
     return db_url
 
 check_db_url()
-print(f"STEP22：ログイン機能を検証します。Swaggerで確認してください。")
-print("---------------------------------------------------------------")
+# print(f"STEP22：ログイン機能を検証します。Swaggerで確認してください。")
+# print("---------------------------------------------------------------")
 
 
 def get_db():
@@ -73,15 +73,15 @@ def get_db():
     db = session()
     try:
         yield db
-        print("DBセッションをコミットしました")
+        # print("DBセッションをコミットしました")
         create_logger("DBセッションをコミットしました")
     except Exception as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(f"DBセッションのコミットに失敗しました。: {str(e)}")
         raise
     finally:
         db.close()
-        print("DBセッションをクローズしました")
+        # print("DBセッションをクローズしました")
         create_logger("DBセッションをクローズしました")
 
 
@@ -132,7 +132,7 @@ async def login(
 
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
-        print(f"User not found with email: {request.username}")
+        # print(f"User not found with email: {request.username}")
         create_error_logger(f"無効なユーザー名です: {request.username}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -142,7 +142,7 @@ async def login(
         user.password,
         request.password
     ):
-        print("Password verification failed")
+        # print("Password verification failed")
         create_error_logger(f"無効なパスワードです: {request.password}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -151,9 +151,9 @@ async def login(
     access_token = create_access_token(
         data={"sub": user.email, "id": user.id}
     )
-    print("==================================================")
-    print(f"ログインしました。: {user.email}")
-    print("==================================================")
+    # print("==================================================")
+    # print(f"ログインしました。: {user.email}")
+    # print("==================================================")
     create_logger(f"ログインに成功しました: {user.email}")
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -250,7 +250,7 @@ async def logout(
     """
     # トークンをブラックリストに追加して無効化
     token_blacklist.add(token)
-    print(f"ログアウトしました。")
+    # print(f"ログアウトしました。")
     create_logger("ログアウトに成功しました")
     return {"message": "ログアウトしました"}
 

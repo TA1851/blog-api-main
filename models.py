@@ -31,7 +31,7 @@ class Article(Base):
     create_logger(f"Articleインスタンスが作成されました。")
 
 key_05 = db_env.get("file_id_05")
-print(f"STEP10：Articleインスタンスが作成されました。 -> {key_05}")
+# print(f"STEP10：Articleインスタンスが作成されました。 -> {key_05}")
 
 
 class User(Base):
@@ -58,5 +58,5 @@ class User(Base):
     blogs = relationship("Article", back_populates="owner")
 
 key_08 = db_env.get("file_id_08")
-print(f"STEP10：Articleインスタンスが作成されました。 -> {key_08}")
-print("---------------------------------------------------------------")
+# print(f"STEP10：Articleインスタンスが作成されました。 -> {key_08}")
+# print("---------------------------------------------------------------")
