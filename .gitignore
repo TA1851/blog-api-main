@@ -22,5 +22,10 @@ TestResults.xml
 .env
 # 仮想環境
 .venv/
+# log
+log/
+# alembic
+alembic.ini
+alembic/
 # ソースコードをコンパイルしたバイトコードをキャッシュするためのディレクトリ
 **/__pycache__/
