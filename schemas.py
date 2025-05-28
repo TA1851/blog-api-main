@@ -188,3 +188,26 @@ class TokenData(BaseModel):
     :param email: メールアドレス
     """
     email: Optional[str] = None
+
+
+class PublicArticle(BaseModel):
+    """パブリック記事表示用モデル（認証なしで閲覧可能）
+
+    :param article_id: 記事のID
+    :param title: 記事のタイトル
+    :param body: 記事の本文
+    """
+    article_id: int = Field(
+        ..., title="記事ID", description="記事ID"
+    )
+    title: str = Field(
+        ..., title="タイトル", max_length=30,
+        description="30文字以内のタイトル"
+    )
+    body: str = Field(
+        ..., title="本文", max_length=1000,
+        description="1000文字以内の本文"
+    )
+
+    class ConfigDict:
+        model_config = ConfigDict(from_attributes=True)

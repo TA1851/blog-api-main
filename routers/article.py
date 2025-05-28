@@ -6,7 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from models import Article
-from schemas import ArticleBase, ShowArticle, User
+from schemas import ArticleBase, ShowArticle, User, PublicArticle
 from database import session, db_env
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
@@ -415,3 +415,218 @@ async def delete_article(
             detail=f"Article not deleted. article_id: {article_id}, {key07}"
         )
     return None
+
+
+@router.get(
+    "/public/articles",
+    status_code=status.HTTP_200_OK,
+    response_model=List[PublicArticle]
+)
+async def get_public_articles(
+    db: Session = Depends(get_db),
+    limit: Optional[int] = Query(
+        None, ge=1,
+        description="取得する最大記事数（指定しない場合は全件取得）"
+    ),
+    skip: Optional[int] = Query(
+        0, ge=0,
+        description="スキップする記事数（ページネーション用）"
+    )
+) -> List[PublicArticle]:
+    """認証なしでパブリック記事を取得するエンドポイント
+
+    :param db: データベースセッション
+    :type db: Session
+    :param limit: 取得する最大記事数
+    :type limit: Optional[int]
+    :param skip: スキップする記事数
+    :type skip: Optional[int]
+    :return: パブリック記事のリスト
+    :rtype: List[PublicArticle]
+    :raises HTTPException: データベースエラーが発生した場合
+    """
+    try:
+        # 記事の総数を取得
+        total_count = db.query(Article).count()
+        
+        # 基本クエリ（記事ID順でソート）
+        query = db.query(Article).order_by(Article.article_id.desc())
+        
+        # skipが指定されている場合
+        if skip:
+            query = query.offset(skip)
+        
+        # limitが指定されている場合
+        if limit:
+            query = query.limit(limit)
+            
+        public_articles = query.all()
+        
+        # ログ出力
+        if limit:
+            create_logger(
+                f"パブリック記事を取得しました。全{total_count}件中{len(public_articles)}件表示 "
+                f"(skip: {skip}, limit: {limit})"
+            )
+        else:
+            create_logger(
+                f"パブリック記事を全件取得しました。全{total_count}件 (skip: {skip})"
+            )
+            
+    except Exception as e:
+        create_error_logger(f"パブリック記事の取得に失敗しました: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="記事の取得に失敗しました"
+        )
+    
+    return public_articles
+
+
+@router.get(
+    "/public/articles/{article_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=PublicArticle
+)
+async def get_public_article(
+    article_id: int,
+    db: Session = Depends(get_db)
+) -> PublicArticle:
+    """認証なしで特定のパブリック記事を取得するエンドポイント
+
+    :param article_id: 記事のID
+    :type article_id: int
+    :param db: データベースセッション
+    :type db: Session
+    :return: 記事の詳細
+    :rtype: PublicArticle
+    :raises HTTPException: 記事が見つからない場合
+    """
+    try:
+        article = db.query(Article).filter(Article.article_id == article_id).first()
+        
+        if not article:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"記事が見つかりません。記事ID: {article_id}"
+            )
+            
+        create_logger(f"パブリック記事を取得しました。記事ID: {article_id}")
+        
+    except HTTPException:
+        # HTTPExceptionはそのまま再度raise
+        raise
+    except Exception as e:
+        create_error_logger(f"パブリック記事の取得に失敗しました。記事ID: {article_id}, エラー: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="記事の取得に失敗しました"
+        )
+    
+    return article
+
+
+@router.get(
+    "/public/articles/search",
+    status_code=status.HTTP_200_OK,
+    response_model=List[PublicArticle]
+)
+async def search_public_articles(
+    q: str = Query(..., min_length=1, description="検索キーワード"),
+    db: Session = Depends(get_db),
+    limit: Optional[int] = Query(
+        10, ge=1, le=100,
+        description="取得する最大記事数（1-100、デフォルト10）"
+    ),
+    skip: Optional[int] = Query(
+        0, ge=0,
+        description="スキップする記事数（ページネーション用）"
+    )
+) -> List[PublicArticle]:
+    """キーワードでパブリック記事を検索するエンドポイント
+
+    :param q: 検索キーワード
+    :type q: str
+    :param db: データベースセッション
+    :type db: Session
+    :param limit: 取得する最大記事数
+    :type limit: Optional[int]
+    :param skip: スキップする記事数
+    :type skip: Optional[int]
+    :return: 検索結果の記事リスト
+    :rtype: List[PublicArticle]
+    :raises HTTPException: データベースエラーが発生した場合
+    """
+    try:
+        # タイトルまたは本文にキーワードが含まれる記事を検索
+        search_filter = f"%{q}%"
+        query = db.query(Article).filter(
+            (Article.title.ilike(search_filter)) | 
+            (Article.body.ilike(search_filter))
+        ).order_by(Article.article_id.desc())
+        
+        # 検索結果の総数を取得
+        total_count = query.count()
+        
+        # ページネーション適用
+        if skip:
+            query = query.offset(skip)
+        query = query.limit(limit)
+        
+        search_results = query.all()
+        
+        create_logger(
+            f"記事検索を実行しました。キーワード: '{q}', "
+            f"検索結果: {len(search_results)}件/{total_count}件 "
+            f"(skip: {skip}, limit: {limit})"
+        )
+        
+    except Exception as e:
+        create_error_logger(f"記事検索に失敗しました。キーワード: '{q}', エラー: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="記事検索に失敗しました"
+        )
+    
+    return search_results
+
+
+@router.get(
+    "/public/articles/stats",
+    status_code=status.HTTP_200_OK
+)
+async def get_public_articles_stats(
+    db: Session = Depends(get_db)
+) -> dict:
+    """パブリック記事の統計情報を取得するエンドポイント
+
+    :param db: データベースセッション
+    :type db: Session
+    :return: 記事の統計情報
+    :rtype: dict
+    :raises HTTPException: データベースエラーが発生した場合
+    """
+    try:
+        # 記事の総数を取得
+        total_articles = db.query(Article).count()
+        
+        # ユーザー数を取得（記事を持つユーザーのみ）
+        from models import User as UserModel
+        total_users_with_articles = db.query(Article.user_id).distinct().count()
+        
+        stats = {
+            "total_articles": total_articles,
+            "total_users_with_articles": total_users_with_articles,
+            "message": "記事統計情報を取得しました"
+        }
+        
+        create_logger(f"記事統計情報を取得しました: {stats}")
+        
+    except Exception as e:
+        create_error_logger(f"記事統計情報の取得に失敗しました: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="統計情報の取得に失敗しました"
+        )
+    
+    return stats
