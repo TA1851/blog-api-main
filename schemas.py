@@ -226,7 +226,6 @@ class PublicArticle(BaseModel):
 
     :param article_id: 記事のID
     :param title: 記事のタイトル
-    :param body: 記事の本文
     :param body_html: 記事の本文（HTML形式）
     """
     article_id: int = Field(
@@ -236,23 +235,9 @@ class PublicArticle(BaseModel):
         ..., title="タイトル", max_length=30,
         description="30文字以内のタイトル"
     )
-    body: str = Field(
-        ..., title="本文", max_length=1000,
-        description="1000文字以内の本文"
+    body_html: str = Field(
+        ..., title="本文（HTML）", description="Markdown変換済みのHTML形式本文"
     )
-    
-    @computed_field
-    @property
-    def body_html(self) -> str:
-        """MarkdownテキストをHTMLに変換
-        
-        :return: HTML形式の本文
-        :rtype: str
-        """
-        # 改行を<br>タグに変換し、見出し（#）を太文字に変換
-        md = markdown.Markdown(extensions=['nl2br'])
-        html_content = md.convert(self.body)
-        return html_content
 
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)

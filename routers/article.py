@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, Query
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 import urllib.parse
+import markdown
 
 from models import Article
 from schemas import ArticleBase, ShowArticle, User, PublicArticle
@@ -463,10 +464,22 @@ async def get_public_articles(
             
         public_articles = query.all()
         
+        # Markdown変換を行ってPublicArticleオブジェクトに変換
+        md = markdown.Markdown(extensions=['nl2br'])
+        result_articles = []
+        
+        for article in public_articles:
+            body_html = md.convert(article.body)
+            result_articles.append(PublicArticle(
+                article_id=article.article_id,
+                title=article.title,
+                body_html=body_html
+            ))
+        
         # ログ出力
         if limit:
             create_logger(
-                f"パブリック記事を取得しました。全{total_count}件中{len(public_articles)}件表示 "
+                f"パブリック記事を取得しました。全{total_count}件中{len(result_articles)}件表示 "
                 f"(skip: {skip}, limit: {limit})"
             )
         else:
@@ -481,7 +494,7 @@ async def get_public_articles(
             detail="記事の取得に失敗しました"
         )
     
-    return public_articles
+    return result_articles
 
 
 
@@ -549,10 +562,22 @@ async def search_public_articles(
         
         search_results = query.all()
         
+        # Markdown変換を行ってPublicArticleオブジェクトに変換
+        md = markdown.Markdown(extensions=['nl2br'])
+        result_articles = []
+        
+        for article in search_results:
+            body_html = md.convert(article.body)
+            result_articles.append(PublicArticle(
+                article_id=article.article_id,
+                title=article.title,
+                body_html=body_html
+            ))
+        
         create_logger(
             f"記事検索を実行しました。キーワード: '{decoded_query}' "
             f"(キーワード数: {len(keywords)}), "
-            f"検索結果: {len(search_results)}件/{total_count}件 "
+            f"検索結果: {len(result_articles)}件/{total_count}件 "
             f"(skip: {skip}, limit: {limit})"
         )
         
@@ -563,4 +588,4 @@ async def search_public_articles(
             detail="記事検索に失敗しました"
         )
     
-    return search_results
+    return result_articles
