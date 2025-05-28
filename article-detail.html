@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブログ記事詳細</title>
+    <style>
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .article-header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .article-title {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+        
+        .article-meta {
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+        
+        .article-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .article-content h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        
+        .article-content h2 {
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-top: 25px;
+        }
+        
+        .article-content h3 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+        
+        .article-content p {
+            margin-bottom: 15px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .error-message {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <a href="index.html" class="btn">記事一覧に戻る</a>
+        <div id="article-id" class="article-meta"></div>
+    </div>
+    
+    <div id="error-message" class="error-message"></div>
+    
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>記事を読み込み中...</p>
+    </div>
+    
+    <div id="article-container" class="container" style="display: none;">
+        <div class="article-header">
+            <h1 id="article-title" class="article-title"></h1>
+            <div id="article-meta" class="article-meta"></div>
+        </div>
+        <div id="article-content" class="article-content"></div>
+    </div>
+
+    <script>
+        // APIベースURL
+        const API_BASE_URL = 'http://localhost:8000/api/v1';
+
+        // 記事詳細取得関数
+        async function getArticleDetail(articleId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/public/articles/${articleId}`);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('記事が見つかりませんでした');
+                    }
+                    throw new Error(`記事の取得に失敗しました (status: ${response.status})`);
+                }
+                
+                const article = await response.json();
+                return article;
+            } catch (error) {
+                console.error('記事詳細取得エラー:', error);
+                throw error;
+            }
+        }
+
+        // 記事詳細表示関数
+        function displayArticleDetail(article) {
+            // ページタイトルを設定
+            document.title = `${article.title} - ブログ`;
+            
+            // 記事情報を表示
+            document.getElementById('article-title').textContent = article.title;
+            document.getElementById('article-content').innerHTML = article.body_html;
+            document.getElementById('article-id').textContent = `記事ID: ${article.article_id}`;
+            document.getElementById('article-meta').textContent = `記事ID: ${article.article_id}`;
+            
+            // コンテンツを表示
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('article-container').style.display = 'block';
+        }
+
+        // エラーメッセージ表示関数
+        function showErrorMessage(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-message').style.display = 'block';
+        }
+
+        // URLパラメータから記事IDを取得
+        function getArticleIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id');
+            
+            if (!articleId) {
+                showErrorMessage('記事IDが指定されていません');
+                return null;
+            }
+            
+            const id = parseInt(articleId);
+            if (isNaN(id) || id <= 0) {
+                showErrorMessage('無効な記事IDです');
+                return null;
+            }
+            
+            return id;
+        }
+
+        // ページ読み込み時の処理
+        async function initializeArticleDetail() {
+            const articleId = getArticleIdFromUrl();
+            
+            if (!articleId) {
+                return;
+            }
+            
+            try {
+                const article = await getArticleDetail(articleId);
+                displayArticleDetail(article);
+            } catch (error) {
+                showErrorMessage(error.message);
+            }
+        }
+
+        // ページ読み込み完了時に実行
+        document.addEventListener('DOMContentLoaded', initializeArticleDetail);
+
+        // ブラウザの戻る/進むボタン対応
+        window.addEventListener('popstate', () => {
+            initializeArticleDetail();
+        });
+    </script>
+</body>
+</html>

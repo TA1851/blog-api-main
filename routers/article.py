@@ -589,3 +589,58 @@ async def search_public_articles(
         )
     
     return result_articles
+
+
+@router.get(
+    "/public/articles/{article_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=PublicArticle
+)
+async def get_public_article_by_id(
+    article_id: int,
+    db: Session = Depends(get_db)
+) -> PublicArticle:
+    """指定されたIDのパブリック記事を取得するエンドポイント
+
+    :param article_id: 取得する記事のID
+    :type article_id: int
+    :param db: データベースセッション
+    :type db: Session
+    :return: 指定されたIDの記事詳細
+    :rtype: PublicArticle
+    :raises HTTPException: 記事が見つからない場合や取得エラーが発生した場合
+    """
+    try:
+        # 記事IDで記事を検索
+        article = db.query(Article).filter(Article.article_id == article_id).first()
+        
+        if not article:
+            create_error_logger(f"記事が見つかりません。ID: {article_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"記事ID {article_id} の記事が見つかりません"
+            )
+        
+        # Markdown変換を行ってPublicArticleオブジェクトに変換
+        md = markdown.Markdown(extensions=['nl2br'])
+        body_html = md.convert(article.body)
+        
+        result_article = PublicArticle(
+            article_id=article.article_id,
+            title=article.title,
+            body_html=body_html
+        )
+        
+        create_logger(f"記事詳細を取得しました。ID: {article_id}, タイトル: {article.title}")
+        
+    except HTTPException:
+        # HTTPException は再度発生させる
+        raise
+    except Exception as e:
+        create_error_logger(f"記事詳細の取得に失敗しました。ID: {article_id}, エラー: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="記事詳細の取得に失敗しました"
+        )
+    
+    return result_article
