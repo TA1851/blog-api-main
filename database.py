@@ -1,6 +1,6 @@
 """データベース接続モジュール"""
 import os
-import pprint
+# import pprint
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -22,10 +22,10 @@ def check_env_file(
         default_env_path = Path(default_env_path) \
         if isinstance(default_env_path, str) \
         else default_env_path
-    print(
-        f"STEP1：ENVファイルの初期化に成功しました。 \
-        -> {default_env_path}"
-        )
+    # print(
+    #     f"STEP1：ENVファイルの初期化に成功しました。 \
+    #     -> {default_env_path}"
+    #    )
 
     if not default_env_path.exists():
         print(".envファイルが見つかりません")
@@ -34,12 +34,13 @@ def check_env_file(
             {default_env_path}"
             )
     else:
-        print(
-            f"STEP2：.envファイルが見つかりました。 \
-                -> {default_env_path}"
-                )
-        create_logger(
-            f".envファイルが見つかりました: {default_env_path}")
+        # print(
+        #     f"STEP2：.envファイルが見つかりました。 \
+        #         -> {default_env_path}"
+        #         )
+        # create_logger(
+        #     f".envファイルが見つかりました: {default_env_path}")
+        print("処理を開始します。")
     return default_env_path
 
 
@@ -67,10 +68,10 @@ def read_env_var(env_path: Path) -> dict:
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
     cors_origins = os.getenv("CORS_ORIGINS")
-    local_origin = os.getenv("LOCAL_CORS_ORIGINS")
+    # local_origin = os.getenv("LOCAL_CORS_ORIGINS")
 
     if id_A003:
-        print(f"STEP3：ファイルIDを取得しました。 -> {id_A003}")
+        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A003}")
         create_logger(f"ファイルIDを取得しました。: {id_A003}")
         result["file_id_03"] = id_A003
     else:
@@ -78,7 +79,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。")
 
     if id_A005:
-        print(f"STEP3：ファイルIDを取得しました。 -> {id_A005}")
+        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A005}")
         create_logger(f"ファイルIDを取得しました。: {id_A005}")
         result["file_id_05"] = id_A005
     else:
@@ -86,7 +87,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。")
 
     if id_A006:
-        print(f"STEP3：ファイルIDを取得しました。 -> {id_A006}")
+        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A006}")
         create_logger(f"ファイルIDを取得しました。: {id_A006}")
         result["file_id_06"] = id_A006
     else:
@@ -94,7 +95,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。")
 
     if id_A007:
-        print(f"STEP3：ファイルIDを取得しました。 -> {id_A007}")
+        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A007}")
         create_logger(f"ファイルIDを取得しました。: {id_A007}")
         result["file_id_07"] = id_A007
     else:
@@ -102,7 +103,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。")
 
     if id_A008:
-        print(f"STEP4：ファイルIDを取得しました。 -> {id_A008}")
+        # print(f"STEP4：ファイルIDを取得しました。 -> {id_A008}")
         create_logger(f"ファイルIDを取得しました。: {id_A008}")
         result["file_id_08"] = id_A008
     else:
@@ -110,12 +111,12 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。 {id_A008}")
 
     if id_A009:
-        print(f"STEP4：ファイルIDを取得しました。 -> {id_A009}")
+        # print(f"STEP4：ファイルIDを取得しました。 -> {id_A009}")
         create_logger(f"ファイルIDを取得しました。: {id_A009}")
         result["file_id_09"] = id_A009
 
     if id_A010:
-        print(f"STEP4：ファイルIDを取得しました。 -> {id_A010}")
+        # print(f"STEP4：ファイルIDを取得しました。 -> {id_A010}")
         create_logger(f"ファイルIDを取得しました。: {id_A010}")
         result["file_id_10"] = id_A010
     else:
@@ -123,7 +124,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("ファイルIDが取得できませんでした。 {id_A009}")
 
     if database_url:
-        print(f"STEP4：DB_URLを取得しました。 -> {database_url}")
+        # print(f"STEP4：DB_URLを取得しました。 -> {database_url}")
         create_logger(f"DB_URLを取得しました。: {database_url}")
         result["database_url"] = database_url
     else:
@@ -131,7 +132,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("DB_URLが取得できませんでした。")
 
     if secret_key:
-        print(f"STEP4：SECRET_KEYを取得しました。 -> {secret_key}")
+        # print(f"STEP4：SECRET_KEYを取得しました。 -> {secret_key}")
         create_logger(f"SECRET_KEYを取得しました。: {secret_key}")
         result["secret_key"] = secret_key
     else:
@@ -139,7 +140,7 @@ def read_env_var(env_path: Path) -> dict:
         create_error_logger("SECRET_KEYが取得できませんでした。")
 
     if algo:
-        print(f"STEP4：ALGORITHMを取得しました。 -> {algo}")
+        # print(f"STEP4：ALGORITHMを取得しました。 -> {algo}")
         create_logger(f"ALGORITHMを取得しました。: {algo}")
         result["algo"] = algo
     else:
@@ -151,7 +152,7 @@ def read_env_var(env_path: Path) -> dict:
         if "," in cors_origins:
             result["cors_origins"] = [origin.strip() for origin in cors_origins.split(",")]
         else:
-            print(f"STEP4：CORS_ORIGINSを取得しました。 -> {cors_origins}")
+            # print(f"STEP4：CORS_ORIGINSを取得しました。 -> {cors_origins}")
             create_logger(f"CORS_ORIGINSを取得しました。: {cors_origins}")
             # 単一の値の場合はリストに入れる（現在はこちらが処理される）
             result["cors_origins"] = [cors_origins.strip()]
@@ -159,30 +160,30 @@ def read_env_var(env_path: Path) -> dict:
         print("CORS_ORIGINSが取得できませんでした。")
         create_error_logger("CORS_ORIGINSが取得できませんでした。")
 
-    if local_origin:
-        if "," in local_origin:
-            result["local_origin"] = [origin.strip() for origin in local_origin.split(",")]
-        else:
-            print(f"STEP4：LOCAL_CORS_ORIGINSを取得しました。 -> {local_origin}")
-            create_logger(f"LOCAL_CORS_ORIGINSを取得しました。: {local_origin}")
-            # 単一の値の場合はリストに入れる（現在はこちらが処理される）
-            result["local_origin"] = [local_origin.strip()]
-    else:
-        print("LOCAL_CORS_ORIGINSが取得できませんでした。")
-        create_error_logger("LOCAL_CORS_ORIGINSが取得できませんでした。")
+    # if local_origin:
+    #     if "," in local_origin:
+    #         result["local_origin"] = [origin.strip() for origin in local_origin.split(",")]
+    #     else:
+    #         print(f"STEP4：LOCAL_CORS_ORIGINSを取得しました。 -> {local_origin}")
+    #         create_logger(f"LOCAL_CORS_ORIGINSを取得しました。: {local_origin}")
+    #         # 単一の値の場合はリストに入れる（現在はこちらが処理される）
+    #         result["local_origin"] = [local_origin.strip()]
+    # else:
+    #     print("LOCAL_CORS_ORIGINSが取得できませんでした。")
+    #     create_error_logger("LOCAL_CORS_ORIGINSが取得できませんでした。")
 
     if not result:
         print("環境変数の取得に失敗しました。")
         create_error_logger("環境変数の取得に失敗しました。")
         return result
     else:
-        print(f"STEP5：環境変数の取得に成功しました")
+        # print(f"STEP5：環境変数の取得に成功しました")
         create_logger(f"環境変数の取得に成功しました。: {result}")
 
         # 環境変数を構造化して表示する
-        print("")
-        pprint.pprint(result)
-        print("")
+        # print("")
+        # pprint.pprint(result)
+        # print("")
         return result
 
 db_env = read_env_var(env_var)
@@ -208,18 +209,18 @@ def create_database_engine() -> Engine:
             create_error_logger("DATABASE_URLが設定されていません。")
             raise DatabaseConnectionError("DATABASE_URLが設定されていません。")
         else:
-            print(f"STEP7：DB_URLを取得しました。 -> {DB_URL}")
+            # print(f"STEP7：DB_URLを取得しました。 -> {DB_URL}")
             create_logger(f"DB_URLを取得しました。: {DB_URL}")
 
         # データベースエンジンを作成
         connect_args = {"check_same_thread": False}
         engine = create_engine(DB_URL, connect_args=connect_args)
-        print(f"STEP8：データベースエンジンを作成しました。 -> {engine}")
+        # print(f"STEP8：データベースエンジンを作成しました。 -> {engine}")
         create_logger("データベース接続に成功しました。")
         return engine
 
     except Exception as e:
-        pprint.pprint(f"Error: {e}")
+        # pprint.pprint(f"Error: {e}")
         create_error_logger(f"データベース接続に失敗しました。: {str(e)}")
         raise
 
@@ -259,11 +260,11 @@ def create_session(engine: Engine) -> Session:
                 f"{session_id}が環境変数に設定されていません。"
                 )
         else:
-            print(f"STEP9：セッションを確立しました。 -> {session_id}")
+            # print(f"STEP9：セッションを確立しました。 -> {session_id}")
             create_logger(f"セッションを確立しました。 -> {session_id}")
         return SessionLocal
     except Exception as e:
-        pprint.pprint(f"Error: {e}")
+        # pprint.pprint(f"Error: {e}")
         create_error_logger(f"セッション作成に失敗しました。: {str(e)}")
         raise
 
@@ -281,15 +282,15 @@ def get_db():
     db = session()
     try:
         yield db
-        print("DBセッションをコミットしました")
+        # print("DBセッションをコミットしました")
         create_logger("DBセッションをコミットしました")
     except Exception as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(
             f"DBセッションのコミットに失敗しました。: {str(e)}"
             )
         raise
     finally:
         db.close()
-        print("DBセッションをクローズしました")
+        # print("DBセッションをクローズしました")
         create_logger("DBセッションをクローズしました")

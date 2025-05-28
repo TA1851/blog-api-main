@@ -61,7 +61,7 @@ async def validation_exception_handler(request, exc):
             field_name = ".".join(str(loc) for loc in locations)
 
         error_message = f"{field_name}の検証エラー: {error['msg']}"
-        print(f"バリデーションエラー: {error_message} -> {key_06}")
+        # print(f"バリデーションエラー: {error_message} -> {key_06}")
         create_error_logger(error_message)
 
     # デフォルトのエラーハンドラを呼び出す
@@ -78,10 +78,10 @@ class User(BaseModel):
     :param password: パスワード
     :param is_active: ユーザーの有効状態
     """
-    name: str | None = Field(
-        None, name="ユーザー名", max_length=20, \
-        description="20文字以内で入力してください"
-        )
+    # name: str | None = Field(
+    #     None, name="ユーザー名", max_length=20, \
+    #     description="20文字以内で入力してください"
+    #     )
     email: EmailStr | None = Field(
         None, email="メールアドレス", max_length=50, strict=True, \
         description="50文字以内で入力してください")
@@ -109,10 +109,10 @@ class ShowUser(BaseModel):
     id: int | None = Field(
         None, title="ID", description="ユーザーのID"
         )
-    name: str | None = Field(
-        None, title="ユーザー名", max_length=20, \
-        description="20文字以内で入力してください"
-        )
+    # name: str | None = Field(
+    #     None, title="ユーザー名", max_length=20, \
+    #     description="20文字以内で入力してください"
+    #     )
     email: EmailStr | None = Field(
         None, title="メールアドレス", max_length=50, \
         description="50文字以内で入力してください"
@@ -145,8 +145,8 @@ class ShowArticle(BaseModel):
         description="30文字以内で入力してください"
         )
     body: str | None = Field(
-        None, title="本文", max_length=100, \
-        description="100文字以内で入力してください"
+        None, title="本文", max_length=1000, \
+        description="1000文字以内で入力してください"
         )
 
     class ConfigDict:
@@ -164,8 +164,8 @@ class Login(BaseModel):
         description="50文字以内で入力してください"
         )
     password: str | None = Field(
-        None, title="パスワード", max_length=100, \
-        description="10文字以内で入力してください"
+        None, title="パスワード", max_length=50, \
+        description="50文字以内で入力してください"
         )
 
     class ConfigDict:

@@ -1,5 +1,5 @@
 """カスタムトークンの作成"""
-import pprint
+# import pprint
 from typing import Optional
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
@@ -16,11 +16,9 @@ router = APIRouter(
   tags=["Auth"]
 )
 
-# TODO:環境変数設定ファイルに移行する
-print("")
-pprint.pprint(db_env)
-print("")
-
+# print("")
+# pprint.pprint(db_env)
+# print("")
 
 SECRET_KEY = db_env.get("secret_key")
 ALGORITHM = db_env.get("algo")
@@ -84,7 +82,7 @@ def verify_token(
       print(f"token_data: {token_data}")
       create_logger(f"token_data: {token_data}")
   except JWTError:
-      print("JWTErrorが発生しました")
+      print("JWTErrorが発生しました。")
       create_error_logger(f"token_data: {token_data}")
       raise credentials_exception
   user = get_user_by_id(id, db)

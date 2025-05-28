@@ -1,5 +1,5 @@
 """エンドポイントのルーティングを定義するモジュール"""
-import pprint
+# import pprint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, status, HTTPException, Query
 from sqlalchemy import func
@@ -35,7 +35,7 @@ def check_environment_variable():
         create_error_logger(f"環境変数:{key07}が設定されていません。{key07}")
         raise ValueError(f"環境変数が設定されていません。-> {key07}")
     else:
-        print(f"STEP17：環境変数：{key07}を取得しました。 -> {key07}")
+        # print(f"STEP17：環境変数：{key07}を取得しました。 -> {key07}")
         create_logger(f"環境変数{key07}を取得しました。:")
     return key07
 
@@ -54,13 +54,13 @@ def check_db_url():
         create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {key03}")
         raise ValueError(f"環境変数が設定されていません。{key03}")
     else:
-        print(f"STEP18：環境変数: {db_url}を読み込みました。")
-    create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
+        # print(f"STEP18：環境変数: {db_url}を読み込みました。")
+        create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
     return db_url
 
 check_db_url()
-print("STEP19：ルートを取得しました。Swaggerを確認してください。")
-print("---------------------------------------------------------------")
+# print("STEP19：ルートを取得しました。Swaggerを確認してください。")
+# print("---------------------------------------------------------------")
 
 
 def get_db():
@@ -72,15 +72,15 @@ def get_db():
     db = session()
     try:
         yield db
-        print("DBセッションをコミットしました")
+        # print("DBセッションをコミットしました")
         create_logger("DBセッションをコミットしました")
     except Exception as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(f"DBセッションのコミットに失敗しました。: {str(e)}")
         raise
     finally:
         db.close()
-        print("DBセッションをクローズしました")
+        # print("DBセッションをクローズしました")
         create_logger("DBセッションをクローズしました")
 
 
@@ -140,7 +140,7 @@ async def all_fetch(
                 f"ユーザーID: {current_user.id}  \
                 のブログ記事を全件取得しました。全{total_count}件")
     except ValueError as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(f"ブログ記事の取得に失敗しました。{key07}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -157,12 +157,20 @@ async def all_fetch(
 
     # ログメッセージを条件によって変更
     if limit:
-        print(
+        # print(
+        #     f"ユーザーID: {current_user.id} のブログ記事 \
+        #     {len(user_blogs)}件を取得しました。 \
+        #     (制限: {limit}, 総数: {total_count})")
+        create_logger(
             f"ユーザーID: {current_user.id} のブログ記事 \
-            {len(user_blogs)}件を取得しました。 \
-            (制限: {limit}, 総数: {total_count})")
+            {len(user_blogs)}件を取得しました。(制限: {limit}, 総数: {total_count})"
+            )
     else:
-        print(
+        # print(
+        #     f"ユーザーID: {current_user.id} のブログ記事 \
+        #     全{len(user_blogs)}件を取得しました。(総数: {total_count})"
+        #     )
+        create_logger(
             f"ユーザーID: {current_user.id} のブログ記事 \
             全{len(user_blogs)}件を取得しました。(総数: {total_count})"
             )
@@ -200,7 +208,7 @@ async def get_article(
         print(id_blog)
         create_logger("指定したIDのブログ記事を取得しました。")
     except ValueError as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(f"指定したIDのブログ記事に失敗しました。{key07}")
         # エラー発生時に明示的な４０４を返す
         raise HTTPException(
@@ -347,7 +355,7 @@ async def update_article(
             user_id: {current_user.id}, {key07}")
 
     except ValueError as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(
             f"記事の更新に失敗しました。 \
             article_id: {article_id}, {key07}")
@@ -398,7 +406,7 @@ async def delete_article(
         print(f"記事を削除しました。article_id: {article_id}, {key07}")
         create_logger(f"記事を削除しました。article_id: {article_id}, {key07}")
     except ValueError as e:
-        pprint.pprint(str(e))
+        # pprint.pprint(str(e))
         create_error_logger(
             f"記事の削除に失敗しました。article_id: {article_id}, {key07}"
         )

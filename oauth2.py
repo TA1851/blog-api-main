@@ -29,7 +29,7 @@ def check_environment_variable():
     raise ValueError(f"環境変数が設定されていません。-> {db_env}")
   else:
     # print(f"STEP14：環境変数：{db_env}を取得しました。 -> {db_env}")
-    print(f"STEP14：環境変数：{key10}を取得しました。 -> {key10}")
+    # print(f"STEP14：環境変数：{key10}を取得しました。 -> {key10}")
     create_logger(f"環境変数{db_env}を取得しました。:")
   return db_env
 
@@ -46,14 +46,14 @@ def check_db_url():
     create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {db_url}")
     raise ValueError(f"環境変数が設定されていません。{db_url}")
   else:
-    print(f"STEP15：環境変数: {db_url}を読み込みました。")
-  create_logger(f"環境変数: {db_url}を読み込みました。 -> {db_url}")
+    # print(f"STEP15：環境変数: {db_url}を読み込みました。")
+    create_logger(f"環境変数: {db_url}を読み込みました。 -> {db_url}")
   return db_url
 
 
 check_db_url()
-print(f"STEP16：ユーザを作成します。Swaggerで確認してください。")
-print("---------------------------------------------------------------")
+# print(f"STEP16：ユーザを作成します。Swaggerで確認してください。")
+# print("---------------------------------------------------------------")
 
 get_db()
 
