@@ -28,7 +28,7 @@ def check_env_file(
     #    )
 
     if not default_env_path.exists():
-        print(".envファイルが見つかりません")
+        # print(".envファイルが見つかりません")
         create_error_logger(
             f".envファイルが見つかりません。PATHを確認して下さい。: \
             {default_env_path}"
