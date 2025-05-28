@@ -27,5 +27,6 @@ log/
 # alembic
 alembic.ini
 alembic/
+# Pythonのバイトコードファイル
 # ソースコードをコンパイルしたバイトコードをキャッシュするためのディレクトリ
 **/__pycache__/
