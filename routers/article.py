@@ -2,8 +2,9 @@
 # import pprint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, status, HTTPException, Query
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
+import urllib.parse
 
 from models import Article
 from schemas import ArticleBase, ShowArticle, User, PublicArticle
@@ -490,7 +491,7 @@ async def get_public_articles(
     response_model=List[PublicArticle]
 )
 async def search_public_articles(
-    q: str = Query(..., min_length=1, description="検索キーワード"),
+    q: str = Query(..., min_length=1, description="検索キーワード（日本語対応）"),
     db: Session = Depends(get_db),
     limit: Optional[int] = Query(
         10, ge=1, le=100,
@@ -501,9 +502,9 @@ async def search_public_articles(
         description="スキップする記事数（ページネーション用）"
     )
 ) -> List[PublicArticle]:
-    """キーワードでパブリック記事を検索するエンドポイント
+    """キーワードでパブリック記事を検索するエンドポイント（日本語対応）
 
-    :param q: 検索キーワード
+    :param q: 検索キーワード（日本語・英語対応）
     :type q: str
     :param db: データベースセッション
     :type db: Session
@@ -516,12 +517,27 @@ async def search_public_articles(
     :raises HTTPException: データベースエラーが発生した場合
     """
     try:
-        # タイトルまたは本文にキーワードが含まれる記事を検索
-        search_filter = f"%{q}%"
-        query = db.query(Article).filter(
-            (Article.title.ilike(search_filter)) | 
-            (Article.body.ilike(search_filter))
-        ).order_by(Article.article_id.desc())
+        # URLデコードして日本語キーワードを正しく処理
+        decoded_query = urllib.parse.unquote(q, encoding='utf-8')
+        
+        # 複数のキーワードに対応（スペース区切り）
+        keywords = decoded_query.strip().split()
+        
+        # 基本クエリを構築
+        query = db.query(Article)
+        
+        # 各キーワードでAND検索（タイトルまたは本文に含まれる）
+        for keyword in keywords:
+            search_filter = f"%{keyword}%"
+            query = query.filter(
+                or_(
+                    Article.title.ilike(search_filter),
+                    Article.body.ilike(search_filter)
+                )
+            )
+        
+        # 記事ID降順でソート
+        query = query.order_by(Article.article_id.desc())
         
         # 検索結果の総数を取得
         total_count = query.count()
@@ -534,7 +550,8 @@ async def search_public_articles(
         search_results = query.all()
         
         create_logger(
-            f"記事検索を実行しました。キーワード: '{q}', "
+            f"記事検索を実行しました。キーワード: '{decoded_query}' "
+            f"(キーワード数: {len(keywords)}), "
             f"検索結果: {len(search_results)}件/{total_count}件 "
             f"(skip: {skip}, limit: {limit})"
         )
@@ -547,5 +564,3 @@ async def search_public_articles(
         )
     
     return search_results
-
-

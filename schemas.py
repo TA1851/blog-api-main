@@ -1,6 +1,7 @@
 """レスポンスのスキーマを定義するモジュール"""
 from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
+from pydantic import BaseModel, Field, ConfigDict, EmailStr, computed_field
+import markdown
 
 from logger.custom_logger import create_error_logger
 from database import db_env
@@ -17,6 +18,7 @@ class ArticleBase(BaseModel, validate_assignment=True):
     :param article_id: 記事のID
     :param title: 記事のタイトル
     :param body: 記事の本文
+    :param body_html: 記事の本文（HTML形式）
     :param user_id: 記事を作成したユーザーのID
     :param ConfigDict: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用
     :param model_config: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用
@@ -33,6 +35,19 @@ class ArticleBase(BaseModel, validate_assignment=True):
         description="100文字以内で入力してください"
         )
     user_id: Optional[int] = None
+    
+    @computed_field
+    @property
+    def body_html(self) -> str:
+        """MarkdownテキストをHTMLに変換
+        
+        :return: HTML形式の本文
+        :rtype: str
+        """
+        # 改行を<br>タグに変換し、見出し（#）を太文字に変換
+        md = markdown.Markdown(extensions=['nl2br'])
+        html_content = md.convert(self.body)
+        return html_content
 
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
@@ -136,6 +151,7 @@ class ShowArticle(BaseModel):
     :param id: 記事のID
     :param title: 記事のタイトル
     :param body: 記事の本文
+    :param body_html: 記事の本文（HTML形式）
     """
     id: int | None = Field(
         None, title="ID", description="記事のID"
@@ -148,6 +164,21 @@ class ShowArticle(BaseModel):
         None, title="本文", max_length=1000, \
         description="1000文字以内で入力してください"
         )
+    
+    @computed_field
+    @property
+    def body_html(self) -> str | None:
+        """MarkdownテキストをHTMLに変換
+        
+        :return: HTML形式の本文
+        :rtype: str | None
+        """
+        if self.body is None:
+            return None
+        # 改行を<br>タグに変換し、見出し（#）を太文字に変換
+        md = markdown.Markdown(extensions=['nl2br'])
+        html_content = md.convert(self.body)
+        return html_content
 
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
@@ -196,6 +227,7 @@ class PublicArticle(BaseModel):
     :param article_id: 記事のID
     :param title: 記事のタイトル
     :param body: 記事の本文
+    :param body_html: 記事の本文（HTML形式）
     """
     article_id: int = Field(
         ..., title="記事ID", description="記事ID"
@@ -208,6 +240,19 @@ class PublicArticle(BaseModel):
         ..., title="本文", max_length=1000,
         description="1000文字以内の本文"
     )
+    
+    @computed_field
+    @property
+    def body_html(self) -> str:
+        """MarkdownテキストをHTMLに変換
+        
+        :return: HTML形式の本文
+        :rtype: str
+        """
+        # 改行を<br>タグに変換し、見出し（#）を太文字に変換
+        md = markdown.Markdown(extensions=['nl2br'])
+        html_content = md.convert(self.body)
+        return html_content
 
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
