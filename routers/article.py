@@ -483,48 +483,6 @@ async def get_public_articles(
     return public_articles
 
 
-@router.get(
-    "/public/articles/{article_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=PublicArticle
-)
-async def get_public_article(
-    article_id: int,
-    db: Session = Depends(get_db)
-) -> PublicArticle:
-    """認証なしで特定のパブリック記事を取得するエンドポイント
-
-    :param article_id: 記事のID
-    :type article_id: int
-    :param db: データベースセッション
-    :type db: Session
-    :return: 記事の詳細
-    :rtype: PublicArticle
-    :raises HTTPException: 記事が見つからない場合
-    """
-    try:
-        article = db.query(Article).filter(Article.article_id == article_id).first()
-        
-        if not article:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"記事が見つかりません。記事ID: {article_id}"
-            )
-            
-        create_logger(f"パブリック記事を取得しました。記事ID: {article_id}")
-        
-    except HTTPException:
-        # HTTPExceptionはそのまま再度raise
-        raise
-    except Exception as e:
-        create_error_logger(f"パブリック記事の取得に失敗しました。記事ID: {article_id}, エラー: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="記事の取得に失敗しました"
-        )
-    
-    return article
-
 
 @router.get(
     "/public/articles/search",
@@ -591,42 +549,3 @@ async def search_public_articles(
     return search_results
 
 
-@router.get(
-    "/public/articles/stats",
-    status_code=status.HTTP_200_OK
-)
-async def get_public_articles_stats(
-    db: Session = Depends(get_db)
-) -> dict:
-    """パブリック記事の統計情報を取得するエンドポイント
-
-    :param db: データベースセッション
-    :type db: Session
-    :return: 記事の統計情報
-    :rtype: dict
-    :raises HTTPException: データベースエラーが発生した場合
-    """
-    try:
-        # 記事の総数を取得
-        total_articles = db.query(Article).count()
-        
-        # ユーザー数を取得（記事を持つユーザーのみ）
-        from models import User as UserModel
-        total_users_with_articles = db.query(Article.user_id).distinct().count()
-        
-        stats = {
-            "total_articles": total_articles,
-            "total_users_with_articles": total_users_with_articles,
-            "message": "記事統計情報を取得しました"
-        }
-        
-        create_logger(f"記事統計情報を取得しました: {stats}")
-        
-    except Exception as e:
-        create_error_logger(f"記事統計情報の取得に失敗しました: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="統計情報の取得に失敗しました"
-        )
-    
-    return stats
