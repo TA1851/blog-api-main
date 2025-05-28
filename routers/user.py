@@ -115,19 +115,21 @@ class UserRouter:
                 )
 
             new_user = UserModel(
-                name=user.name,
+                # name=user.name,
                 email=user.email,
                 password=Hash.bcrypt(user.password)
             )
-            print(f"STEP17：新規ユーザーを作成します。: {new_user}")
+            # print(f"STEP17：新規ユーザーを作成します。: {new_user}")
             create_logger(f"新規ユーザーを作成します。: {new_user}")
 
-            if not new_user.name \
-                or not new_user.email \
+            # if not new_user.name \
+            #     or not new_user.email \
+            #     or not new_user.password:
+                # print(
+                #     "ユーザーの作成に失敗しました。必須フィールドが不足しています。"
+                # )
+            if not new_user.email \
                 or not new_user.password:
-                print(
-                    "ユーザーの作成に失敗しました。必須フィールドが不足しています。"
-                )
                 create_error_logger(
                     "ユーザーの作成に失敗しました。必須フィールドが不足しています。"
                 )
@@ -160,6 +162,7 @@ class UserRouter:
 
         except ValidationError as e:
             db.rollback()
+            print(f"パスワードが不正です: {str(e)}")
             create_error_logger(f"パスワードが不正です: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -168,6 +171,7 @@ class UserRouter:
 
         except SQLAlchemyError as e:
             db.rollback()
+            print(f"データベースエラーが発生しました: {str(e)}")
             create_error_logger(f"データベースエラーが発生しました: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
