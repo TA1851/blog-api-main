@@ -22,27 +22,27 @@ router = APIRouter(
 
 # データベースURLを取得（本番環境のPostgreSQLを優先、次に開発環境のSQLite）
 db_url = db_env.get("posgre_url") or db_env.get("sqlite_url")
-key03 = db_env.get("file_id_03")
-key09 = db_env.get("file_id_09")
+# key03 = db_env.get("file_id_03")
+# key09 = db_env.get("file_id_09")
 
 
-def check_environment_variable():
-    """環境変数を取得する
+# def check_environment_variable():
+#     """環境変数を取得する
 
-    :param key09: auth.pyの環境変数
-    :type key09: str
-    :return: 環境変数の値
-    :rtype: str
-    """
-    if not key09:
-        create_error_logger(f"環境変数:{key09}が設定されていません。{key09}")
-        raise ValueError(f"環境変数が設定されていません。-> {key09}")
-    else:
-        # print(f"STEP20：環境変数：{key09}を取得しました。 -> {key09}")
-        create_logger(f"環境変数{key09}を取得しました。:")
-    return key09
+#     :param key09: auth.pyの環境変数
+#     :type key09: str
+#     :return: 環境変数の値
+#     :rtype: str
+#     """
+#     if not key09:
+#         create_error_logger(f"環境変数:{key09}が設定されていません。{key09}")
+#         raise ValueError(f"環境変数が設定されていません。-> {key09}")
+#     else:
+#         # print(f"STEP20：環境変数：{key09}を取得しました。 -> {key09}")
+#         create_logger(f"環境変数{key09}を取得しました。:")
+#     return key09
 
-check_environment_variable()
+# check_environment_variable()
 
 
 def check_db_url():
@@ -56,11 +56,11 @@ def check_db_url():
     :rtype: str
     """
     if not db_url:
-        create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {key03}")
-        raise ValueError(f"環境変数が設定されていません。{key03}")
+        create_error_logger(f"環境変数:{db_url}が設定されていません")
+        raise ValueError(f"環境変数が設定されていません。")
     else:
         # print(f"STEP21：環境変数: {db_url}を読み込みました。")
-        create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
+        create_logger(f"環境変数: {db_url}を読み込みました。")
     return db_url
 
 check_db_url()
