@@ -57,7 +57,6 @@ def read_env_var(env_path: Path) -> dict:
     result = {}
 
     # 環境変数を取得
-    environment = os.getenv("ENVIRONMENT", "development")  # デフォルトは開発環境
     id_A003 = os.getenv("AA03")
     id_A005 = os.getenv("AA05")
     id_A006 = os.getenv("AA06")
@@ -65,15 +64,13 @@ def read_env_var(env_path: Path) -> dict:
     id_A008 = os.getenv("AA08")
     id_A009 = os.getenv("AA09")
     id_A010 = os.getenv("AA10")
-    database_url = os.getenv("DATABASE_URL")
+    sqlite_url = os.getenv("SQLITE_URL")
+    posgre_database_url = os.getenv("POSGRE_URL")
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
     cors_origins = os.getenv("CORS_ORIGINS")
     # local_origin = os.getenv("LOCAL_CORS_ORIGINS")
 
-    # 環境設定をログに記録
-    create_logger(f"現在の環境: {environment}")
-    result["environment"] = environment
 
     if id_A003:
         # print(f"STEP3：ファイルIDを取得しました。 -> {id_A003}")
@@ -128,13 +125,21 @@ def read_env_var(env_path: Path) -> dict:
         print("ファイルIDが取得できませんでした。 -> {id_A009}")
         create_error_logger("ファイルIDが取得できませんでした。 {id_A009}")
 
-    if database_url:
+    if sqlite_url:
         # print(f"STEP4：DB_URLを取得しました。 -> {database_url}")
-        create_logger(f"DB_URLを取得しました。: {database_url}")
-        result["database_url"] = database_url
+        create_logger(f"開発用のDB_URLを取得しました。: {sqlite_url}")
+        result["database_url"] = sqlite_url
     else:
-        print("DB_URLが取得できませんでした。")
-        create_error_logger("DB_URLが取得できませんでした。")
+        print("開発用のDB_URLが取得できませんでした。")
+        create_error_logger("開発用のDB_URLが取得できませんでした。")
+
+    if posgre_database_url:
+        # print(f"STEP4：DB_URLを取得しました。 -> {posgre_database_url}")
+        create_logger(f"本番用のDB_URLを取得しました。: {posgre_database_url}")
+        result["database_url"] = posgre_database_url
+    else:
+        print("本番用のDB_URLが取得できませんでした。")
+        create_error_logger("本番用のDB_URLが取得できませんでした。")
 
     if secret_key:
         # print(f"STEP4：SECRET_KEYを取得しました。 -> {secret_key}")
@@ -211,41 +216,40 @@ def create_database_engine() -> Engine:
     - PostgreSQL: 接続プール設定
     """
     try:
-        DB_URL = db_env.get("database_url")
-        environment = db_env.get("environment", "development")
-        
+        DB_URL = db_env.get("sqlite_url")
         if not DB_URL:
             print("DATABASE_URLが設定されていません。")
             create_error_logger("DATABASE_URLが設定されていません。")
             raise DatabaseConnectionError("DATABASE_URLが設定されていません。")
         else:
-            create_logger(f"DB_URLを取得しました。環境: {environment}")
+            create_logger(f"DB_URLを取得しました。環境: {DB_URL}")
 
-        # 環境に応じたデータベースエンジンの設定
-        if environment == "production":
-            # 本番環境（PostgreSQL）の設定
-            if not DB_URL.startswith("postgresql"):
-                create_error_logger("本番環境ではPostgreSQLのURL形式が必要です")
-                raise DatabaseConnectionError("本番環境ではPostgreSQLのURL形式が必要です")
-            
+        # 本番環境（PostgreSQL）の設定
+        if not DB_URL.startswith("posgre_database_url"):
+            create_error_logger("本番環境ではPostgreSQLのURL形式が必要です")
+            raise DatabaseConnectionError("本番環境ではPostgreSQLのURL形式が必要です")
+        if DB_URL.startswith("postgresql"):
             # PostgreSQL用の接続設定
+            connect_args = {
+                "pool_size": 10,          # 接続プールのサイズ
+                "max_overflow": 20,      # プールを超える接続数
+                "pool_timeout": 30,      # 接続取得のタイムアウト（秒）
+                "pool_recycle": 1800     # 接続の再利用時間（秒）
+            }
             engine = create_engine(
-                DB_URL,
-                pool_size=10,           # 接続プールサイズ
-                max_overflow=20,        # プール上限を超えた場合の追加接続数
-                pool_pre_ping=True,     # 接続の有効性をチェック
-                pool_recycle=3600,      # 接続の再利用時間（秒）
-                echo=False              # SQLログ出力（本番では無効）
+                DB_URL, 
+                connect_args=connect_args,
+                echo=False               # 本番環境ではSQLログを出力しない
             )
             create_logger("PostgreSQL（本番環境）でデータベース接続を確立しました")
-            
+
         else:
             # 開発環境（SQLite）の設定
             if not DB_URL.startswith("sqlite"):
                 create_logger("開発環境用にSQLiteを使用します")
                 # 開発環境では強制的にSQLiteを使用
-                DB_URL = "sqlite:///./blog.db"
-            
+                DB_URL = ""
+
             # SQLite用の接続設定
             connect_args = {"check_same_thread": False}
             engine = create_engine(
