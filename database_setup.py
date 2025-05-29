@@ -106,9 +106,10 @@ def main():
     
     # 環境情報を表示
     current_env = db_env.get("environment", "development")
+    database_url = db_env.get("posgre_url") or db_env.get("sqlite_url", "未設定")
     print(f"🌟 データベース初期化を開始します")
     print(f"📊 現在の環境: {current_env}")
-    print(f"🔗 データベースURL: {db_env.get('database_url', '未設定')}")
+    print(f"🔗 データベースURL: {database_url}")
     print("-" * 50)
     
     # テーブル作成

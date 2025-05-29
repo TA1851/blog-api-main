@@ -20,7 +20,8 @@ router = APIRouter(
 )
 
 
-db_url = db_env.get("database_url")
+# データベースURLを取得（本番環境のPostgreSQLを優先、次に開発環境のSQLite）
+db_url = db_env.get("posgre_url") or db_env.get("sqlite_url")
 key03 = db_env.get("file_id_03")
 key07 = db_env.get("file_id_07")
 

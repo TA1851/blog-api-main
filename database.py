@@ -109,26 +109,29 @@ def read_env_var(env_path: Path) -> dict:
         create_logger(f"ファイルIDを取得しました。: {id_A008}")
         result["file_id_08"] = id_A008
     else:
-        print("ファイルIDが取得できませんでした。 -> {id_A008}")
-        create_error_logger("ファイルIDが取得できませんでした。 {id_A008}")
+        print(f"ファイルIDが取得できませんでした。 -> {id_A008}")
+        create_error_logger(f"ファイルIDが取得できませんでした。 {id_A008}")
 
     if id_A009:
         # print(f"STEP4：ファイルIDを取得しました。 -> {id_A009}")
         create_logger(f"ファイルIDを取得しました。: {id_A009}")
         result["file_id_09"] = id_A009
+    else:
+        print(f"ファイルIDが取得できませんでした。 -> {id_A009}")
+        create_error_logger(f"ファイルIDが取得できませんでした。 {id_A009}")
 
     if id_A010:
         # print(f"STEP4：ファイルIDを取得しました。 -> {id_A010}")
         create_logger(f"ファイルIDを取得しました。: {id_A010}")
         result["file_id_10"] = id_A010
     else:
-        print("ファイルIDが取得できませんでした。 -> {id_A009}")
-        create_error_logger("ファイルIDが取得できませんでした。 {id_A009}")
+        print(f"ファイルIDが取得できませんでした。 -> {id_A010}")
+        create_error_logger(f"ファイルIDが取得できませんでした。 {id_A010}")
 
     if sqlite_url:
-        # print(f"STEP4：DB_URLを取得しました。 -> {database_url}")
+        # print(f"STEP4：DB_URLを取得しました。 -> {sqlite_url}")
         create_logger(f"開発用のDB_URLを取得しました。: {sqlite_url}")
-        result["database_url"] = sqlite_url
+        result["sqlite_url"] = sqlite_url
     else:
         print("開発用のDB_URLが取得できませんでした。")
         create_error_logger("開発用のDB_URLが取得できませんでした。")
@@ -136,7 +139,7 @@ def read_env_var(env_path: Path) -> dict:
     if posgre_database_url:
         # print(f"STEP4：DB_URLを取得しました。 -> {posgre_database_url}")
         create_logger(f"本番用のDB_URLを取得しました。: {posgre_database_url}")
-        result["database_url"] = posgre_database_url
+        result["posgre_url"] = posgre_database_url
     else:
         print("本番用のDB_URLが取得できませんでした。")
         create_error_logger("本番用のDB_URLが取得できませんでした。")
@@ -185,7 +188,8 @@ def read_env_var(env_path: Path) -> dict:
     if not result:
         print("環境変数の取得に失敗しました。")
         create_error_logger("環境変数の取得に失敗しました。")
-        return result
+        # 空の辞書でも返すように修正（エラーで停止させない）
+        return {}
     else:
         # print(f"STEP5：環境変数の取得に成功しました")
         create_logger(f"環境変数の取得に成功しました。: {result}")
@@ -209,56 +213,64 @@ def create_database_engine() -> Engine:
     """環境変数からデータベースURLを取得し、データベースエンジンを作成する。
 
     開発環境ではSQLite、本番環境ではPostgreSQLを使用します。
-    データベースURLが設定されていない場合は、DatabaseConnectionErrorをスローします。
+    データベースURLが設定されていない場合は、デフォルトのSQLiteを使用します。
 
     connect_args:
     - SQLite: {"check_same_thread": False}
     - PostgreSQL: 接続プール設定
     """
     try:
-        DB_URL = db_env.get("sqlite_url")
-        if not DB_URL:
-            print("DATABASE_URLが設定されていません。")
-            create_error_logger("DATABASE_URLが設定されていません。")
-            raise DatabaseConnectionError("DATABASE_URLが設定されていません。")
-        else:
-            create_logger(f"DB_URLを取得しました。環境: {DB_URL}")
-
-        # 本番環境（PostgreSQL）の設定
-        if not DB_URL.startswith("posgre_database_url"):
-            create_error_logger("本番環境ではPostgreSQLのURL形式が必要です")
-            raise DatabaseConnectionError("本番環境ではPostgreSQLのURL形式が必要です")
-        if DB_URL.startswith("postgresql"):
-            # PostgreSQL用の接続設定
-            connect_args = {
-                "pool_size": 10,          # 接続プールのサイズ
-                "max_overflow": 20,      # プールを超える接続数
-                "pool_timeout": 30,      # 接続取得のタイムアウト（秒）
-                "pool_recycle": 1800     # 接続の再利用時間（秒）
-            }
-            engine = create_engine(
-                DB_URL, 
-                connect_args=connect_args,
-                echo=False               # 本番環境ではSQLログを出力しない
-            )
-            create_logger("PostgreSQL（本番環境）でデータベース接続を確立しました")
-
-        else:
-            # 開発環境（SQLite）の設定
-            if not DB_URL.startswith("sqlite"):
-                create_logger("開発環境用にSQLiteを使用します")
-                # 開発環境では強制的にSQLiteを使用
-                DB_URL = ""
-
+        # 開発環境でSQLiteを優先使用（PostgreSQLより先にチェック）
+        sqlite_url = db_env.get("sqlite_url")
+        if sqlite_url:
+            create_logger(f"DB_URLを取得しました。環境: {sqlite_url}")
             # SQLite用の接続設定
             connect_args = {"check_same_thread": False}
             engine = create_engine(
-                DB_URL, 
+                sqlite_url, 
                 connect_args=connect_args,
                 echo=True               # 開発環境ではSQLログを出力
             )
             create_logger("SQLite（開発環境）でデータベース接続を確立しました")
+            return engine
 
+        # 本番環境（PostgreSQL）の設定
+        posgre_url = db_env.get("posgre_url")
+        if posgre_url and posgre_url.startswith("postgresql"):
+            # PostgreSQL用の接続設定
+            engine = create_engine(
+                posgre_url,
+                pool_size=10,          # 接続プールのサイズ
+                max_overflow=20,       # プールを超える接続数
+                pool_timeout=30,       # 接続取得のタイムアウト（秒）
+                pool_recycle=1800,     # 接続の再利用時間（秒）
+                echo=False             # 本番環境ではSQLログを出力しない
+            )
+            create_logger("PostgreSQL（本番環境）でデータベース接続を確立しました")
+            return engine
+            # SQLite用の接続設定
+            connect_args = {"check_same_thread": False}
+            engine = create_engine(
+                sqlite_url, 
+                connect_args=connect_args,
+                echo=True               # 開発環境ではSQLログを出力
+            )
+            create_logger("SQLite（開発環境）でデータベース接続を確立しました")
+            return engine
+        
+        # どちらのURLも設定されていない場合、デフォルトのSQLiteを使用
+        default_sqlite_url = "sqlite:///./blog.db"
+        print(f"DATABASE_URLが設定されていないため、デフォルトのSQLiteを使用します: {default_sqlite_url}")
+        create_logger(f"デフォルトのSQLiteを使用します: {default_sqlite_url}")
+        
+        # SQLite用の接続設定
+        connect_args = {"check_same_thread": False}
+        engine = create_engine(
+            default_sqlite_url, 
+            connect_args=connect_args,
+            echo=True               # 開発環境ではSQLログを出力
+        )
+        create_logger("デフォルトSQLite（開発環境）でデータベース接続を確立しました")
         return engine
 
     except Exception as e:

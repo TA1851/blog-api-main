@@ -18,7 +18,8 @@ router = APIRouter(
 )
 
 
-db_url = db_env.get("database_url")
+# データベースURLを取得（本番環境のPostgreSQLを優先、次に開発環境のSQLite）
+db_url = db_env.get("posgre_url") or db_env.get("sqlite_url")
 key03 = db_env.get("file_id_03")
 key08 = db_env.get("file_id_08")
 
@@ -53,7 +54,7 @@ def check_db_url():
     :rtype: str
     """
     if not db_url:
-        create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {key03}")
+        create_error_logger(f"環境変数:database_urlが設定されていません。 -> {key03}")
         raise ValueError(f"環境変数が設定されていません。{key03}")
     else:
         # print(f"STEP12：環境変数: {db_url}を読み込みました。")
