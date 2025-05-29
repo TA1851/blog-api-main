@@ -19,7 +19,7 @@ rad.json
 #Test results file
 TestResults.xml
 # 設定関連
-.env
+.env*
 # 仮想環境
 .venv/
 # log
