@@ -57,15 +57,15 @@ def read_env_var(env_path: Path) -> dict:
     result = {}
 
     # 環境変数を取得
-    environment = os.getenv("ENVIRONMENT", "development")  # デフォルトは開発環境
-    id_A003 = os.getenv("AA03")
-    id_A005 = os.getenv("AA05")
-    id_A006 = os.getenv("AA06")
-    id_A007 = os.getenv("AA07")
-    id_A008 = os.getenv("AA08")
-    id_A009 = os.getenv("AA09")
-    id_A010 = os.getenv("AA10")
-    sqlite_url = os.getenv("SQLITE_URL")
+    environment = os.getenv("ENVIRONMENT")  # デフォルトは開発環境
+    # id_A003 = os.getenv("AA03")
+    # id_A005 = os.getenv("AA05")
+    # id_A006 = os.getenv("AA06")
+    # id_A007 = os.getenv("AA07")
+    # id_A008 = os.getenv("AA08")
+    # id_A009 = os.getenv("AA09")
+    # id_A010 = os.getenv("AA10")
+    # sqlite_url = os.getenv("SQLITE_URL")
     posgre_database_url = os.getenv("POSGRE_URL")
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
@@ -75,69 +75,69 @@ def read_env_var(env_path: Path) -> dict:
     # 環境変数を結果に追加
     result["environment"] = environment
 
-    if id_A003:
-        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A003}")
-        create_logger(f"ファイルIDを取得しました。: {id_A003}")
-        result["file_id_03"] = id_A003
-    else:
-        print("ファイルIDが取得できませんでした。")
-        create_error_logger("ファイルIDが取得できませんでした。")
+    # if id_A003:
+    #     # print(f"STEP3：ファイルIDを取得しました。 -> {id_A003}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A003}")
+    #     result["file_id_03"] = id_A003
+    # else:
+    #     print("ファイルIDが取得できませんでした。")
+    #     create_error_logger("ファイルIDが取得できませんでした。")
 
-    if id_A005:
-        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A005}")
-        create_logger(f"ファイルIDを取得しました。: {id_A005}")
-        result["file_id_05"] = id_A005
-    else:
-        print("ファイルIDが取得できませんでした。")
-        create_error_logger("ファイルIDが取得できませんでした。")
+    # if id_A005:
+    #     # print(f"STEP3：ファイルIDを取得しました。 -> {id_A005}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A005}")
+    #     result["file_id_05"] = id_A005
+    # else:
+    #     print("ファイルIDが取得できませんでした。")
+    #     create_error_logger("ファイルIDが取得できませんでした。")
 
-    if id_A006:
-        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A006}")
-        create_logger(f"ファイルIDを取得しました。: {id_A006}")
-        result["file_id_06"] = id_A006
-    else:
-        print("ファイルIDが取得できませんでした。")
-        create_error_logger("ファイルIDが取得できませんでした。")
+    # if id_A006:
+    #     # print(f"STEP3：ファイルIDを取得しました。 -> {id_A006}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A006}")
+    #     result["file_id_06"] = id_A006
+    # else:
+    #     print("ファイルIDが取得できませんでした。")
+    #     create_error_logger("ファイルIDが取得できませんでした。")
 
-    if id_A007:
-        # print(f"STEP3：ファイルIDを取得しました。 -> {id_A007}")
-        create_logger(f"ファイルIDを取得しました。: {id_A007}")
-        result["file_id_07"] = id_A007
-    else:
-        print("ファイルIDが取得できませんでした。")
-        create_error_logger("ファイルIDが取得できませんでした。")
+    # if id_A007:
+    #     # print(f"STEP3：ファイルIDを取得しました。 -> {id_A007}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A007}")
+    #     result["file_id_07"] = id_A007
+    # else:
+    #     print("ファイルIDが取得できませんでした。")
+    #     create_error_logger("ファイルIDが取得できませんでした。")
 
-    if id_A008:
-        # print(f"STEP4：ファイルIDを取得しました。 -> {id_A008}")
-        create_logger(f"ファイルIDを取得しました。: {id_A008}")
-        result["file_id_08"] = id_A008
-    else:
-        print(f"ファイルIDが取得できませんでした。 -> {id_A008}")
-        create_error_logger(f"ファイルIDが取得できませんでした。 {id_A008}")
+    # if id_A008:
+    #     # print(f"STEP4：ファイルIDを取得しました。 -> {id_A008}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A008}")
+    #     result["file_id_08"] = id_A008
+    # else:
+    #     print(f"ファイルIDが取得できませんでした。 -> {id_A008}")
+    #     create_error_logger(f"ファイルIDが取得できませんでした。 {id_A008}")
 
-    if id_A009:
-        # print(f"STEP4：ファイルIDを取得しました。 -> {id_A009}")
-        create_logger(f"ファイルIDを取得しました。: {id_A009}")
-        result["file_id_09"] = id_A009
-    else:
-        print(f"ファイルIDが取得できませんでした。 -> {id_A009}")
-        create_error_logger(f"ファイルIDが取得できませんでした。 {id_A009}")
+    # if id_A009:
+    #     # print(f"STEP4：ファイルIDを取得しました。 -> {id_A009}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A009}")
+    #     result["file_id_09"] = id_A009
+    # else:
+    #     print(f"ファイルIDが取得できませんでした。 -> {id_A009}")
+    #     create_error_logger(f"ファイルIDが取得できませんでした。 {id_A009}")
 
-    if id_A010:
-        # print(f"STEP4：ファイルIDを取得しました。 -> {id_A010}")
-        create_logger(f"ファイルIDを取得しました。: {id_A010}")
-        result["file_id_10"] = id_A010
-    else:
-        print(f"ファイルIDが取得できませんでした。 -> {id_A010}")
-        create_error_logger(f"ファイルIDが取得できませんでした。 {id_A010}")
+    # if id_A010:
+    #     # print(f"STEP4：ファイルIDを取得しました。 -> {id_A010}")
+    #     create_logger(f"ファイルIDを取得しました。: {id_A010}")
+    #     result["file_id_10"] = id_A010
+    # else:
+    #     print(f"ファイルIDが取得できませんでした。 -> {id_A010}")
+    #     create_error_logger(f"ファイルIDが取得できませんでした。 {id_A010}")
 
-    if sqlite_url:
-        # print(f"STEP4：DB_URLを取得しました。 -> {sqlite_url}")
-        create_logger(f"開発用のDB_URLを取得しました。: {sqlite_url}")
-        result["sqlite_url"] = sqlite_url
-    else:
-        print("開発用のDB_URLが取得できませんでした。")
-        create_error_logger("開発用のDB_URLが取得できませんでした。")
+    # if sqlite_url:
+    #     # print(f"STEP4：DB_URLを取得しました。 -> {sqlite_url}")
+    #     create_logger(f"開発用のDB_URLを取得しました。: {sqlite_url}")
+    #     result["sqlite_url"] = sqlite_url
+    # else:
+    #     print("開発用のDB_URLが取得できませんでした。")
+    #     create_error_logger("開発用のDB_URLが取得できませんでした。")
 
     if posgre_database_url:
         # print(f"STEP4：DB_URLを取得しました。 -> {posgre_database_url}")
