@@ -123,10 +123,10 @@ async def all_fetch(
                 のブログ記事を全件取得しました。全{total_count}件")
     except ValueError as e:
         # pprint.pprint(str(e))
-        create_error_logger(f"ブログ記事の取得に失敗しました。{key07}")
+        create_error_logger(f"ブログ記事の取得に失敗しました。")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Articles not found {key07}"
+            detail=f"Articles not found"
         )
 
     # 記事が見つからない場合は空のリストを返す
@@ -191,7 +191,7 @@ async def get_article(
         create_logger("指定したIDのブログ記事を取得しました。")
     except ValueError as e:
         # pprint.pprint(str(e))
-        create_error_logger(f"指定したIDのブログ記事に失敗しました。{key07}")
+        create_error_logger(f"指定したIDのブログ記事に失敗しました。")
         # エラー発生時に明示的な４０４を返す
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, \
@@ -331,19 +331,19 @@ async def update_article(
         db.commit()
         db.refresh(update_blog)
 
-        print(f"記事を更新しました。article_id: {article_id}, {key07}")
+        print(f"記事を更新しました。article_id: {article_id}")
         create_logger(
             f"記事を更新しました。article_id: {article_id}, \
-            user_id: {current_user.id}, {key07}")
+            user_id: {current_user.id}")
 
     except ValueError as e:
         # pprint.pprint(str(e))
         create_error_logger(
             f"記事の更新に失敗しました。 \
-            article_id: {article_id}, {key07}")
+            article_id: {article_id}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Article not updated. article_id: {article_id}, {key07}"
+            detail=f"Article not updated. article_id: {article_id}"
         )
     return update_blog
 
@@ -385,16 +385,16 @@ async def delete_article(
             )
         db.delete(delete_blog)
         db.commit()
-        print(f"記事を削除しました。article_id: {article_id}, {key07}")
-        create_logger(f"記事を削除しました。article_id: {article_id}, {key07}")
+        print(f"記事を削除しました。article_id: {article_id}")
+        create_logger(f"記事を削除しました。article_id: {article_id}")
     except ValueError as e:
         # pprint.pprint(str(e))
         create_error_logger(
-            f"記事の削除に失敗しました。article_id: {article_id}, {key07}"
+            f"記事の削除に失敗しました。article_id: {article_id}"
         )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Article not deleted. article_id: {article_id}, {key07}"
+            detail=f"Article not deleted. article_id: {article_id}"
         )
     return None
 

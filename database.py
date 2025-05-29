@@ -1,6 +1,6 @@
 """データベース接続モジュール"""
 import os
-import pprint
+# import pprint
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -199,7 +199,7 @@ def read_env_var(env_path: Path) -> dict:
 
         # 環境変数を構造化して表示する
         # print("")
-        pprint.pprint(result)
+        # pprint.pprint(result)
         # print("")
         return result
 
