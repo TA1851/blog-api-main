@@ -1,6 +1,6 @@
 """データベース接続モジュール"""
 import os
-# import pprint
+import pprint
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -196,7 +196,7 @@ def read_env_var(env_path: Path) -> dict:
 
         # 環境変数を構造化して表示する
         # print("")
-        # pprint.pprint(result)
+        pprint.pprint(result)
         # print("")
         return result
 
@@ -220,62 +220,62 @@ def create_database_engine() -> Engine:
     - PostgreSQL: 接続プール設定
     """
     try:
-        # 開発環境でSQLiteを優先使用（PostgreSQLより先にチェック）
-        sqlite_url = db_env.get("sqlite_url")
-        if sqlite_url:
-            create_logger(f"DB_URLを取得しました。環境: {sqlite_url}")
-            # SQLite用の接続設定
-            connect_args = {"check_same_thread": False}
-            engine = create_engine(
-                sqlite_url, 
-                connect_args=connect_args,
-                echo=True               # 開発環境ではSQLログを出力
-            )
-            create_logger("SQLite（開発環境）でデータベース接続を確立しました")
-            return engine
+        # 開発環境でSQLiteを使用
+    #     sqlite_url = db_env.get("sqlite_url")
+    #     if not sqlite_url:
+    #         create_error_logger("SQLiteのURLが設定されていません。")
+    #         raise DatabaseConnectionError("SQLiteのURLが設定されていません。")
+    #     # SQLiteのURLが正しい形式か確認
+    #     if not sqlite_url.startswith("sqlite"):
+    #         create_error_logger(f"SQLiteのURLが不正です: {sqlite_url}")
+    #         raise DatabaseConnectionError(f"SQLiteのURLが不正です: {sqlite_url}")
+    #     print(f"STEP6：DB_URLを取得しました。 -> {sqlite_url}")
+    #     create_logger(f"DB_URLを取得しました。環境: {sqlite_url}")
 
-        # 本番環境（PostgreSQL）の設定
-        posgre_url = db_env.get("posgre_url")
-        if posgre_url and posgre_url.startswith("postgresql"):
+    #     if sqlite_url:
+    #         create_logger(f"DB_URLを取得しました。環境: {sqlite_url}")
+    #         # SQLite用の接続設定
+    #         connect_args = {"check_same_thread": False}
+    #         engine = create_engine(
+    #             sqlite_url, 
+    #             connect_args=connect_args,
+    #             echo=False               # SQLログを出力
+    #         )
+    #         create_logger("SQLite（開発環境）でデータベース接続を確立しました")
+    #         return engine
+    # except Exception as e:
+    #     create_error_logger(f"データベース接続に失敗しました。: {str(e)}")
+    #     raise
+        # 本番環境でPostgreSQLを使用
+        posgre_database_url = db_env.get("posgre_url")
+        if not posgre_database_url:
+            create_error_logger("PostgreSQLのURLが設定されていません。")
+            raise DatabaseConnectionError("PostgreSQLのURLが設定されていません。")
+        # PostgreSQLのURLが正しい形式か確認
+        if not posgre_database_url.startswith("postgresql"):
+            create_error_logger(f"PostgreSQLのURLが不正です: {posgre_database_url}")
+            raise DatabaseConnectionError(f"PostgreSQLのURLが不正です: {posgre_database_url}")
+        # print(f"STEP7：DB_URLを取得しました。 -> {posgre_database_url}")
+        create_logger(f"DB_URLを取得しました。環境: {posgre_database_url}")
+        if posgre_database_url:
+            create_logger(f"DB_URLを取得しました。環境: {posgre_database_url}")
             # PostgreSQL用の接続設定
+            connect_args = {
+                "pool_size": 10,          # 接続プールのサイズ
+                "max_overflow": 20,       # プールサイズを超える接続数
+                "pool_timeout": 30,       # 接続取得のタイムアウト（秒）
+                "pool_recycle": 1800      # 接続の再利用時間（秒）
+            }
             engine = create_engine(
-                posgre_url,
-                pool_size=10,          # 接続プールのサイズ
-                max_overflow=20,       # プールを超える接続数
-                pool_timeout=30,       # 接続取得のタイムアウト（秒）
-                pool_recycle=1800,     # 接続の再利用時間（秒）
-                echo=False             # 本番環境ではSQLログを出力しない
+                posgre_database_url, 
+                connect_args=connect_args,
+                echo=False               # SQLログを出力
             )
             create_logger("PostgreSQL（本番環境）でデータベース接続を確立しました")
             return engine
-            # SQLite用の接続設定
-            connect_args = {"check_same_thread": False}
-            engine = create_engine(
-                sqlite_url, 
-                connect_args=connect_args,
-                echo=True               # 開発環境ではSQLログを出力
-            )
-            create_logger("SQLite（開発環境）でデータベース接続を確立しました")
-            return engine
-        
-        # どちらのURLも設定されていない場合、デフォルトのSQLiteを使用
-        default_sqlite_url = "sqlite:///./blog.db"
-        print(f"DATABASE_URLが設定されていないため、デフォルトのSQLiteを使用します: {default_sqlite_url}")
-        create_logger(f"デフォルトのSQLiteを使用します: {default_sqlite_url}")
-        
-        # SQLite用の接続設定
-        connect_args = {"check_same_thread": False}
-        engine = create_engine(
-            default_sqlite_url, 
-            connect_args=connect_args,
-            echo=True               # 開発環境ではSQLログを出力
-        )
-        create_logger("デフォルトSQLite（開発環境）でデータベース接続を確立しました")
-        return engine
-
     except Exception as e:
         create_error_logger(f"データベース接続に失敗しました。: {str(e)}")
-        raise
+        raise DatabaseConnectionError(f"データベース接続に失敗しました。: {str(e)}")
 
 # テーブルオブジェクトを生成するベースクラス
 Base = declarative_base()
