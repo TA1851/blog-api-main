@@ -9,7 +9,7 @@ import markdown
 
 from models import Article
 from schemas import ArticleBase, ShowArticle, User, PublicArticle
-from database import session, db_env
+from database import get_db, db_env
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
 
@@ -64,27 +64,6 @@ def check_db_url():
 check_db_url()
 # print("STEP19：ルートを取得しました。Swaggerを確認してください。")
 # print("---------------------------------------------------------------")
-
-
-def get_db():
-    """データベースセッションを取得する
-
-    :return: データベースセッション
-    :rtype: Session
-    """
-    db = session()
-    try:
-        yield db
-        # print("DBセッションをコミットしました")
-        create_logger("DBセッションをコミットしました")
-    except Exception as e:
-        # pprint.pprint(str(e))
-        create_error_logger(f"DBセッションのコミットに失敗しました。: {str(e)}")
-        raise
-    finally:
-        db.close()
-        # print("DBセッションをクローズしました")
-        create_logger("DBセッションをクローズしました")
 
 
 @router.get(
