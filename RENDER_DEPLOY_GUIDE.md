@@ -34,41 +34,16 @@
 
 ```
 ENVIRONMENT=production
-DATABASE_URL=<PostgreSQLのInternal Database URLをペースト>
+DATABASE_URL=<PostgreSQLのInternal Database URL>
 SECRET_KEY=<ランダムな64文字の文字列>
 ALGORITHM=HS256
 CORS_ORIGINS=<フロントエンドのURL>
-AA03=[database.py]
-AA05=[models.py]
-AA06=[schemas.py]
-AA07=[articles.py]
-AA08=[users.py]
-AA09=[auth.py]
-AA10=[oauth2.py]
 ```
 
 ### Advanced Settings
 - **Auto-Deploy**: Yes
 - **Health Check Path**: `/` （オプション）
 
-## 3. データベース初期化
-
-Webサービスが正常にデプロイされた後、以下の手順でデータベースを初期化：
-
-### 方法1: Render Shell経由
-1. Renderダッシュボードでサービスを選択
-2. "Shell" タブをクリック
-3. 以下のコマンドを実行：
-```bash
-python database_setup.py --environment production --init-data
-```
-
-### 方法2: ローカルから本番DBに接続
-1. ローカルの`.env`ファイルを一時的に本番設定に変更
-2. 以下のコマンドを実行：
-```bash
-ENVIRONMENT=production DATABASE_URL="<本番PostgreSQL URL>" python database_setup.py --init-data
-```
 
 ## 4. 動作確認
 
@@ -95,25 +70,7 @@ RenderではHTTPSが自動的に有効になります。カスタムドメイン
 - `DATABASE_URL`はRenderが自動生成
 - `CORS_ORIGINS`はフロントエンドのドメインのみ許可
 
-## 8. トラブルシューティング
-
-### よくある問題と解決法
-
-1. **データベース接続エラー**
-   - DATABASE_URLが正しく設定されているか確認
-   - PostgreSQLサービスが起動しているか確認
-
-2. **デプロイエラー**
-   - requirements.txtにpsycopg2-binaryが含まれているか確認
-   - Build Commandが正しく設定されているか確認
-
-3. **CORS エラー**
-   - CORS_ORIGINSにフロントエンドのURLが含まれているか確認
-
-4. **テーブルが存在しない**
-   - database_setup.pyを実行してテーブルを作成
-
-## 9. セキュリティ設定
+## 8. セキュリティ設定
 
 本番環境では以下を確認：
 - 環境変数が適切に設定されている
