@@ -6,10 +6,9 @@ from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
-from database import db_env
+from database import db_env, get_db
 from models import User
 from logger.custom_logger import create_logger, create_error_logger
-from routers.user import get_db
 
 
 router = APIRouter(
