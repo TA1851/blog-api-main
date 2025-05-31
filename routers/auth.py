@@ -6,12 +6,13 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from schemas import Login, ShowArticle
+from schemas import Login, ShowArticle, PasswordChange
 from database import session, db_env
 from hashing import Hash
 from custom_token import create_access_token
-from models import User
+from models import User, Article
 from logger.custom_logger import create_logger, create_error_logger
+from utils.email_sender import send_registration_complete_email
 
 
 router = APIRouter(
@@ -97,7 +98,12 @@ async def login(
 
     ログインエンドポイント：
     ```
-    http://127.0.0.1:8000/api/v1/login
+    http://127.0.0.1:8080/api/v1/login
+    ```
+
+    注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください：
+    ```
+    http://127.0.0.1:8080/api/v1/change-password
     ```
 
     パラメータ：
@@ -272,4 +278,98 @@ async def get_all_blogs(
 
     :rtype: List[ShowArticle]
     """
-    return db.query(ShowArticle).all()
+    return db.query(Article).all()
+
+
+@router.post('/change-password')
+async def change_password(
+    request: PasswordChange,
+    db: Session = Depends(get_db)
+) -> dict:
+    """仮パスワードから新パスワードへの変更を行うエンドポイント
+
+    パスワード変更エンドポイント：
+    ```
+    http://127.0.0.1:8080/api/v1/change-password
+    ```
+
+    パラメータ：
+    ```
+    username: ユーザー名（メールアドレス）
+    temp_password: 現在の仮パスワード
+    new_password: 新しいパスワード
+    ```
+
+    レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request)
+    ```
+    {
+        "access_token": "JWTトークン文字列",
+        "token_type": "bearer",
+        "message": "パスワードが正常に変更されました。登録完了メールを送信しました。"
+    }
+    ```
+    
+    注意：パスワード変更成功後、登録完了メールが自動的に送信されます。
+
+    :param request: PasswordChange
+    :type request: PasswordChange
+    :param db: データベースセッション
+    :type db: Session
+    :return: アクセストークンとメッセージを返します
+    :rtype: dict
+    :raises HTTPException: ユーザー名または仮パスワードが無効な場合
+    """
+    print(f"Password change attempt for username: {request.username}")
+    create_logger(f"パスワード変更試行: {request.username}")
+
+    # ユーザーの存在確認
+    user = db.query(User).filter(User.email == request.username).first()
+    if not user:
+        create_error_logger(f"無効なユーザー名です: {request.username}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="無効なユーザー名です"
+        )
+
+    # 仮パスワードの検証
+    if not Hash.verify(user.password, request.temp_password):
+        create_error_logger(f"無効な仮パスワードです: {request.username}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="無効な仮パスワードです"
+        )
+
+    # 新しいパスワードのハッシュ化と更新
+    hashed_new_password = Hash.bcrypt(request.new_password)
+    user.password = hashed_new_password
+
+    try:
+        db.commit()
+        create_logger(f"パスワード変更成功: {request.username}")
+        
+        # 登録完了メールを送信
+        try:
+            await send_registration_complete_email(user.email, user.name or "ユーザー")
+            create_logger(f"登録完了メール送信成功: {user.email}")
+        except Exception as email_error:
+            # メール送信エラーは主処理に影響しないようにログのみ記録
+            create_error_logger(f"登録完了メール送信エラー: {user.email}, エラー: {str(email_error)}")
+        
+        # 新しいアクセストークンを生成
+        access_token = create_access_token(
+            data={"sub": user.email, "id": user.id}
+        )
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "message": "パスワードが正常に変更されました。登録完了メールを送信しました。"
+        }
+
+    except Exception as e:
+        db.rollback()
+        create_error_logger(f"パスワード変更失敗: {request.username}, エラー: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="パスワード変更中にエラーが発生しました"
+        )

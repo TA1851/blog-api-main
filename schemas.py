@@ -203,6 +203,30 @@ class Login(BaseModel):
         model_config = ConfigDict(from_attributes=True)
 
 
+class PasswordChange(BaseModel):
+    """パスワード変更用モデル
+
+    :param username: ユーザー名（メールアドレス）
+    :param temp_password: 仮パスワード
+    :param new_password: 新しいパスワード
+    """
+    username: EmailStr = Field(
+        ..., title="メールアドレス", max_length=50, 
+        description="メールアドレスを入力してください"
+    )
+    temp_password: str = Field(
+        ..., title="仮パスワード", max_length=50,
+        description="現在の仮パスワードを入力してください"
+    )
+    new_password: str = Field(
+        ..., title="新しいパスワード", max_length=50, min_length=8,
+        description="8文字以上50文字以内で新しいパスワードを入力してください"
+    )
+
+    class ConfigDict:
+        model_config = ConfigDict(from_attributes=True)
+
+
 class Token(BaseModel):
     """トークン用モデル
 
