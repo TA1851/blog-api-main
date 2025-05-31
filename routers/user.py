@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from pydantic import ValidationError
 from datetime import datetime, timedelta
 from uuid import uuid4
+from urllib.parse import unquote
 
 from schemas import User as UserSchema
 from models import User as UserModel
@@ -86,6 +87,7 @@ class SQLAlchemyError(Exception):
 ALLOWED_EMAIL_DOMAINS_RAW = os.getenv("ALLOWED_EMAIL_DOMAINS", "")
 ALLOWED_EMAIL_DOMAINS = [domain.strip() for domain in ALLOWED_EMAIL_DOMAINS_RAW.split(",") if domain.strip()]
 ENABLE_DOMAIN_RESTRICTION = os.getenv("ENABLE_DOMAIN_RESTRICTION", "true").lower() == "true"
+ENABLE_EMAIL_VERIFICATION = os.getenv("ENABLE_EMAIL_VERIFICATION", "true").lower() == "true"
 
 # デバッグ情報をログに出力
 create_logger(f"[修正後] 環境変数ALLOWED_EMAIL_DOMAINS_RAW: '{ALLOWED_EMAIL_DOMAINS_RAW}'")
@@ -121,28 +123,25 @@ class UserRouter:
     status_code=status.HTTP_201_CREATED,
     response_model=UserSchema,
     summary="User Create",
-    description="ユーザーを作成するエンドポイント",
+    description="ユーザーを作成するエンドポイント（シンプル登録）",
     )
     async def create_user(
         user: UserSchema,
         db: Session = Depends(get_db)
     ) -> dict:
-        """ユーザーを作成するエンドポイント"""
+        """ユーザーを作成するエンドポイント（シンプル登録）"""
         try:
-            # デバッグ情報をログに出力
             create_logger(f"ユーザー作成開始 - メール: {user.email}")
-            create_logger(f"ドメイン制限設定: {ENABLE_DOMAIN_RESTRICTION}")
-            create_logger(f"許可されたドメイン: {ALLOWED_EMAIL_DOMAINS}")
             
-            # メールアドレスのドメインチェック
-            if not is_valid_email_domain(user.email):
-                create_error_logger(f"ドメイン検証失敗 - メール: {user.email}, ドメイン: {user.email.split('@')[-1]}")
+            # ドメイン制限チェック（有効な場合のみ）
+            if ENABLE_DOMAIN_RESTRICTION and not is_valid_email_domain(user.email):
+                create_error_logger(f"ドメイン検証失敗 - メール: {user.email}")
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"このメールアドレスのドメインは許可されていません。許可されたドメイン: {', '.join(ALLOWED_EMAIL_DOMAINS)}"
                 )
 
-            # メールアドレスの重複チェック（既にユーザーが存在するか）
+            # メールアドレスの重複チェック
             existing_user = db.query(UserModel).filter(
                 UserModel.email == user.email
             ).first()
@@ -154,76 +153,64 @@ class UserRouter:
                     detail="このメールアドレスは既に使用されています。"
                 )
 
-            # 既存の確認レコードをチェック
-            existing_verification = db.query(EmailVerification).filter(
-                EmailVerification.email == user.email
-            ).first()
+            if ENABLE_EMAIL_VERIFICATION:
+                # メール認証が有効な場合の従来の処理
+                existing_verification = db.query(EmailVerification).filter(
+                    EmailVerification.email == user.email
+                ).first()
 
-            if existing_verification:
-                if existing_verification.is_verified:
-                    # 既に確認済みの場合
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail="このメールアドレスは既に確認済みです。"
-                    )
+                if existing_verification:
+                    if existing_verification.is_verified:
+                        raise HTTPException(
+                            status_code=status.HTTP_409_CONFLICT,
+                            detail="このメールアドレスは既に確認済みです。"
+                        )
+                    else:
+                        existing_verification.token = str(uuid4())
+                        existing_verification.created_at = datetime.utcnow()
+                        existing_verification.expires_at = datetime.utcnow() + timedelta(hours=24)
+                        verification = existing_verification
+                        create_logger(f"既存の確認レコードを更新しました: {user.email}")
                 else:
-                    # 未確認の場合は既存レコードを更新
-                    existing_verification.token = str(uuid4())
-                    existing_verification.created_at = datetime.utcnow()
-                    existing_verification.expires_at = datetime.utcnow() + timedelta(hours=24)
-                    verification = existing_verification
-                    create_logger(f"既存の確認レコードを更新しました: {user.email}")
+                    verification = EmailVerification.create_verification(user.email)
+                    db.add(verification)
+                    create_logger(f"新しい確認レコードを作成しました: {user.email}")
+
+                db.commit()
+                await send_verification_email(user.email, verification.token)
+
+                return {
+                    "message": "ユーザー登録を受け付けました。確認メールをお送りしましたので、メール内のリンクをクリックして登録を完了してください。",
+                    "email": user.email
+                }
             else:
-                # 新しい確認レコードを作成
-                verification = EmailVerification.create_verification(user.email)
-                db.add(verification)
-                create_logger(f"新しい確認レコードを作成しました: {user.email}")
-
-            db.commit()
-
-            # 確認メールの送信
-            await send_verification_email(user.email, verification.token)
-
-            return {
-                "message": "ユーザー登録を受け付けました。確認メールをお送りしましたので、メール内のリンクをクリックして登録を完了してください。",
-                "email": user.email
-            }
+                # シンプル登録：直接ユーザーを作成
+                new_user = UserModel(
+                    email=user.email,
+                    password=Hash.bcrypt(user.password),
+                    is_active=True  # 直接アクティブ化
+                )
+                
+                db.add(new_user)
+                db.commit()
+                db.refresh(new_user)
+                
+                create_logger(f"ユーザーを直接作成しました: {user.email}")
+                
+                return {
+                    "message": "ユーザー登録が完了しました。ログインできます。",
+                    "email": user.email,
+                    "id": new_user.id,
+                    "is_active": new_user.is_active
+                }
 
         except HTTPException:
-            # HTTPExceptionはそのまま再発生
             db.rollback()
             raise
-
-        except IntegrityError as e:
-            db.rollback()
-            create_error_logger(f"データベース整合性エラー: {str(e)}")
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="このメールアドレスは既に登録処理中です。"
-            )
-
-        except ValidationError as e:
-            db.rollback()
-            print(f"パスワードが不正です: {str(e)}")
-            create_error_logger(f"パスワードが不正です: {str(e)}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="パスワードが不正です。"
-            )
-
-        except SQLAlchemyError as e:
-            db.rollback()
-            print(f"データベースエラーが発生しました: {str(e)}")
-            create_error_logger(f"データベースエラーが発生しました: {str(e)}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="データベースエラーが発生しました。"
-            )
 
         except Exception as e:
             db.rollback()
             error_detail = traceback.format_exc()
-            print(f"不明なエラーが発生しました: {error_detail}")
             create_error_logger(f"不明なエラーが発生しました: {error_detail}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -244,11 +231,24 @@ class UserRouter:
         token: str = Query(...),
         db: Session = Depends(get_db)
     ):
+        # デバッグログを追加
+        create_logger(f"メール認証リクエスト受信 - 元のトークン: {token}")
+        
+        # URLデコード処理（安全性を確保）
+        decoded_token = unquote(token)
+        create_logger(f"メール認証リクエスト受信 - デコード後トークン: {decoded_token}")
+        
         verification = db.query(EmailVerification).filter(
-            EmailVerification.token == token
+            EmailVerification.token == decoded_token
         ).first()
 
         if not verification:
+            # デバッグ：データベース内の全トークンを確認
+            all_verifications = db.query(EmailVerification).all()
+            create_logger(f"データベース内のトークン数: {len(all_verifications)}")
+            for v in all_verifications:
+                create_logger(f"DB内トークン: {v.token}, Email: {v.email}, 確認済み: {v.is_verified}")
+            
             raise HTTPException(
                 status_code=400,
                 detail="無効なトークンです。"
