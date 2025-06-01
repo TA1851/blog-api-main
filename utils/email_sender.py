@@ -5,6 +5,8 @@ from urllib.parse import quote
 
 
 CORS_ORIGINS = os.getenv("CORS_ORIGINS")
+LOCAL_CORS_ORIGINS = os.getenv("LOCAL_CORS_ORIGINS")
+SERVER_PORT = os.getenv("SERVER_PORT", "8080")
 
 
 def get_mail_config():
@@ -49,7 +51,14 @@ async def send_verification_email(email: str, token: str):
     create_logger(f"メール送信開始 - 宛先: {email}, トークン: {token}")
     
     encoded_token = quote(token, safe='')
-    verification_url = f"{CORS_ORIGINS}/verify-email?token={encoded_token}"
+    
+    # 開発環境では127.0.0.1を使用、本番環境ではCORS_ORIGINSを使用
+    if LOCAL_CORS_ORIGINS:
+        verification_url = f"http://127.0.0.1:{SERVER_PORT}/api/v1/verify-email?token={encoded_token}"
+    else:
+        verification_url = f"{CORS_ORIGINS}/api/v1/verify-email?token={encoded_token}"
+    
+    create_logger(f"生成された確認URL: {verification_url}")
     
     content = (
         "こんにちは！\n\n"
@@ -58,7 +67,7 @@ async def send_verification_email(email: str, token: str):
         "初期パスワード：temp_password_123\n\n"
         "以下のリンクをクリックしてください：\n"
         f"{verification_url}\n\n"
-        "このリンクの有効時間は1時間です。\n\n"
+        "このリンクの有効時間は24時間です。\n\n"
         "Blog API チーム"
     )
     
@@ -304,5 +313,134 @@ async def send_registration_complete_email(email: str, username: str):
             "登録完了メール送信（エラー発生 - 開発モード）",
             email,
             "【Blog API】登録完了のお知らせ",
+            content
+        )
+
+async def send_account_deletion_email(email: str, username: str):
+    """退会完了メールを送信する"""
+    create_logger(f"退会完了メール送信開始 - 宛先: {email}, ユーザー名: {username}")
+    
+    content = (
+        f"こんにちは、{username}さん\n\n"
+        "Blog APIからの退会手続きが完了いたしました。\n\n"
+        "これまでBlog APIをご利用いただき、誠にありがとうございました。\n"
+        "お客様の投稿された記事やデータは、ご要望に従って削除させていただきました。\n\n"
+        "退会に関する詳細：\n"
+        "• ユーザーアカウントの削除\n"
+        "• 投稿された記事の削除\n"
+        "• 個人情報の削除\n\n"
+        "また何かの機会がございましたら、いつでもお気軽にご利用ください。\n"
+        "新規登録はいつでも可能です。\n\n"
+        "今後ともよろしくお願いいたします。\n\n"
+        "Blog API チーム"
+    )
+    
+    if not _is_email_enabled():
+        create_logger(f"[開発モード] 退会完了メール情報をコンソールに出力: {email}")
+        _print_dev_mode_email(
+            "退会完了メール送信（開発モード）",
+            email,
+            "【Blog API】退会完了のお知らせ",
+            content
+        )
+        return
+
+    if not _validate_mail_config():
+        create_error_logger("メール設定が不完全です。開発モードでコンソール出力します。")
+        _print_dev_mode_email(
+            "退会完了メール送信（開発モード - 設定不完全）",
+            email,
+            "【Blog API】退会完了のお知らせ",
+            content
+        )
+        return
+
+    try:
+        conf = get_mail_config()
+        if not conf:
+            raise Exception("メール設定が正しく設定されていません")
+        
+        # プレーンテキストメール
+        plain_body = content.replace('\n', '\r\n')
+
+        # HTMLメール
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>退会完了のお知らせ</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #e74c3c; margin: 0;">👋 退会完了</h1>
+        </div>
+        
+        <h2 style="color: #2c3e50;">こんにちは、{username}さん</h2>
+        
+        <p style="font-size: 16px; color: #e74c3c; font-weight: bold;">
+            Blog APIからの退会手続きが完了いたしました。
+        </p>
+        
+        <p>これまでBlog APIをご利用いただき、誠にありがとうございました。</p>
+        <p>お客様の投稿された記事やデータは、ご要望に従って削除させていただきました。</p>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #2c3e50; margin-top: 0;">退会に関する詳細：</h3>
+            <ul style="margin: 0;">
+                <li style="margin: 8px 0;">✅ ユーザーアカウントの削除</li>
+                <li style="margin: 8px 0;">✅ 投稿された記事の削除</li>
+                <li style="margin: 8px 0;">✅ 個人情報の削除</li>
+            </ul>
+        </div>
+        
+        <div style="background-color: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #27ae60; margin: 30px 0;">
+            <p style="margin: 0; color: #2d5a2d;">
+                <strong>また何かの機会がございましたら、いつでもお気軽にご利用ください。</strong><br>
+                新規登録はいつでも可能です。
+            </p>
+        </div>
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+        
+        <p style="color: #666; font-size: 12px; text-align: center;">
+            今後ともよろしくお願いいたします。<br><br>
+            <strong>Blog API チーム</strong>
+        </p>
+    </div>
+</body>
+</html>"""
+        
+        PREFER_PLAIN_TEXT = os.getenv("PREFER_PLAIN_TEXT_EMAIL", "false").lower() == "true"
+        
+        if PREFER_PLAIN_TEXT:
+            message = MessageSchema(
+                subject="【Blog API】退会完了のお知らせ",
+                recipients=[email],
+                body=plain_body,
+                subtype="plain",
+                charset="utf-8"
+            )
+        else:
+            message = MessageSchema(
+                subject="【Blog API】退会完了のお知らせ",
+                recipients=[email],
+                body=plain_body,
+                html=html_body,
+                subtype="html",
+                charset="utf-8"
+            )
+        
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        create_logger(f"退会完了メールを送信しました: {email}")
+        
+    except Exception as e:
+        create_error_logger(f"退会完了メール送信エラー: {str(e)}")
+        _print_dev_mode_email(
+            "退会完了メール送信（エラー発生 - 開発モード）",
+            email,
+            "【Blog API】退会完了のお知らせ",
             content
         )

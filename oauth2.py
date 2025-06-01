@@ -9,12 +9,12 @@ from models import User
 from schemas import TokenData
 from custom_token import SECRET_KEY, ALGORITHM
 from logger.custom_logger import create_logger, create_error_logger
-from routers.user import show_user
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
-# データベースURLを取得（本番環境のPostgreSQLを優先、次に開発環境のSQLite）
-db_url = db_env.get("posgre_url")
+# データベースURLを取得（開発環境ではSQLiteを使用）
+# db_url = db_env.get("posgre_url")  # 本番環境用PostgreSQL（コメントアウト）
+db_url = db_env.get("sqlite_url")  # 開発環境用SQLite
 # key03 = db_env.get("file_id_03")
 # key10 = db_env.get("file_id_10")
 
@@ -97,5 +97,8 @@ async def get_current_user(
       create_error_logger(f"JWTErrorが発生しました: {str(e)}")
       raise credentials_exception
 
-  user = await show_user(id, db)
+  # 直接データベースからユーザーを取得
+  user = db.query(User).filter(User.email == token_data.email).first()
+  if user is None:
+      raise credentials_exception
   return user

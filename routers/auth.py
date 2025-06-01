@@ -21,8 +21,9 @@ router = APIRouter(
 )
 
 
-# データベースURLを取得（本番環境のPostgreSQLを優先、次に開発環境のSQLite）
-db_url = db_env.get("posgre_url")
+# データベースURLを取得（開発環境ではSQLiteを使用）
+# db_url = db_env.get("posgre_url")  # 本番環境用PostgreSQL（コメントアウト）
+db_url = db_env.get("sqlite_url")  # 開発環境用SQLite
 
 # key03 = db_env.get("file_id_03")
 # key09 = db_env.get("file_id_09")
@@ -147,8 +148,8 @@ async def login(
             detail=f"無効なユーザー名です"
         )
     if not Hash.verify(
-        user.password,
-        request.password
+        request.password,
+        user.password
     ):
         # print("Password verification failed")
         create_error_logger(f"無効なパスワードです: {request.password}")
@@ -333,7 +334,7 @@ async def change_password(
         )
 
     # 仮パスワードの検証
-    if not Hash.verify(user.password, request.temp_password):
+    if not Hash.verify(request.temp_password, user.password):
         create_error_logger(f"無効な仮パスワードです: {request.username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -350,11 +351,13 @@ async def change_password(
         
         # 登録完了メールを送信
         try:
-            await send_registration_complete_email(user.email, user.name or "ユーザー")
-            create_logger(f"登録完了メール送信成功: {user.email}")
+            # user.nameがNoneの場合はメールアドレスのローカル部分を使用
+            user_name = user.name if user.name else user.email.split('@')[0]
+            await send_registration_complete_email(user.email, user_name)
+            create_logger(f"登録完了メールを送信しました: {user.email}")
         except Exception as email_error:
-            # メール送信エラーは主処理に影響しないようにログのみ記録
-            create_error_logger(f"登録完了メール送信エラー: {user.email}, エラー: {str(email_error)}")
+            create_error_logger(f"登録完了メール送信に失敗しました: {user.email}, エラー: {str(email_error)}")
+            # メール送信失敗でもパスワード変更は成功とする
         
         # 新しいアクセストークンを生成
         access_token = create_access_token(
@@ -364,7 +367,7 @@ async def change_password(
         return {
             "access_token": access_token,
             "token_type": "bearer",
-            "message": "パスワードが正常に変更されました。登録完了メールを送信しました。"
+            "message": "パスワードが正常に変更されました。"
         }
 
     except Exception as e:

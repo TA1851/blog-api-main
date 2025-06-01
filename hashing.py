@@ -20,11 +20,11 @@ class Hash:
         return password_context.hash(password)
 
     @staticmethod
-    def verify(hashed_password: str, plain_password: str) -> bool:
+    def verify(plain_password: str, hashed_password: str) -> bool:
         """平文のパスワードとハッシュ化されたパスワードを比較
 
-        :param hashed_password: ハッシュ化されたパスワード
         :param plain_password: 平文のパスワード
+        :param hashed_password: ハッシュ化されたパスワード
         :return: 一致する場合は True, それ以外は False
         """
         return password_context.verify(plain_password, hashed_password)

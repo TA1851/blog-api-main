@@ -66,8 +66,8 @@ def read_env_var(env_path: Path) -> dict:
     # id_A008 = os.getenv("AA08")
     # id_A009 = os.getenv("AA09")
     # id_A010 = os.getenv("AA10")
-    # sqlite_url = os.getenv("SQLITE_URL") # ローカルで開発する時に有効にする
-    posgre_database_url = os.getenv("POSGRE_URL")
+    sqlite_url = os.getenv("SQLITE_URL") # ローカルで開発する時に有効にする
+    # posgre_database_url = os.getenv("POSGRE_URL")
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
     cors_origins = os.getenv("CORS_ORIGINS")
@@ -132,21 +132,21 @@ def read_env_var(env_path: Path) -> dict:
     #     print(f"ファイルIDが取得できませんでした。 -> {id_A010}")
     #     create_error_logger(f"ファイルIDが取得できませんでした。 {id_A010}")
 
-    # if sqlite_url:
-    #     # print(f"STEP4：DB_URLを取得しました。 -> {sqlite_url}")
-    #     create_logger(f"開発用のDB_URLを取得しました。: {sqlite_url}")
-    #     result["sqlite_url"] = sqlite_url
-    # else:
-    #     print("開発用のDB_URLが取得できませんでした。")
-    #     create_error_logger("開発用のDB_URLが取得できませんでした。")
-
-    if posgre_database_url:
-        # print(f"STEP4：DB_URLを取得しました。 -> {posgre_database_url}")
-        create_logger(f"本番用のDB_URLを取得しました。: {posgre_database_url}")
-        result["posgre_url"] = posgre_database_url
+    if sqlite_url:
+        # print(f"STEP4：DB_URLを取得しました。 -> {sqlite_url}")
+        create_logger(f"開発用のDB_URLを取得しました。: {sqlite_url}")
+        result["sqlite_url"] = sqlite_url
     else:
-        print("本番用のDB_URLが取得できませんでした。")
-        create_error_logger("本番用のDB_URLが取得できませんでした。")
+        print("開発用のDB_URLが取得できませんでした。")
+        create_error_logger("開発用のDB_URLが取得できませんでした。")
+
+    # if posgre_database_url:
+    #     # print(f"STEP4：DB_URLを取得しました。 -> {posgre_database_url}")
+    #     create_logger(f"本番用のDB_URLを取得しました。: {posgre_database_url}")
+    #     result["posgre_url"] = posgre_database_url
+    # else:
+    #     print("本番用のDB_URLが取得できませんでした。")
+    #     create_error_logger("本番用のDB_URLが取得できませんでした。")
 
     if secret_key:
         # print(f"STEP4：SECRET_KEYを取得しました。 -> {secret_key}")

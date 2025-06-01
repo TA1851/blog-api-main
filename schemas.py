@@ -265,3 +265,16 @@ class PublicArticle(BaseModel):
 
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
+
+
+class AccountDeletionRequest(BaseModel):
+    """退会リクエストのスキーマ"""
+    email: EmailStr = Field(..., description="退会するユーザーのメールアドレス")
+    password: str = Field(..., min_length=8, description="現在のパスワード")
+    confirm_password: str = Field(..., min_length=8, description="確認用パスワード")
+    
+    def validate_passwords_match(self):
+        """パスワードと確認用パスワードが一致するかチェック"""
+        if self.password != self.confirm_password:
+            raise ValueError("パスワードと確認用パスワードが一致しません")
+        return True
