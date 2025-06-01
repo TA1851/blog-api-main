@@ -20,10 +20,10 @@ router = APIRouter(
     tags=["auth"],
 )
 
-
-# データベースURLを取得（開発環境ではSQLiteを使用）
-# db_url = db_env.get("posgre_url")  # 本番環境用PostgreSQL（コメントアウト）
-db_url = db_env.get("sqlite_url")  # 開発環境用SQLite
+# TODO: 開発時に切り替える
+# データベースURLを取得：
+# db_url = db_env.get("posgre_url")  # 本番環境用
+db_url = db_env.get("sqlite_url")  # 開発環境用
 
 # key03 = db_env.get("file_id_03")
 # key09 = db_env.get("file_id_09")
@@ -87,8 +87,6 @@ def get_db():
         db.close()
         # print("DBセッションをクローズしました")
         create_logger("DBセッションをクローズしました")
-
-
 
 
 @router.post('/login')
@@ -171,7 +169,7 @@ async def login(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
 
 
-# ブラックリストを保持するセット（メモリ内）
+# ブラックリストを保持するセット
 token_blacklist: Set[str] = set()
 
 
@@ -195,7 +193,7 @@ def verify_token(
             detail="トークンが無効化されています"
         )
     try:
-        # トークンの検証ロジック（既存のコードがあれば利用）
+        # トークンの検証ロジックを実装
         payload = jwt.decode(token, "your-secret-key", algorithms=["HS256"])
         email = payload.get("sub")
         if email is None:
@@ -348,7 +346,7 @@ async def change_password(
     try:
         db.commit()
         create_logger(f"パスワード変更成功: {request.username}")
-        
+
         # 登録完了メールを送信
         try:
             # user.nameがNoneの場合はメールアドレスのローカル部分を使用
@@ -357,19 +355,16 @@ async def change_password(
             create_logger(f"登録完了メールを送信しました: {user.email}")
         except Exception as email_error:
             create_error_logger(f"登録完了メール送信に失敗しました: {user.email}, エラー: {str(email_error)}")
-            # メール送信失敗でもパスワード変更は成功とする
-        
+
         # 新しいアクセストークンを生成
         access_token = create_access_token(
             data={"sub": user.email, "id": user.id}
         )
-
         return {
             "access_token": access_token,
             "token_type": "bearer",
             "message": "パスワードが正常に変更されました。"
         }
-
     except Exception as e:
         db.rollback()
         create_error_logger(f"パスワード変更失敗: {request.username}, エラー: {str(e)}")

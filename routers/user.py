@@ -21,14 +21,14 @@ from utils.email_validator import is_valid_email_domain
 
 
 router = APIRouter(
-    prefix="/api/v1",  # APIのバージョンを指定
-    tags=["user"],  # SwaggerUIのタグを指定
+    prefix="/api/v1",
+    tags=["user"],
 )
 
 
-# データベースURLを取得（開発環境ではSQLiteを使用）
-# db_url = db_env.get("posgre_url")  # 本番環境用PostgreSQL（コメントアウト）
-db_url = db_env.get("sqlite_url")  # 開発環境用SQLite
+# データベースURLを取得
+# db_url = db_env.get("posgre_url")  # 本番環境用
+db_url = db_env.get("sqlite_url")  # 開発環境用
 # key03 = db_env.get("file_id_03")
 # key08 = db_env.get("file_id_08")
 
@@ -84,13 +84,13 @@ class SQLAlchemyError(Exception):
     """データベース関連のエラー"""
     pass
 
-# 環境変数の読み込みを修正（直接os.environから読み込む）
+# 環境変数の読み込む
 ALLOWED_EMAIL_DOMAINS_RAW = os.getenv("ALLOWED_EMAIL_DOMAINS", "")
 ALLOWED_EMAIL_DOMAINS = [domain.strip() for domain in ALLOWED_EMAIL_DOMAINS_RAW.split(",") if domain.strip()]
 ENABLE_DOMAIN_RESTRICTION = os.getenv("ENABLE_DOMAIN_RESTRICTION", "true").lower() == "true"
 ENABLE_EMAIL_VERIFICATION = os.getenv("ENABLE_EMAIL_VERIFICATION", "true").lower() == "true"
 
-# デバッグ情報をログに出力
+# デバッグ情報
 create_logger(f"[修正後] 環境変数ALLOWED_EMAIL_DOMAINS_RAW: '{ALLOWED_EMAIL_DOMAINS_RAW}'")
 create_logger(f"[修正後] 解析後のALLOWED_EMAIL_DOMAINS: {ALLOWED_EMAIL_DOMAINS}")
 create_logger(f"[修正後] ENABLE_DOMAIN_RESTRICTION: {ENABLE_DOMAIN_RESTRICTION}")
@@ -106,17 +106,23 @@ def is_valid_email_domain(email: str) -> bool:
     if not ENABLE_DOMAIN_RESTRICTION:
         create_logger(f"ドメイン制限が無効化されています。メール: {email}")
         return True
-    
+
     if not ALLOWED_EMAIL_DOMAINS:
-        create_error_logger("許可されたドメインが設定されていません。すべてのドメインを許可します。")
+        create_error_logger(
+            "許可されたドメインが設定されていません。すべてのドメインを許可します。"
+            )
         return True
-    
+
     domain = email.split('@')[-1].lower()
     is_valid = domain in ALLOWED_EMAIL_DOMAINS
-    
-    create_logger(f"メールドメイン検証 - メール: {email}, ドメイン: {domain}, 許可ドメイン: {ALLOWED_EMAIL_DOMAINS}, 結果: {is_valid}")
-    
+
+    create_logger(
+        f"メールドメイン検証 - メール: {email}, ドメイン: {domain}, \
+        許可ドメイン: {ALLOWED_EMAIL_DOMAINS}, 結果: {is_valid}"
+        )
+
     return is_valid
+
 
 class UserRouter:
     @router.post(
@@ -133,13 +139,14 @@ class UserRouter:
         """ユーザーを作成するエンドポイント（シンプル登録）"""
         try:
             create_logger(f"ユーザー作成開始 - メール: {user.email}")
-            
-            # ドメイン制限チェック（有効な場合のみ）
+
+            # ドメイン制限チェック
             if ENABLE_DOMAIN_RESTRICTION and not is_valid_email_domain(user.email):
                 create_error_logger(f"ドメイン検証失敗 - メール: {user.email}")
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"このメールアドレスのドメインは許可されていません。許可されたドメイン: {', '.join(ALLOWED_EMAIL_DOMAINS)}"
+                    detail=f"このメールアドレスのドメインは許可されていません。許可されたドメイン: \
+                    {', '.join(ALLOWED_EMAIL_DOMAINS)}"
                 )
 
             # メールアドレスの重複チェック
@@ -188,20 +195,18 @@ class UserRouter:
                     "email": user.email
                 }
             else:
-                # シンプル登録：直接ユーザーを作成
+                # ユーザーの作成
                 new_user = UserModel(
                     name=user.name if hasattr(user, 'name') and user.name else user.email.split('@')[0],
                     email=user.email,
                     password=Hash.bcrypt(user.password),
-                    is_active=True  # 直接アクティブ化
+                    is_active=True
                 )
-                
                 db.add(new_user)
                 db.commit()
                 db.refresh(new_user)
-                
                 create_logger(f"ユーザーを直接作成しました: {user.email}")
-                
+
                 return {
                     "message": "ユーザー登録が完了しました。ログインできます。",
                     "email": user.email,
@@ -221,7 +226,6 @@ class UserRouter:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="予期しないエラーが発生しました。"
             )
-
         finally:
             create_logger("DBセッションをクローズします")
             db.close()
@@ -229,7 +233,7 @@ class UserRouter:
 
     @router.get(
         "/verify-email",
-        summary="Email Verification", 
+        summary="Email Verification",
         description="ユーザーのメールアドレスを確認するエンドポイント",
     )
     async def verify_email(
@@ -238,11 +242,12 @@ class UserRouter:
     ):
         # デバッグログを追加
         create_logger(f"メール認証リクエスト受信 - 元のトークン: {token}")
-        
+
         # URLデコード処理（安全性を確保）
         decoded_token = unquote(token)
-        create_logger(f"メール認証リクエスト受信 - デコード後トークン: {decoded_token}")
-        
+        create_logger(
+            f"メール認証リクエスト受信 - デコード後トークン: {decoded_token}"
+            )
         # トークンの形式チェック
         if not decoded_token or len(decoded_token) < 10:
             create_error_logger(f"無効なトークン形式: {decoded_token}")
@@ -250,45 +255,45 @@ class UserRouter:
                 status_code=400,
                 detail="無効なトークン形式です。"
             )
-        
+
         verification = db.query(EmailVerification).filter(
             EmailVerification.token == decoded_token
         ).first()
 
         if not verification:
-            # デバッグ：データベース内の全トークンを確認
+            # データベース内の全トークンを確認
             all_verifications = db.query(EmailVerification).all()
             create_logger(f"データベース内のトークン数: {len(all_verifications)}")
             for v in all_verifications:
-                create_logger(f"DB内トークン: {v.token[:20]}..., Email: {v.email}, 確認済み: {v.is_verified}")
-            
+                create_logger(
+                    f"DB内トークン: {v.token[:20]}..., Email: {v.email}, 確認済み: {v.is_verified}"
+                    )
             create_error_logger(f"トークンが見つかりません: {decoded_token[:20]}...")
             raise HTTPException(
                 status_code=400,
                 detail="無効なトークンです。"
             )
-
         if verification.is_verified:
             raise HTTPException(
                 status_code=400,
                 detail="このメールアドレスは既に確認済みです。"
             )
-
         if datetime.utcnow() > verification.expires_at:
             raise HTTPException(
                 status_code=400,
                 detail="トークンの有効期限が切れています。"
             )
 
-        # 保存されたパスワードを使用してユーザーを作成
-        # password_hashは既にハッシュ化されているので、そのまま使用
-        user_password = verification.password_hash if hasattr(verification, 'password_hash') and verification.password_hash else Hash.bcrypt("temp_password_123")
-        
+        # 初期パスワード
+        user_password = verification.password_hash if hasattr(
+            verification, 'password_hash') and verification.password_hash \
+            else Hash.bcrypt("temp_password_123")
+
         # ユーザーの作成
         new_user = UserModel(
-            name=verification.email.split('@')[0],  # メールアドレスのローカル部分をnameとして使用
+            name=verification.email.split('@')[0],  # @の前の部分をユーザー名に設定
             email=verification.email,
-            password=user_password,  # 既にハッシュ化済み
+            password=user_password,
             is_active=True
         )
 
@@ -305,7 +310,7 @@ class UserRouter:
         }
 
 
-# カスタム例外クラスを定義するモジュール
+# カスタム例外クラス（ユーザ関連）
 class UserNotFoundError(Exception):
     """ユーザーが見つからない場合の例外"""
     def __init__(self, user_id: int = None, email: str = None):
@@ -317,11 +322,13 @@ class UserNotFoundError(Exception):
             self.message = "User not found"
         super().__init__(self.message)
 
+
 class EmailVerificationError(Exception):
     """メール確認に関する例外"""
     def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
+
 
 class DatabaseError(Exception):
     """データベース関連の例外"""
@@ -389,11 +396,11 @@ async def resend_verification_email(
     verification.token = str(uuid4())
     verification.created_at = datetime.utcnow()
     verification.expires_at = datetime.utcnow() + timedelta(hours=24)
-    
+
     db.commit()
-    
+
     await send_verification_email(email, verification.token)
-    
+
     return {"message": "確認メールを再送信しました。"}
 
 
@@ -408,7 +415,7 @@ async def delete_user_account(
     db: Session = Depends(get_db)
 ):
     """ユーザーアカウントを削除するエンドポイント
-    
+
     :param deletion_request: 退会リクエストデータ
     :type deletion_request: AccountDeletionRequest
     :param db: データベースセッション
@@ -419,22 +426,22 @@ async def delete_user_account(
     """
     try:
         create_logger(f"退会処理開始 - メール: {deletion_request.email}")
-        
+
         # パスワード一致チェック
         deletion_request.validate_passwords_match()
-        
+
         # ユーザーの存在確認
         user = db.query(UserModel).filter(
             UserModel.email == deletion_request.email
         ).first()
-        
+
         if not user:
             create_error_logger(f"退会対象ユーザーが見つかりません: {deletion_request.email}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="指定されたメールアドレスのユーザーが見つかりません"
             )
-        
+
         # パスワード検証
         if not Hash.verify(deletion_request.password, user.password):
             create_error_logger(f"パスワード検証失敗: {deletion_request.email}")
@@ -442,54 +449,54 @@ async def delete_user_account(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="パスワードが正しくありません"
             )
-        
+
         # ユーザー名を保存（メール送信用）
         username = user.email.split('@')[0]
         user_email = user.email
-        
+
         create_logger(f"ユーザー検証完了: {user_email}, ID: {user.id}")
-        
-        # 1. ユーザーの記事を削除
+
+        # ユーザーの記事を削除
         from models import Article
         articles = db.query(Article).filter(Article.user_id == user.id).all()
         article_count = len(articles)
-        
+
         for article in articles:
             db.delete(article)
-        
+
         create_logger(f"ユーザーの記事を削除しました: {article_count}件")
-        
-        # 2. メール認証テーブルからも削除
+
+        # メール認証テーブルからも削除
         verification_records = db.query(EmailVerification).filter(
             EmailVerification.email == user_email
         ).all()
-        
+
         for verification in verification_records:
             db.delete(verification)
-        
+
         create_logger(f"メール認証レコードを削除しました: {len(verification_records)}件")
-        
-        # 3. ユーザーアカウントを削除
+
+        # ユーザーアカウントを削除
         db.delete(user)
-        
+
         # 変更をコミット
         db.commit()
-        
+
         create_logger(f"ユーザーアカウント削除完了: {user_email}")
-        
-        # 4. 退会完了メールを送信
+
+        # 退会完了メールを送信
         await send_account_deletion_email(user_email, username)
-        
+
         return {
             "message": "退会処理が完了しました。退会完了メールをお送りしました。",
             "deleted_articles_count": article_count,
             "email": user_email
         }
-        
+
     except HTTPException:
         db.rollback()
         raise
-    
+
     except ValueError as e:
         db.rollback()
         create_error_logger(f"バリデーションエラー: {str(e)}")
@@ -497,7 +504,7 @@ async def delete_user_account(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
-    
+
     except Exception as e:
         db.rollback()
         error_detail = traceback.format_exc()
@@ -506,7 +513,7 @@ async def delete_user_account(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="退会処理中に予期しないエラーが発生しました"
         )
-    
+
     finally:
         create_logger("DBセッションをクローズします")
         db.close()

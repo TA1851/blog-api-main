@@ -12,9 +12,10 @@ from logger.custom_logger import create_logger, create_error_logger
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
-# データベースURLを取得（開発環境ではSQLiteを使用）
-# db_url = db_env.get("posgre_url")  # 本番環境用PostgreSQL（コメントアウト）
-db_url = db_env.get("sqlite_url")  # 開発環境用SQLite
+# TODO: 開発時に切り替える
+# データベースURLを取得
+# db_url = db_env.get("posgre_url")  # 本番環境用
+db_url = db_env.get("sqlite_url")  # 開発環境用
 # key03 = db_env.get("file_id_03")
 # key10 = db_env.get("file_id_10")
 
@@ -90,13 +91,11 @@ async def get_current_user(
           print("emailがNoneです")
           create_error_logger("emailがNoneです")
           raise credentials_exception
-
       token_data = TokenData(email=email)
   except JWTError as e:
       print("JWTErrorが発生しました")
       create_error_logger(f"JWTErrorが発生しました: {str(e)}")
       raise credentials_exception
-
   # 直接データベースからユーザーを取得
   user = db.query(User).filter(User.email == token_data.email).first()
   if user is None:

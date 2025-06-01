@@ -35,12 +35,11 @@ class ArticleBase(BaseModel, validate_assignment=True):
         description="100文字以内で入力してください"
         )
     user_id: Optional[int] = None
-    
     @computed_field
     @property
     def body_html(self) -> str:
         """MarkdownテキストをHTMLに変換
-        
+
         :return: HTML形式の本文
         :rtype: str
         """
@@ -48,7 +47,6 @@ class ArticleBase(BaseModel, validate_assignment=True):
         md = markdown.Markdown(extensions=['nl2br'])
         html_content = md.convert(self.body)
         return html_content
-
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
 
@@ -60,8 +58,8 @@ class Article(ArticleBase):
         model_config = ConfigDict(from_attributes=True)
 
 
-key_06 = db_env.get("file_id_06")
-key_08 = db_env.get("file_id_08")
+# key_06 = db_env.get("file_id_06")
+# key_08 = db_env.get("file_id_08")
 
 # FastAPIのエンドポイントで使用する例外ハンドラ
 async def validation_exception_handler(request, exc):
@@ -108,9 +106,9 @@ class User(BaseModel):
         None, is_active="アクティブ", \
         description="TrueまたはFalseで入力してください"
         )
-
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
+
 
 class ShowUser(BaseModel):
     """ユーザー表示用モデル
@@ -140,7 +138,6 @@ class ShowUser(BaseModel):
         None, title="ブログ記事", \
         description="ユーザーが作成したブログ記事のリスト"
         )
-
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
 
@@ -164,12 +161,12 @@ class ShowArticle(BaseModel):
         None, title="本文", max_length=1000, \
         description="1000文字以内で入力してください"
         )
-    
+
     @computed_field
     @property
     def body_html(self) -> str | None:
         """MarkdownテキストをHTMLに変換
-        
+
         :return: HTML形式の本文
         :rtype: str | None
         """
@@ -272,7 +269,7 @@ class AccountDeletionRequest(BaseModel):
     email: EmailStr = Field(..., description="退会するユーザーのメールアドレス")
     password: str = Field(..., min_length=8, description="現在のパスワード")
     confirm_password: str = Field(..., min_length=8, description="確認用パスワード")
-    
+
     def validate_passwords_match(self):
         """パスワードと確認用パスワードが一致するかチェック"""
         if self.password != self.confirm_password:

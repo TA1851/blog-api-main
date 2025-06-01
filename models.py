@@ -30,7 +30,7 @@ class Article(Base):
     owner = relationship("User", back_populates="blogs")
     create_logger(f"Articleインスタンスが作成されました。")
 
-key_05 = db_env.get("file_id_05")
+# key_05 = db_env.get("file_id_05")
 # print(f"STEP10：Articleインスタンスが作成されました。 -> {key_05}")
 
 
@@ -57,6 +57,6 @@ class User(Base):
     # 特定のユーザーが作成した記事の情報を全て取得する
     blogs = relationship("Article", back_populates="owner")
 
-key_08 = db_env.get("file_id_08")
+# key_08 = db_env.get("file_id_08")
 # print(f"STEP10：Articleインスタンスが作成されました。 -> {key_08}")
 # print("---------------------------------------------------------------")

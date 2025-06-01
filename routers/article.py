@@ -19,10 +19,10 @@ router = APIRouter(
     tags=["articles"],
 )
 
-
-# データベースURLを取得（開発環境ではSQLiteを使用）
-# db_url = db_env.get("posgre_url")  # 本番環境用PostgreSQL（コメントアウト）
-db_url = db_env.get("sqlite_url")  # 開発環境用SQLite
+# TODO: 開発時に切り替える
+# データベースURLを取得
+# db_url = db_env.get("posgre_url")  # 本番環境用
+db_url = db_env.get("sqlite_url")  # 開発環境用
 # key03 = db_env.get("file_id_03")
 # key07 = db_env.get("file_id_07")
 
@@ -238,13 +238,11 @@ async def create_article(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="タイトルは必須項目です"
         )
-    
     if blog.body is None or blog.body.strip() == "":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="本文は必須項目です"
         )
-        
     # 自動採番処理
     max_article_id = db.query(func.max(Article.article_id)).scalar() or 0
     new_article_id = max_article_id + 1
@@ -259,6 +257,7 @@ async def create_article(
     db.commit()
     db.refresh(new_blog)
     return new_blog
+
 
 @router.put(
     "/articles",
@@ -310,25 +309,20 @@ async def update_article(
                 detail=f"Article not found or you do not have permission \
                 -> Article_id:{article_id}"
             )
-            
         # タイトルと本文の検証 - 空やNULLの場合はエラー
         if blog.title is None or blog.title.strip() == "":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="タイトルは必須項目です"
             )
-        
         if blog.body is None or blog.body.strip() == "":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="本文は必須項目です"
             )
-            
         # 記事の内容を更新
         update_blog.title = blog.title
         update_blog.body = blog.body
-
-        # DBに反映
         db.commit()
         db.refresh(update_blog)
 
@@ -336,7 +330,6 @@ async def update_article(
         create_logger(
             f"記事を更新しました。article_id: {article_id}, \
             user_id: {current_user.id}")
-
     except ValueError as e:
         # pprint.pprint(str(e))
         create_error_logger(
@@ -347,6 +340,7 @@ async def update_article(
             detail=f"Article not updated. article_id: {article_id}"
         )
     return update_blog
+
 
 @router.delete(
     "/articles",
@@ -431,24 +425,20 @@ async def get_public_articles(
     try:
         # 記事の総数を取得
         total_count = db.query(Article).count()
-        
+
         # 基本クエリ（記事ID順でソート）
         query = db.query(Article).order_by(Article.article_id.desc())
-        
+
         # skipが指定されている場合
         if skip:
             query = query.offset(skip)
-        
         # limitが指定されている場合
         if limit:
             query = query.limit(limit)
-            
         public_articles = query.all()
-        
         # Markdown変換を行ってPublicArticleオブジェクトに変換
         md = markdown.Markdown(extensions=['nl2br'])
         result_articles = []
-        
         for article in public_articles:
             body_html = md.convert(article.body)
             result_articles.append(PublicArticle(
@@ -456,8 +446,6 @@ async def get_public_articles(
                 title=article.title,
                 body_html=body_html
             ))
-        
-        # ログ出力
         if limit:
             create_logger(
                 f"パブリック記事を取得しました。全{total_count}件中{len(result_articles)}件表示 "
@@ -467,16 +455,13 @@ async def get_public_articles(
             create_logger(
                 f"パブリック記事を全件取得しました。全{total_count}件 (skip: {skip})"
             )
-            
     except Exception as e:
         create_error_logger(f"パブリック記事の取得に失敗しました: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="記事の取得に失敗しました"
         )
-    
     return result_articles
-
 
 
 @router.get(
@@ -513,13 +498,9 @@ async def search_public_articles(
     try:
         # URLデコードして日本語キーワードを正しく処理
         decoded_query = urllib.parse.unquote(q, encoding='utf-8')
-        
         # 複数のキーワードに対応（スペース区切り）
         keywords = decoded_query.strip().split()
-        
-        # 基本クエリを構築
         query = db.query(Article)
-        
         # 各キーワードでAND検索（タイトルまたは本文に含まれる）
         for keyword in keywords:
             search_filter = f"%{keyword}%"
@@ -529,24 +510,18 @@ async def search_public_articles(
                     Article.body.ilike(search_filter)
                 )
             )
-        
         # 記事ID降順でソート
         query = query.order_by(Article.article_id.desc())
-        
         # 検索結果の総数を取得
         total_count = query.count()
-        
         # ページネーション適用
         if skip:
             query = query.offset(skip)
         query = query.limit(limit)
-        
         search_results = query.all()
-        
         # Markdown変換を行ってPublicArticleオブジェクトに変換
         md = markdown.Markdown(extensions=['nl2br'])
         result_articles = []
-        
         for article in search_results:
             body_html = md.convert(article.body)
             result_articles.append(PublicArticle(
@@ -554,21 +529,18 @@ async def search_public_articles(
                 title=article.title,
                 body_html=body_html
             ))
-        
         create_logger(
             f"記事検索を実行しました。キーワード: '{decoded_query}' "
             f"(キーワード数: {len(keywords)}), "
             f"検索結果: {len(result_articles)}件/{total_count}件 "
             f"(skip: {skip}, limit: {limit})"
         )
-        
     except Exception as e:
         create_error_logger(f"記事検索に失敗しました。キーワード: '{q}', エラー: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="記事検索に失敗しました"
         )
-    
     return result_articles
 
 
@@ -594,26 +566,21 @@ async def get_public_article_by_id(
     try:
         # 記事IDで記事を検索
         article = db.query(Article).filter(Article.article_id == article_id).first()
-        
         if not article:
             create_error_logger(f"記事が見つかりません。ID: {article_id}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"記事ID {article_id} の記事が見つかりません"
             )
-        
         # Markdown変換を行ってPublicArticleオブジェクトに変換
         md = markdown.Markdown(extensions=['nl2br'])
         body_html = md.convert(article.body)
-        
         result_article = PublicArticle(
             article_id=article.article_id,
             title=article.title,
             body_html=body_html
         )
-        
         create_logger(f"記事詳細を取得しました。ID: {article_id}, タイトル: {article.title}")
-        
     except HTTPException:
         # HTTPException は再度発生させる
         raise
@@ -623,5 +590,4 @@ async def get_public_article_by_id(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="記事詳細の取得に失敗しました"
         )
-    
     return result_article
