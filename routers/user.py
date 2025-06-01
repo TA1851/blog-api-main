@@ -16,7 +16,7 @@ from database import db_env, session, get_db
 from hashing import Hash
 from models import User as UserModel
 from logger.custom_logger import create_logger, create_error_logger
-from utils.email_sender import send_verification_email
+from utils.email_sender import send_verification_email, send_registration_complete_email
 from utils.email_validator import is_valid_email_domain
 
 
@@ -166,13 +166,16 @@ class UserRouter:
                             detail="このメールアドレスは既に確認済みです。"
                         )
                     else:
+                        # 既存のレコードを更新（パスワードも保存）
                         existing_verification.token = str(uuid4())
                         existing_verification.created_at = datetime.utcnow()
                         existing_verification.expires_at = datetime.utcnow() + timedelta(hours=24)
+                        existing_verification.password_hash = Hash.bcrypt(user.password)
                         verification = existing_verification
                         create_logger(f"既存の確認レコードを更新しました: {user.email}")
                 else:
                     verification = EmailVerification.create_verification(user.email)
+                    verification.password_hash = Hash.bcrypt(user.password)
                     db.add(verification)
                     create_logger(f"新しい確認レコードを作成しました: {user.email}")
 
@@ -224,7 +227,7 @@ class UserRouter:
 
     @router.get(
         "/verify-email",
-        summary="Email Verification",
+        summary="Email Verification", 
         description="ユーザーのメールアドレスを確認するエンドポイント",
     )
     async def verify_email(
@@ -266,22 +269,29 @@ class UserRouter:
                 detail="トークンの有効期限が切れています。"
             )
 
-        # パスワードがない場合のデフォルトパスワードを設定
-        default_password = "temp_password_123"  # 実際の運用では別の方法を検討
+        # 保存されたパスワードを使用してユーザーを作成
+        user_password = verification.password_hash if hasattr(verification, 'password_hash') and verification.password_hash else Hash.bcrypt("temp_password_123")
         
         # ユーザーの作成
         new_user = UserModel(
             email=verification.email,
-            password=Hash.bcrypt(default_password)
+            password=user_password,
+            is_active=True
         )
 
         verification.is_verified = True
         db.add(new_user)
         db.commit()
+        db.refresh(new_user)
+
+        # 登録完了メールを送信
+        await send_registration_complete_email(verification.email, verification.email.split('@')[0])
 
         return {
-            "message": "メールアドレスの確認が完了しました。一時パスワードでユーザーが作成されました。ログイン後にパスワードを変更してください。",
-            "temporary_password": default_password
+            "message": "メールアドレスの確認が完了しました。登録が完了し、ログインできます。",
+            "email": verification.email,
+            "user_id": new_user.id,
+            "is_active": new_user.is_active
         }
 
 
