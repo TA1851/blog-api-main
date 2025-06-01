@@ -17,9 +17,6 @@ router = APIRouter(
     tags=["Auth"]
 )
 
-# print("")
-# pprint.pprint(db_env)
-# print("")
 
 SECRET_KEY = db_env.get("secret_key")
 ALGORITHM = db_env.get("algo")

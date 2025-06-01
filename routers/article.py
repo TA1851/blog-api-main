@@ -19,29 +19,6 @@ router = APIRouter(
     tags=["articles"],
 )
 
-# データベース設定は database.py で管理されているため、
-# article.py では個別の URL チェックは不要です。
-
-
-# def check_environment_variable():
-#     """環境変数を取得する
-
-#     :param key07: artile.pyの環境変数
-#     :type key07: str
-#     :return: 環境変数の値
-#     :rtype: str
-#     """
-#     if not key07:
-#         create_error_logger(f"環境変数:{key07}が設定されていません。{key07}")
-#         raise ValueError(f"環境変数が設定されていません。-> {key07}")
-#     else:
-#         # print(f"STEP17：環境変数：{key07}を取得しました。 -> {key07}")
-#         create_logger(f"環境変数{key07}を取得しました。:")
-#     return key07
-
-# データベース設定は database.py で管理されているため、
-# article.py では個別の URL チェックは不要です。
-
 
 @router.get(
     "/articles",
@@ -116,19 +93,11 @@ async def all_fetch(
 
     # ログメッセージを条件によって変更
     if limit:
-        # print(
-        #     f"ユーザーID: {current_user.id} のブログ記事 \
-        #     {len(user_blogs)}件を取得しました。 \
-        #     (制限: {limit}, 総数: {total_count})")
         create_logger(
             f"ユーザーID: {current_user.id} のブログ記事 \
             {len(user_blogs)}件を取得しました。(制限: {limit}, 総数: {total_count})"
             )
     else:
-        # print(
-        #     f"ユーザーID: {current_user.id} のブログ記事 \
-        #     全{len(user_blogs)}件を取得しました。(総数: {total_count})"
-        #     )
         create_logger(
             f"ユーザーID: {current_user.id} のブログ記事 \
             全{len(user_blogs)}件を取得しました。(総数: {total_count})"

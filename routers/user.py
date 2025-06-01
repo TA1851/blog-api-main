@@ -26,12 +26,6 @@ router = APIRouter(
 )
 
 
-# データベース設定は database.py で管理されているため、
-# user.py では個別の URL チェックは不要です。
-# key03 = db_env.get("file_id_03")
-# key08 = db_env.get("file_id_08")
-
-
 def check_environment_variable():
     """環境変数を取得する
 
@@ -40,13 +34,6 @@ def check_environment_variable():
     :return: 環境変数の値
     :rtype: str
     """
-    # if not key08:
-    #     create_error_logger(f"環境変数:{key08}が設定されていません。{key08}")
-    #     raise ValueError(f"環境変数が設定されていません。-> {key08}")
-    # else:
-    #     # print(f"STEP11：環境変数：{key08}を取得しました。 -> {key08}")
-    #     create_logger(f"環境変数{key08}を取得しました。:")
-    # return key08
 
 check_environment_variable()
 
@@ -61,27 +48,20 @@ def check_db_url():
     :return: 環境変数の値
     :rtype: str
     """
-    # if not db_url:
-    #     create_error_logger(f"環境変数:database_urlが設定されていません。 -> {key03}")
-    #     raise ValueError(f"環境変数が設定されていません。{key03}")
-    # else:
-    #     # print(f"STEP12：環境変数: {db_url}を読み込みました。")
-    #     create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
-    # return db_url
 
 check_db_url()
-# print(f"STEP13：ユーザを作成します。Swaggerで確認してください。")
-# print("---------------------------------------------------------------")
-
 get_db()
+
 
 class IntegrityError(Exception):
     """主にユニーク制約違反（メールアドレスが既に使用されている場合など）を示すエラー"""
     pass
 
+
 class SQLAlchemyError(Exception):
     """データベース関連のエラー"""
     pass
+
 
 # 環境変数の読み込む
 ALLOWED_EMAIL_DOMAINS_RAW = os.getenv("ALLOWED_EMAIL_DOMAINS", "")
@@ -93,6 +73,7 @@ ENABLE_EMAIL_VERIFICATION = os.getenv("ENABLE_EMAIL_VERIFICATION", "true").lower
 create_logger(f"[修正後] 環境変数ALLOWED_EMAIL_DOMAINS_RAW: '{ALLOWED_EMAIL_DOMAINS_RAW}'")
 create_logger(f"[修正後] 解析後のALLOWED_EMAIL_DOMAINS: {ALLOWED_EMAIL_DOMAINS}")
 create_logger(f"[修正後] ENABLE_DOMAIN_RESTRICTION: {ENABLE_DOMAIN_RESTRICTION}")
+
 
 def is_valid_email_domain(email: str) -> bool:
     """メールアドレスのドメインが許可されたものかチェックする

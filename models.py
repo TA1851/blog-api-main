@@ -30,9 +30,6 @@ class Article(Base):
     owner = relationship("User", back_populates="blogs")
     create_logger(f"Articleインスタンスが作成されました。")
 
-# key_05 = db_env.get("file_id_05")
-# print(f"STEP10：Articleインスタンスが作成されました。 -> {key_05}")
-
 
 class User(Base):
     """SQLAlchemyのBaseクラスを継承して、ユーザー情報のテーブルを定義する。
@@ -56,7 +53,3 @@ class User(Base):
     is_active: bool = Column(Boolean, default=True)
     # 特定のユーザーが作成した記事の情報を全て取得する
     blogs = relationship("Article", back_populates="owner")
-
-# key_08 = db_env.get("file_id_08")
-# print(f"STEP10：Articleインスタンスが作成されました。 -> {key_08}")
-# print("---------------------------------------------------------------")

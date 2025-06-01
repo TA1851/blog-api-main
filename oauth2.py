@@ -12,9 +12,6 @@ from custom_token import SECRET_KEY, ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
-# データベース設定は database.py で管理されているため、
-# oauth2.py では個別の URL チェックは不要です。
-
 
 async def get_current_user(
   token: str = Depends(oauth2_scheme),

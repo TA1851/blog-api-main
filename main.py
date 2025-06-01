@@ -16,9 +16,6 @@ app = FastAPI()
 origins = db_env.get("cors_origins", [])
 local_origin = db_env.get("local_origin", [])
 
-# デバッグ用にオリジンの値を表示
-# print(f"CORS origins: {origins}")
-# print(f"Local origin: {local_origin}")
 
 # 両方のオリジンリストを結合
 allowed_origins = []
@@ -29,11 +26,9 @@ if local_origin:
 
 # デフォルト値の設定
 if not allowed_origins:
-    # print("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
     create_error_logger("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
 else:
-    # print(f"STEP4：CORS_ORIGINSとLOCAL_ORIGINを取得しました。 -> {allowed_origins}")
-    print(f"処理が完了しました。")
+    create_logger(f"CORS_ORIGIN -> OK")
 
 # CORSミドルウェアの設定
 app.add_middleware(

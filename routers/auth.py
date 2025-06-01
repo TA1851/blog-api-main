@@ -20,11 +20,6 @@ router = APIRouter(
     tags=["auth"],
 )
 
-# データベース設定は database.py で管理されているため、
-# auth.py では個別の URL チェックは不要です。
-# print(f"STEP22：ログイン機能を検証します。Swaggerで確認してください。")
-# print("---------------------------------------------------------------")
-
 
 def get_db():
     """データベースセッションを取得するための依存関数"""
@@ -113,9 +108,6 @@ async def login(
     access_token = create_access_token(
         data={"sub": user.email, "id": user.id}
     )
-    # print("==================================================")
-    # print(f"ログインしました。: {user.email}")
-    # print("==================================================")
     create_logger(f"ログインに成功しました: {user.email}")
     return {"access_token": access_token, "token_type": "bearer"}
 
