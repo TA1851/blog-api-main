@@ -41,7 +41,7 @@
 - /api/v1/user: ユーザー登録と管理
 - /api/v1/articles: ブログ記事の作成・読取・更新・削除
 - /api/v1/verify-email: ユーザーのメールアドレスを確認
-- /api/v1/resend-verification: 確認メールを再送信する
+- /api/v1/resend-verification: 確認メールを再送信する.
 
 ### このプロジェクトで学んだこと
 
