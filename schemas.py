@@ -3,9 +3,6 @@ from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict, EmailStr, computed_field
 import markdown
 
-from logger.custom_logger import create_error_logger
-from database import db_env
-
 
 class LengthMismatchError(Exception):
     """文字列の長さが一致しないエラーを表すカスタム例外"""
@@ -32,7 +29,7 @@ class ArticleBase(BaseModel, validate_assignment=True):
         )
     body: str = Field(
         ..., title="本文", max_length=1000, \
-        description="100文字以内で入力してください"
+        description="1000文字以内で入力してください"
         )
     user_id: Optional[int] = None
     @computed_field
@@ -58,9 +55,6 @@ class Article(ArticleBase):
         model_config = ConfigDict(from_attributes=True)
 
 
-# key_06 = db_env.get("file_id_06")
-# key_08 = db_env.get("file_id_08")
-
 # FastAPIのエンドポイントで使用する例外ハンドラ
 async def validation_exception_handler(request, exc):
     """RequestValidationErrorをキャッチしてログに記録する例外ハンドラ"""
@@ -74,8 +68,7 @@ async def validation_exception_handler(request, exc):
             field_name = ".".join(str(loc) for loc in locations)
 
         error_message = f"{field_name}の検証エラー: {error['msg']}"
-        # print(f"バリデーションエラー: {error_message} -> {key_06}")
-        create_error_logger(error_message)
+        print(error_message)
 
     # デフォルトのエラーハンドラを呼び出す
     from fastapi.exception_handlers import request_validation_exception_handler
@@ -91,10 +84,6 @@ class User(BaseModel):
     :param password: パスワード
     :param is_active: ユーザーの有効状態
     """
-    # name: str | None = Field(
-    #     None, name="ユーザー名", max_length=20, \
-    #     description="20文字以内で入力してください"
-    #     )
     email: EmailStr | None = Field(
         None, email="メールアドレス", max_length=50, strict=True, \
         description="50文字以内で入力してください")
@@ -122,10 +111,6 @@ class ShowUser(BaseModel):
     id: int | None = Field(
         None, title="ID", description="ユーザーのID"
         )
-    # name: str | None = Field(
-    #     None, title="ユーザー名", max_length=20, \
-    #     description="20文字以内で入力してください"
-    #     )
     email: EmailStr | None = Field(
         None, title="メールアドレス", max_length=50, \
         description="50文字以内で入力してください"
@@ -176,7 +161,6 @@ class ShowArticle(BaseModel):
         md = markdown.Markdown(extensions=['nl2br'])
         html_content = md.convert(self.body)
         return html_content
-
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
 
@@ -208,7 +192,7 @@ class PasswordChange(BaseModel):
     :param new_password: 新しいパスワード
     """
     username: EmailStr = Field(
-        ..., title="メールアドレス", max_length=50, 
+        ..., title="メールアドレス", max_length=50,
         description="メールアドレスを入力してください"
     )
     temp_password: str = Field(
@@ -219,7 +203,6 @@ class PasswordChange(BaseModel):
         ..., title="新しいパスワード", max_length=50, min_length=8,
         description="8文字以上50文字以内で新しいパスワードを入力してください"
     )
-
     class ConfigDict:
         model_config = ConfigDict(from_attributes=True)
 

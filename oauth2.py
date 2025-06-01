@@ -8,16 +8,12 @@ from database import db_env, get_db
 from models import User
 from schemas import TokenData
 from custom_token import SECRET_KEY, ALGORITHM
-from logger.custom_logger import create_logger, create_error_logger
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
 # TODO: 開発時に切り替える
-# データベースURLを取得
-# db_url = db_env.get("posgre_url")  # 本番環境用
-db_url = db_env.get("sqlite_url")  # 開発環境用
-# key03 = db_env.get("file_id_03")
-# key10 = db_env.get("file_id_10")
+db_url = db_env.get("posgre_url")
 
 
 def check_environment_variable():
@@ -27,13 +23,9 @@ def check_environment_variable():
   :return: データベースURL
   """
   if not db_env:
-    create_error_logger(f"環境変数:{db_env}が設定されていません。{db_env}")
     raise ValueError(f"環境変数が設定されていません。-> {db_env}")
   else:
-    # print(f"STEP14：環境変数：{db_env}を取得しました。 -> {db_env}")
-    # print(f"STEP14：環境変数：{key10}を取得しました。 -> {key10}")
-    create_logger(f"環境変数{db_env}を取得しました。:")
-  return db_env
+    return db_env
 
 check_environment_variable()
 
@@ -45,18 +37,11 @@ def check_db_url():
   :return: データベースURL
   """
   if not db_url:
-    create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {db_url}")
     raise ValueError(f"環境変数が設定されていません。{db_url}")
   else:
-    # print(f"STEP15：環境変数: {db_url}を読み込みました。")
-    create_logger(f"環境変数: {db_url}を読み込みました。 -> {db_url}")
-  return db_url
-
+    return db_url
 
 check_db_url()
-# print(f"STEP16：ユーザを作成します。Swaggerで確認してください。")
-# print("---------------------------------------------------------------")
-
 get_db()
 
 
@@ -93,8 +78,7 @@ async def get_current_user(
           raise credentials_exception
       token_data = TokenData(email=email)
   except JWTError as e:
-      print("JWTErrorが発生しました")
-      create_error_logger(f"JWTErrorが発生しました: {str(e)}")
+      print(f"JWTErrorが発生しました: {str(e)}")
       raise credentials_exception
   # 直接データベースからユーザーを取得
   user = db.query(User).filter(User.email == token_data.email).first()
