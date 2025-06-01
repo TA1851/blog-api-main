@@ -19,12 +19,8 @@ router = APIRouter(
     tags=["articles"],
 )
 
-# TODO: 開発時に切り替える
-# データベースURLを取得
-# db_url = db_env.get("posgre_url")  # 本番環境用
-db_url = db_env.get("sqlite_url")  # 開発環境用
-# key03 = db_env.get("file_id_03")
-# key07 = db_env.get("file_id_07")
+# データベース設定は database.py で管理されているため、
+# article.py では個別の URL チェックは不要です。
 
 
 # def check_environment_variable():
@@ -43,28 +39,8 @@ db_url = db_env.get("sqlite_url")  # 開発環境用
 #         create_logger(f"環境変数{key07}を取得しました。:")
 #     return key07
 
-# check_environment_variable()
-
-
-def check_db_url():
-    """データベースのURLを取得する
-
-    :param db_url: データベースのURL
-    :type db_url: str
-    :return: データベースのURL
-    :rtype: str
-    """
-    # if not db_url:
-    #     create_error_logger(f"環境変数:{db_url}が設定されていません。 -> {key03}")
-    #     raise ValueError(f"環境変数が設定されていません。{key03}")
-    # else:
-    #     # print(f"STEP18：環境変数: {db_url}を読み込みました。")
-    #     create_logger(f"環境変数: {db_url}を読み込みました。 -> {key03}")
-    return db_url
-
-check_db_url()
-# print("STEP19：ルートを取得しました。Swaggerを確認してください。")
-# print("---------------------------------------------------------------")
+# データベース設定は database.py で管理されているため、
+# article.py では個別の URL チェックは不要です。
 
 
 @router.get(

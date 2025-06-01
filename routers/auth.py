@@ -20,52 +20,8 @@ router = APIRouter(
     tags=["auth"],
 )
 
-# TODO: 開発時に切り替える
-# データベースURLを取得：
-db_url = db_env.get("posgre_url")  # 本番環境用
-
-# key03 = db_env.get("file_id_03")
-# key09 = db_env.get("file_id_09")
-
-
-# def check_environment_variable():
-#     """環境変数を取得する
-
-#     :param key09: auth.pyの環境変数
-#     :type key09: str
-#     :return: 環境変数の値
-#     :rtype: str
-#     """
-#     if not key09:
-#         create_error_logger(f"環境変数:{key09}が設定されていません。{key09}")
-#         raise ValueError(f"環境変数が設定されていません。-> {key09}")
-#     else:
-#         # print(f"STEP20：環境変数：{key09}を取得しました。 -> {key09}")
-#         create_logger(f"環境変数{key09}を取得しました。:")
-#     return key09
-
-# check_environment_variable()
-
-
-def check_db_url():
-    """データベースURLを取得する
-
-    :param key03: auth.pyの環境変数
-    :type key03: str
-    :param db_url: auth.pyの環境変数
-    :type db_url: str
-    :return: 環境変数の値
-    :rtype: str
-    """
-    if not db_url:
-        create_error_logger(f"環境変数:{db_url}が設定されていません")
-        raise ValueError(f"環境変数が設定されていません。")
-    else:
-        # print(f"STEP21：環境変数: {db_url}を読み込みました。")
-        create_logger(f"環境変数: {db_url}を読み込みました。")
-    return db_url
-
-check_db_url()
+# データベース設定は database.py で管理されているため、
+# auth.py では個別の URL チェックは不要です。
 # print(f"STEP22：ログイン機能を検証します。Swaggerで確認してください。")
 # print("---------------------------------------------------------------")
 

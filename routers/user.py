@@ -26,9 +26,8 @@ router = APIRouter(
 )
 
 
-# データベースURLを取得
-# db_url = db_env.get("posgre_url")  # 本番環境用
-db_url = db_env.get("sqlite_url")  # 開発環境用
+# データベース設定は database.py で管理されているため、
+# user.py では個別の URL チェックは不要です。
 # key03 = db_env.get("file_id_03")
 # key08 = db_env.get("file_id_08")
 

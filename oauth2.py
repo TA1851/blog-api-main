@@ -12,37 +12,8 @@ from custom_token import SECRET_KEY, ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 
-# TODO: 開発時に切り替える
-db_url = db_env.get("posgre_url")
-
-
-def check_environment_variable():
-  """環境変数設定ファイルからデータベースのURLを取得する
-
-  :param db_env: 環境変数設定ファイル
-  :return: データベースURL
-  """
-  if not db_env:
-    raise ValueError(f"環境変数が設定されていません。-> {db_env}")
-  else:
-    return db_env
-
-check_environment_variable()
-
-
-def check_db_url():
-  """データベースURLを取得して、データベースと接続する
-
-  :param db_url: データベースURL
-  :return: データベースURL
-  """
-  if not db_url:
-    raise ValueError(f"環境変数が設定されていません。{db_url}")
-  else:
-    return db_url
-
-check_db_url()
-get_db()
+# データベース設定は database.py で管理されているため、
+# oauth2.py では個別の URL チェックは不要です。
 
 
 async def get_current_user(

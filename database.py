@@ -42,7 +42,7 @@ def read_env_var(env_path: Path) -> dict:
 
     # TODO: 開発時に切り替える（環境変数）
     environment = os.getenv("ENVIRONMENT")
-    posgre_database_url = os.getenv("POSGRE_URL")
+    posgre_database_url = os.getenv("POSGRE_URL") or os.getenv("DATABASE_URL")  # DATABASE_URLもサポート
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
     cors_origins = os.getenv("CORS_ORIGINS")
@@ -116,7 +116,14 @@ def create_database_engine() -> Engine:
             )
             return engine
         else:
-            raise DatabaseConnectionError("不明な環境設定")
+            # 開発環境またはENVIRONMENTが未設定の場合はSQLiteを使用
+            sqlite_path = "sqlite:///./blog.db"
+            engine = create_engine(
+                sqlite_path,
+                connect_args={"check_same_thread": False},
+                echo=False
+            )
+            return engine
     except Exception as e:
         raise DatabaseConnectionError(f"データベース接続に失敗しました。: {str(e)}")
 
