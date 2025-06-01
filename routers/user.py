@@ -328,7 +328,7 @@ class DatabaseError(Exception):
     description="ユーザー情報を取得するエンドポイント"
 )
 
-def show_user(user_id: int, db: Session = Depends(get_db)):
+async def show_user(user_id: int, db: Session = Depends(get_db)):
     """ユーザー情報を取得する関数
 
     :param user_id: ユーザーID
