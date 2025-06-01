@@ -76,7 +76,7 @@ def read_env_var(env_path: Path) -> dict:
     else:
         return result
 
-db_env = read_env_var()
+db_env = read_env_var(env_var)
 
 
 class DatabaseConnectionError(Exception):
