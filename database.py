@@ -2,6 +2,7 @@
 import os
 # import pprint
 from pathlib import Path
+from typing import Union, Optional
 from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
@@ -10,8 +11,8 @@ from logger.custom_logger import create_logger, create_error_logger
 
 
 def check_env_file(
-    default_env_path: Path | str=None
-    ) -> Path | None:
+    default_env_path: Union[Path, str] = None
+    ) -> Optional[Path]:
     """ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。
 
     :param default_env_path: str | Path
@@ -28,7 +29,7 @@ def check_env_file(
     #    )
 
     if not default_env_path.exists():
-        # print(".envファイルが見つかりません")
+        print(".envファイルが見つかりません")
         create_error_logger(
             f".envファイルが見つかりません。PATHを確認して下さい。: \
             {default_env_path}"
@@ -57,7 +58,7 @@ def read_env_var(env_path: Path) -> dict:
     result = {}
 
     # 環境変数を取得
-    environment = os.getenv("ENVIRONMENT")  # デフォルトは開発環境
+    environment = os.getenv("ENVIRONMENT")
     # id_A003 = os.getenv("AA03")
     # id_A005 = os.getenv("AA05")
     # id_A006 = os.getenv("AA06")
@@ -65,7 +66,7 @@ def read_env_var(env_path: Path) -> dict:
     # id_A008 = os.getenv("AA08")
     # id_A009 = os.getenv("AA09")
     # id_A010 = os.getenv("AA10")
-    # sqlite_url = os.getenv("SQLITE_URL")
+    # sqlite_url = os.getenv("SQLITE_URL") # ローカルで開発する時に有効にする
     posgre_database_url = os.getenv("POSGRE_URL")
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
@@ -180,7 +181,7 @@ def read_env_var(env_path: Path) -> dict:
     #     if "," in local_origin:
     #         result["local_origin"] = [origin.strip() for origin in local_origin.split(",")]
     #     else:
-    #         print(f"STEP4：LOCAL_CORS_ORIGINSを取得しました。 -> {local_origin}")
+    #         # print(f"STEP4：LOCAL_CORS_ORIGINSを取得しました。 -> {local_origin}")
     #         create_logger(f"LOCAL_CORS_ORIGINSを取得しました。: {local_origin}")
     #         # 単一の値の場合はリストに入れる（現在はこちらが処理される）
     #         result["local_origin"] = [local_origin.strip()]
@@ -242,7 +243,7 @@ def create_database_engine() -> Engine:
             # SQLite用の接続設定
             connect_args = {"check_same_thread": False}
             engine = create_engine(
-                sqlite_url, 
+                sqlite_url,
                 connect_args=connect_args,
                 echo=False               # SQLログを出力
             )
