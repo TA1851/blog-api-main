@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
+
 def check_env_file(
     default_env_path: Union[Path, str] = None
     ) -> Optional[Path]:

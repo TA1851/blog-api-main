@@ -1,5 +1,4 @@
 """エンドポイントのルーティングを定義するモジュール"""
-# import pprint
 from typing import Optional, List
 from fastapi import APIRouter, Depends, status, HTTPException, Query
 from sqlalchemy import func, or_
@@ -8,7 +7,7 @@ import urllib.parse
 import markdown
 
 from models import Article
-from schemas import ArticleBase, ShowArticle, User, PublicArticle
+from schemas import ArticleBase, User, PublicArticle
 from database import get_db, db_env
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user

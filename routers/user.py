@@ -1,20 +1,17 @@
 """ユーザ認証機能を実装するためのルーターモジュール"""
-# import pprint
 import traceback
 import os
 from fastapi import APIRouter, status, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
-from pydantic import ValidationError
 from datetime import datetime, timedelta
 from uuid import uuid4
 from urllib.parse import unquote
 
 from schemas import User as UserSchema, AccountDeletionRequest
 from models import User as UserModel
-from mailmodels import EmailVerification
-from database import db_env, session, get_db
+from models import EmailVerification
+from database import get_db
 from hashing import Hash
-from models import User as UserModel
 from logger.custom_logger import create_logger, create_error_logger
 from utils.email_sender import send_verification_email, send_account_deletion_email
 from utils.email_validator import is_valid_email_domain

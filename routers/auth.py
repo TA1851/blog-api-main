@@ -1,5 +1,4 @@
 """認証機能を実装するためのルーターモジュール"""
-# import pprint
 from typing import List, Set
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException

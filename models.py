@@ -1,8 +1,10 @@
 """テーブル定義モジュール"""
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from datetime import datetime, timedelta
+from uuid import uuid4
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from database import Base, db_env
 
+from database import Base
 from logger.custom_logger import create_logger
 
 
@@ -53,3 +55,24 @@ class User(Base):
     is_active: bool = Column(Boolean, default=True)
     # 特定のユーザーが作成した記事の情報を全て取得する
     blogs = relationship("Article", back_populates="owner")
+
+
+class EmailVerification(Base):
+    """メール確認用のモデル"""
+    __tablename__ = 'email_verifications'
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=False)
+    token = Column(String, unique=True, nullable=False)
+    is_verified = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime)
+
+    @classmethod
+    def create_verification(cls, email: str):
+        """新しい確認レコードを作成"""
+        return cls(
+            email=email,
+            token=str(uuid4()),
+            expires_at=datetime.utcnow() + timedelta(hours=24)
+        )
