@@ -7,6 +7,28 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
+def check_env_file(
+    default_env_path: Union[Path, str] = None
+    ) -> Optional[Path]:
+    """ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。
+
+    :param default_env_path: str | Path
+    """
+    if default_env_path is None:
+        default_env_path = Path(__file__).parent / '.env'
+    else:
+        default_env_path = Path(default_env_path) \
+        if isinstance(default_env_path, str) \
+        else default_env_path
+
+    if not default_env_path.exists():
+        print(".envファイルが見つかりません")
+    else:
+        print("処理を開始します。")
+    return default_env_path
+
+env_var = check_env_file()
+
 
 def read_env_var(env_path: Path) -> dict:
     """dotenvモジュールのload_dotenv関数でENVファイルから環境変数を取得し、ログに記録する。
