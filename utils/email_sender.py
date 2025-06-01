@@ -3,6 +3,10 @@ from logger.custom_logger import create_logger, create_error_logger
 import os
 from urllib.parse import quote
 
+
+CORS_ORIGINS = os.getenv("CORS_ORIGINS")
+
+
 def get_mail_config():
     """メール設定を取得する"""
     return ConnectionConfig(
@@ -45,7 +49,7 @@ async def send_verification_email(email: str, token: str):
     create_logger(f"メール送信開始 - 宛先: {email}, トークン: {token}")
     
     encoded_token = quote(token, safe='')
-    verification_url = f"http://127.0.0.1:3000/verify-email?token={encoded_token}"
+    verification_url = f"{CORS_ORIGINS}/verify-email?token={encoded_token}"
     
     content = (
         "こんにちは！\n\n"
