@@ -34,7 +34,7 @@ class ArticleBase(BaseModel, validate_assignment=True):
         description="1000文字以内で入力してください"
         )
     user_id: Optional[int] = None
-    
+
     @computed_field
     def body_html(self) -> str:
         """MarkdownテキストをHTMLに変換
@@ -87,14 +87,14 @@ class User(BaseModel):
     :param is_active: ユーザーの有効状態
     """
     email: EmailStr | None = Field(
-        None, title="メールアドレス", max_length=50, 
+        None, title="メールアドレス", max_length=50,
         description="50文字以内で入力してください")
     password: str | None = Field(
-        None, title="パスワード", max_length=100, 
-        description="10文字以内で入力してください"
+        None, title="パスワード", max_length=100,
+        description="100文字以内で入力してください"
         )
     is_active: bool | None = Field(
-        None, title="アクティブ", 
+        None, title="アクティブ",
         description="TrueまたはFalseで入力してください"
         )
     class ConfigDict:

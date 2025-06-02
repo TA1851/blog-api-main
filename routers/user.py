@@ -13,6 +13,7 @@ from models import User as UserModel
 from models import EmailVerification
 from database import get_db
 from hashing import Hash
+from oauth2 import get_current_user
 from logger.custom_logger import create_logger, create_error_logger
 from utils.email_sender import send_verification_email, send_account_deletion_email
 from utils.email_validator import is_valid_email_domain
@@ -315,21 +316,35 @@ class DatabaseError(Exception):
 @router.get(
     "/user/{user_id}",
     response_model=UserSchema,
-    summary="Get User",
-    description="ユーザー情報を取得するエンドポイント"
+    summary="Get User (Authentication Required)",
+    description="認証が必要なユーザー情報取得エンドポイント。ユーザーは自分自身の情報のみ取得可能。"
 )
 
-async def show_user(user_id: int, db: Session = Depends(get_db)) -> UserSchema:
-    """ユーザー情報を取得する関数
+async def show_user(
+    user_id: int, 
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+) -> UserSchema:
+    """ユーザー情報を取得する関数（認証が必要）
 
     :param user_id: ユーザーID
     :type user_id: int
     :param db: データベースセッション
     :type db: Session
+    :param current_user: 現在ログインしているユーザー
+    :type current_user: UserModel
     :return: ユーザー情報
     :rtype: UserSchema
     :raises HTTPException: ユーザーが見つからない場合
     """
+    # 認証されたユーザーが自分以外の情報にアクセスしようとしていないかチェック
+    if current_user.id != user_id:
+        create_error_logger(f"User {current_user.id} tried to access user {user_id}'s information")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="他のユーザーの情報にはアクセスできません"
+        )
+    
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         create_error_logger(f"User with id {user_id} not found")
@@ -338,7 +353,7 @@ async def show_user(user_id: int, db: Session = Depends(get_db)) -> UserSchema:
             detail=f"User with id {user_id} not found"
         )
     
-    create_logger(f"ユーザー情報を取得しました: {user_id}")
+    create_logger(f"認証されたユーザー {current_user.id} がユーザー情報を取得しました: {user_id}")
     
     # SQLAlchemyモデルをPydanticスキーマに変換
     return UserSchema(
