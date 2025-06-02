@@ -1,5 +1,6 @@
 from database import db_env
 from logger.custom_logger import create_logger
+import os
 
 
 def is_valid_email_domain(email: str) -> bool:
@@ -11,12 +12,12 @@ def is_valid_email_domain(email: str) -> bool:
     :rtype: bool
     """
     # ドメイン制限が無効の場合は常にTrue
-    domain_restriction_enabled = db_env.get("ENABLE_DOMAIN_RESTRICTION", "false").lower() == "true"
+    domain_restriction_enabled = os.getenv("ENABLE_DOMAIN_RESTRICTION", "false").lower() == "true"
     if not domain_restriction_enabled:
         create_logger(f"ドメイン制限は無効です。すべてのドメインを許可: {email}")
         return True
     # 許可されたドメインのリストを取得
-    allowed_domains = db_env.get("ALLOWED_EMAIL_DOMAINS", "").split(",")
+    allowed_domains = os.getenv("ALLOWED_EMAIL_DOMAINS", "").split(",")
     allowed_domains = [domain.strip() for domain in allowed_domains if domain.strip()]
     if not allowed_domains:
         create_logger("許可されたドメインが設定されていません。すべてのドメインを許可")

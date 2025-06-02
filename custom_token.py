@@ -23,7 +23,7 @@ router = APIRouter(
 
 
 SECRET_KEY = db_env.get("secret_key")
-ALGORITHM = db_env.get("algo")
+ALGORITHM: str = db_env.get("algo") or "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
@@ -136,6 +136,10 @@ def verify_token_with_type(
     """
     try:
         secret_key = os.getenv("SECRET_KEY")
+        if secret_key is None:
+            create_error_logger("SECRET_KEYが設定されていません")
+            raise ValueError("SECRET_KEYが設定されていません")
+        
         algorithm = os.getenv("ALGORITHM", "HS256")
 
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
@@ -155,9 +159,9 @@ def verify_token_with_type(
 
 def verify_token(
     token: str,
-    credentials_exception,
+    credentials_exception: HTTPException,
     db: Session = Depends(get_db)
-    ):
+    ) -> User:
     """トークンを検証する関数
 
     :param token: 検証するトークン
@@ -170,13 +174,24 @@ def verify_token(
     :rtype: User
     """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        id : int = payload.get("id")
-
-        if email is None:
-            print("emailがNoneです")
+        if SECRET_KEY is None:
+            create_error_logger("SECRET_KEYが設定されていません")
             raise credentials_exception
+        
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email_raw = payload.get("sub")
+        id_raw = payload.get("id")
+
+        if email_raw is None:
+            create_error_logger("トークンからemailが取得できませんでした")
+            raise credentials_exception
+        
+        if id_raw is None:
+            create_error_logger("トークンからidが取得できませんでした")
+            raise credentials_exception
+
+        email: str = str(email_raw)
+        user_id: int = int(id_raw)
 
         from schemas import TokenData
         token_data = TokenData(email=email)
@@ -184,15 +199,15 @@ def verify_token(
         create_logger(f"token_data: {token_data}")
     except JWTError:
         print("JWTErrorが発生しました。")
-        create_error_logger(f"token_data: {token_data}")
+        create_error_logger("JWTError occurred during token verification")
         raise credentials_exception
-    user = get_user_by_id(id, db)
+    user = get_user_by_id(user_id, db)
     return user
 
 
 def get_user_by_id(
     id: int, db: Session
-    ):
+    ) -> User:
     """ユーザーIDからユーザー情報を取得する関数
 
     :param id: ユーザーID

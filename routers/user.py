@@ -30,7 +30,7 @@ router = APIRouter(
 )
 
 
-def check_environment_variable():
+def check_environment_variable() -> None:
     """環境変数を取得する
 
     :param key08: user.pyの環境変数
@@ -42,7 +42,7 @@ def check_environment_variable():
 check_environment_variable()
 
 
-def check_db_url():
+def check_db_url() -> None:
     """データベースURLを取得する
 
     :param key03: user.pyの環境変数
@@ -79,35 +79,6 @@ create_logger(f"[修正後] 解析後のALLOWED_EMAIL_DOMAINS: {ALLOWED_EMAIL_DO
 create_logger(f"[修正後] ENABLE_DOMAIN_RESTRICTION: {ENABLE_DOMAIN_RESTRICTION}")
 
 
-def is_valid_email_domain(email: str) -> bool:
-    """メールアドレスのドメインが許可されたものかチェックする
-
-    :param email: チェックするメールアドレス
-    :type email: str
-    :return: ドメインが許可されている場合True
-    :rtype: bool
-    """
-    if not ENABLE_DOMAIN_RESTRICTION:
-        create_logger(f"ドメイン制限が無効化されています。メール: {email}")
-        return True
-
-    if not ALLOWED_EMAIL_DOMAINS:
-        create_error_logger(
-            "許可されたドメインが設定されていません。すべてのドメインを許可します。"
-            )
-        return True
-
-    domain = email.split('@')[-1].lower()
-    is_valid = domain in ALLOWED_EMAIL_DOMAINS
-
-    create_logger(
-        f"メールドメイン検証 - メール: {email}, ドメイン: {domain}, \
-        許可ドメイン: {ALLOWED_EMAIL_DOMAINS}, 結果: {is_valid}"
-        )
-
-    return is_valid
-
-
 class UserRouter:
     @router.post(
     "/user",
@@ -117,11 +88,24 @@ class UserRouter:
     description="ユーザーを作成するエンドポイント（シンプル登録）",
     )
     async def create_user(
+        self,
         user: UserSchema,
         db: Session = Depends(get_db)
     ) -> UserCreateResponse:
         """ユーザーを作成するエンドポイント（シンプル登録）"""
         try:
+            # 入力データの検証
+            if user.email is None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="メールアドレスが必要です。"
+                )
+            if user.password is None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="パスワードが必要です。"
+                )
+                
             create_logger(f"ユーザー作成開始 - メール: {user.email}")
 
             # ドメイン制限チェック
@@ -180,6 +164,12 @@ class UserRouter:
                 }
             else:
                 # ユーザーの作成
+                if user.email is None:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="メールアドレスが必要です。"
+                    )
+                
                 new_user = UserModel(
                     name=user.name if hasattr(user, 'name') and user.name else user.email.split('@')[0],
                     email=user.email,
@@ -194,8 +184,8 @@ class UserRouter:
                 return {
                     "message": "ユーザー登録が完了しました。ログインできます。",
                     "email": user.email,
-                    "id": new_user.id,
-                    "is_active": new_user.is_active
+                    "id": str(new_user.id),
+                    "is_active": str(new_user.is_active)
                 }
 
         except HTTPException:
@@ -221,9 +211,10 @@ class UserRouter:
         description="ユーザーのメールアドレスを確認するエンドポイント",
     )
     async def verify_email(
+        self,
         token: str = Query(...),
         db: Session = Depends(get_db)
-    ):
+    ) -> Dict[str, Any]:
         # デバッグログを追加
         create_logger(f"メール認証リクエスト受信 - 元のトークン: {token}")
 
@@ -262,7 +253,7 @@ class UserRouter:
                 status_code=400,
                 detail="このメールアドレスは既に確認済みです。"
             )
-        if datetime.utcnow() > verification.expires_at:
+        if verification.expires_at is not None and datetime.utcnow() > verification.expires_at:
             raise HTTPException(
                 status_code=400,
                 detail="トークンの有効期限が切れています。"
@@ -297,7 +288,7 @@ class UserRouter:
 # カスタム例外クラス（ユーザ関連）
 class UserNotFoundError(Exception):
     """ユーザーが見つからない場合の例外"""
-    def __init__(self, user_id: int = None, email: str = None):
+    def __init__(self, user_id: Optional[int] = None, email: Optional[str] = None):
         if user_id:
             self.message = f"User with id {user_id} not found"
         elif email:
@@ -328,7 +319,7 @@ class DatabaseError(Exception):
     description="ユーザー情報を取得するエンドポイント"
 )
 
-async def show_user(user_id: int, db: Session = Depends(get_db)):
+async def show_user(user_id: int, db: Session = Depends(get_db)) -> UserSchema:
     """ユーザー情報を取得する関数
 
     :param user_id: ユーザーID
@@ -341,18 +332,20 @@ async def show_user(user_id: int, db: Session = Depends(get_db)):
     """
     user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
-        raise UserNotFoundError(user_id=user_id)
-    else:
-        create_logger(f"ユーザー情報を取得しました: {user_id}"
+        create_error_logger(f"User with id {user_id} not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {user_id} not found"
         )
-    if not user:
-        raise EmailVerificationError(
-            message=f"User with id {user_id} not found"
-        )
-    else:
-        create_error_logger(f"User with id {user_id} not found"
-        )
-    return user
+    
+    create_logger(f"ユーザー情報を取得しました: {user_id}")
+    
+    # SQLAlchemyモデルをPydanticスキーマに変換
+    return UserSchema(
+        email=user.email,
+        password=None,  # パスワードは返さない
+        is_active=user.is_active
+    )
 
 
 @router.post(
@@ -363,7 +356,7 @@ description="確認メールを再送信するエンドポイント"
 async def resend_verification_email(
     email: str,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, str]:
     """確認メールを再送信する"""
     verification = db.query(EmailVerification).filter(
         EmailVerification.email == email,
@@ -397,7 +390,7 @@ async def resend_verification_email(
 async def delete_user_account(
     deletion_request: AccountDeletionRequest,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, str]:
     """ユーザーアカウントを削除するエンドポイント
 
     :param deletion_request: 退会リクエストデータ
@@ -427,6 +420,11 @@ async def delete_user_account(
             )
 
         # パスワード検証
+        if user.password is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ユーザーのパスワードが設定されていません"
+            )
         if not Hash.verify(deletion_request.password, user.password):
             create_error_logger(f"パスワード検証失敗: {deletion_request.email}")
             raise HTTPException(
@@ -435,6 +433,11 @@ async def delete_user_account(
             )
 
         # ユーザー名を保存（メール送信用）
+        if user.email is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ユーザーのメールアドレスが見つかりません。"
+            )
         username = user.email.split('@')[0]
         user_email = user.email
 
@@ -473,7 +476,7 @@ async def delete_user_account(
 
         return {
             "message": "退会処理が完了しました。退会完了メールをお送りしました。",
-            "deleted_articles_count": article_count,
+            "deleted_articles_count": str(article_count),
             "email": user_email
         }
 

@@ -19,9 +19,9 @@ local_origin = db_env.get("local_origin", [])
 
 # 両方のオリジンリストを結合
 allowed_origins = []
-if origins:
+if origins and isinstance(origins, list):
     allowed_origins.extend(origins)
-if local_origin:
+if local_origin and isinstance(local_origin, list):
     allowed_origins.extend(local_origin)
 
 # デフォルト値の設定
@@ -46,8 +46,8 @@ Base.metadata.create_all(engine)
     RequestValidationError
     )
 async def handler(
-    request:Request,
-    exc:RequestValidationError):
+    request: Request,
+    exc: RequestValidationError) -> JSONResponse:
     # pprint.pprint(exc.errors())
     create_error_logger(
         f"バリデーションエラー: {exc.errors()}"
@@ -59,9 +59,5 @@ async def handler(
 
 
 app.include_router(article.router)
-app.add_exception_handler(
-    RequestValidationError,
-    validation_exception_handler
-    )
 app.include_router(user.router)
 app.include_router(auth.router)

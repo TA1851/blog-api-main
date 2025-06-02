@@ -1,6 +1,8 @@
 """レスポンスのスキーマを定義するモジュール"""
-from typing import Optional
+from typing import Optional, Any
 from pydantic import BaseModel, Field, ConfigDict, EmailStr, computed_field
+from fastapi import Request
+from fastapi.exceptions import RequestValidationError
 import markdown
 
 
@@ -20,7 +22,7 @@ class ArticleBase(BaseModel, validate_assignment=True):
     :param ConfigDict: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用
     :param model_config: Pydantic v3.0で class Config が削除される予定のためConfigDictを使用
     """
-    article_id : int = Field(
+    article_id: Optional[int] = Field(
         None, title="記事ID", description="記事ID"
         )
     title: str = Field(
@@ -32,8 +34,8 @@ class ArticleBase(BaseModel, validate_assignment=True):
         description="1000文字以内で入力してください"
         )
     user_id: Optional[int] = None
+    
     @computed_field
-    @property
     def body_html(self) -> str:
         """MarkdownテキストをHTMLに変換
 
@@ -56,7 +58,7 @@ class Article(ArticleBase):
 
 
 # FastAPIのエンドポイントで使用する例外ハンドラ
-async def validation_exception_handler(request, exc):
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> Any:
     """RequestValidationErrorをキャッチしてログに記録する例外ハンドラ"""
     # バリデーションエラーの情報を取得してログとコンソールに記録
     for error in exc.errors():
@@ -85,14 +87,14 @@ class User(BaseModel):
     :param is_active: ユーザーの有効状態
     """
     email: EmailStr | None = Field(
-        None, email="メールアドレス", max_length=50, strict=True, \
+        None, title="メールアドレス", max_length=50, 
         description="50文字以内で入力してください")
     password: str | None = Field(
-        None, password="パスワード", max_length=100, \
+        None, title="パスワード", max_length=100, 
         description="10文字以内で入力してください"
         )
     is_active: bool | None = Field(
-        None, is_active="アクティブ", \
+        None, title="アクティブ", 
         description="TrueまたはFalseで入力してください"
         )
     class ConfigDict:
@@ -148,7 +150,6 @@ class ShowArticle(BaseModel):
         )
 
     @computed_field
-    @property
     def body_html(self) -> str | None:
         """MarkdownテキストをHTMLに変換
 
@@ -253,7 +254,7 @@ class AccountDeletionRequest(BaseModel):
     password: str = Field(..., min_length=8, description="現在のパスワード")
     confirm_password: str = Field(..., min_length=8, description="確認用パスワード")
 
-    def validate_passwords_match(self):
+    def validate_passwords_match(self) -> bool:
         """パスワードと確認用パスワードが一致するかチェック"""
         if self.password != self.confirm_password:
             raise ValueError("パスワードと確認用パスワードが一致しません")

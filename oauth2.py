@@ -7,7 +7,11 @@ from sqlalchemy.orm import Session
 from database import db_env, get_db
 from models import User
 from schemas import TokenData
-from custom_token import SECRET_KEY, ALGORITHM
+from custom_token import SECRET_KEY
+from database import db_env
+
+ALGORITHM: str = db_env.get("algo") or "HS256"
+from logger.custom_logger import create_error_logger
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
@@ -16,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
 async def get_current_user(
   token: str = Depends(oauth2_scheme),
   db: Session = Depends(get_db)
-  ):
+  ) -> User:
   """トークンを検証し、現在のユーザーを取得する
 
   :param token: 認証トークン
@@ -31,25 +35,31 @@ async def get_current_user(
       headers={"WWW-Authenticate": "Bearer"},
   )
   try:
+      # SECRET_KEYがNoneでないことを確認
+      if SECRET_KEY is None:
+          raise credentials_exception
+      
       # トークンを検証してペイロードを取得
       payload = jwt.decode(
         token,
         SECRET_KEY,
         algorithms=[ALGORITHM]
       )
-      email: str = payload.get("sub")
-      id: int = payload.get("id")
-
-      if email is None:
-          print("emailがNoneです")
-          create_error_logger("emailがNoneです")
+      email_raw = payload.get("sub")
+      id_raw = payload.get("id")
+      
+      if email_raw is None or id_raw is None:
           raise credentials_exception
+      
+      email: str = str(email_raw)
+      user_id: int = int(id_raw)
+
       token_data = TokenData(email=email)
   except JWTError as e:
       print(f"JWTErrorが発生しました: {str(e)}")
       raise credentials_exception
   # 直接データベースからユーザーを取得
-  user = db.query(User).filter(User.email == token_data.email).first()
+  user = db.query(User).filter(User.id == user_id).first()
   if user is None:
       raise credentials_exception
   return user

@@ -1,7 +1,8 @@
 """データベース接続モジュール"""
 import os
 from pathlib import Path
-from typing import Union, Optional, Dict, List, Generator, TypedDict
+from typing import Union, Optional, Dict, List, Generator
+from typing_extensions import TypedDict
 from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
@@ -86,7 +87,7 @@ def read_env_var(env_path: Path) -> EnvironmentConfig:
     else:
         return result
 
-db_env = read_env_var(env_var) if env_var else EnvironmentConfig()
+db_env: EnvironmentConfig = read_env_var(env_var) if env_var else EnvironmentConfig()
 
 
 class DatabaseConnectionError(Exception):

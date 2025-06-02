@@ -40,7 +40,7 @@ if not logger.handlers:
     logger.addHandler(error_handler)
 
 # INFOレベルを呼び出し先でに記録する
-def create_logger(info_msg: str):
+def create_logger(info_msg: str) -> None:
     """INFOレベルのログを記録する関数
 
     :param info_msg: ログに記録するメッセージ
@@ -49,7 +49,7 @@ def create_logger(info_msg: str):
     logger.info(info_msg)
 
 # ERRORレベルを呼び出し先でに記録する
-def create_error_logger(error_msg: str):
+def create_error_logger(error_msg: str) -> None:
     """ERRORレベルのログを記録する関数
 
     :param error_msg: ログに記録するメッセージ

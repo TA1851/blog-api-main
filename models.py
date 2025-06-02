@@ -66,6 +66,7 @@ class EmailVerification(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     token: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    password_hash: Mapped[Optional[str]] = mapped_column(String)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime)

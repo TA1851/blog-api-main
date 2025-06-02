@@ -1,5 +1,5 @@
 """認証機能を実装するためのルーターモジュール"""
-from typing import List, Set, Dict, Any
+from typing import List, Set, Dict, Any, Generator
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
@@ -15,7 +15,7 @@ from utils.email_sender import send_registration_complete_email
 
 
 # 認証レスポンスの型定義
-from typing import TypedDict
+from typing_extensions import TypedDict
 
 class LoginResponse(TypedDict):
     """ログインレスポンスの型定義"""
@@ -35,7 +35,7 @@ router = APIRouter(
 )
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     """データベースセッションを取得するための依存関数"""
 
     db = session()
@@ -109,7 +109,7 @@ async def login(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"無効なユーザー名です"
         )
-    if not Hash.verify(
+    if not user.password or not Hash.verify(
         request.password,
         user.password
     ):
@@ -120,9 +120,9 @@ async def login(
             detail="無効なパスワードです"
         )
     access_token = create_access_token(
-        data={"sub": user.email, "id": user.id}
+        data={"sub": user.email or "", "id": user.id}
     )
-    create_logger(f"ログインに成功しました: {user.email}")
+    create_logger(f"ログインに成功しました: {user.email or 'unknown'}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -138,7 +138,7 @@ def verify_token(
     token: str = Depends(
         oauth2_scheme
         )
-    ):
+    ) -> Dict[str, str]:
     """トークンを検証し、無効化されたトークンを拒否する
 
     :param token: 認証トークン（ヘッダーから自動取得）
@@ -176,7 +176,7 @@ async def logout(
     token: str = Depends(
         oauth2_scheme
         )
-    ):
+    ) -> Dict[str, str]:
     """ログアウトエンドポイント:https://127.0.0.1:8000/api/v1/logout
 
     リクエストヘッダー
@@ -228,7 +228,8 @@ async def logout(
     response_model=List[ShowArticle]
     )
 async def get_all_blogs(
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db)
+) -> List[ShowArticle]:
     """全てのブログ記事を取得するエンドポイント
 
     :param db: データベースセッション
@@ -239,17 +240,24 @@ async def get_all_blogs(
 
     :rtype: List[ShowArticle]
     """
-    return db.query(Article).all()
+    articles = db.query(Article).all()
+    return [
+        ShowArticle(
+            id=article.id,
+            title=article.title,
+            body=article.body
+        ) for article in articles
+    ]
 
 
-@router.post('/change-password')
+# パスワード変更レスポンス型
 class PasswordChangeResponse(TypedDict):
     """パスワード変更レスポンスの型定義"""
     message: str
     user_id: str
 
-# 既存のコード...
 
+@router.post('/change-password')
 async def change_password(
     request: PasswordChange,
     db: Session = Depends(get_db)
@@ -300,7 +308,7 @@ async def change_password(
         )
 
     # 仮パスワードの検証
-    if not Hash.verify(request.temp_password, user.password):
+    if not user.password or not Hash.verify(request.temp_password, user.password):
         create_error_logger(f"無効な仮パスワードです: {request.username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -317,21 +325,21 @@ async def change_password(
 
         # 登録完了メールを送信
         try:
-            # user.nameがNoneの場合はメールアドレスのローカル部分を使用
-            user_name = user.name if user.name else user.email.split('@')[0]
-            await send_registration_complete_email(user.email, user_name)
-            create_logger(f"登録完了メールを送信しました: {user.email}")
+            if user.email:
+                # user.nameがNoneの場合はメールアドレスのローカル部分を使用
+                user_name = user.name if user.name else user.email.split('@')[0]
+                await send_registration_complete_email(user.email, user_name)
+                create_logger(f"登録完了メールを送信しました: {user.email}")
         except Exception as email_error:
             create_error_logger(f"登録完了メール送信に失敗しました: {user.email}, エラー: {str(email_error)}")
 
         # 新しいアクセストークンを生成
         access_token = create_access_token(
-            data={"sub": user.email, "id": user.id}
+            data={"sub": user.email or "", "id": user.id}
         )
         return {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "message": "パスワードが正常に変更されました。"
+            "message": "パスワードが正常に変更されました。",
+            "user_id": str(user.id)
         }
     except Exception as e:
         db.rollback()

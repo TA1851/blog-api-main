@@ -1,7 +1,8 @@
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from logger.custom_logger import create_logger, create_error_logger
 import os
 from urllib.parse import quote
+from typing import Optional
 
 
 CORS_ORIGINS = os.getenv("CORS_ORIGINS")
@@ -9,7 +10,7 @@ LOCAL_CORS_ORIGINS = os.getenv("LOCAL_CORS_ORIGINS")
 SERVER_PORT = os.getenv("SERVER_PORT", "8080")
 
 
-def get_mail_config():
+def get_mail_config() -> ConnectionConfig:
     """メール設定を取得する"""
     return ConnectionConfig(
         MAIL_USERNAME=os.getenv("MAIL_USERNAME", ""),
@@ -26,8 +27,8 @@ def get_mail_config():
 
 def _print_dev_mode_email(
     title: str, email: str, subject: str, \
-    content: str, verification_url: str = None
-    ):
+    content: str, verification_url: Optional[str] = None
+    ) -> None:
     """開発モード用のコンソール出力を統一"""
     print(f"📧 {title}")
     print("=" * 60)
@@ -40,12 +41,12 @@ def _print_dev_mode_email(
     print("=" * 60)
 
 
-def _is_email_enabled():
+def _is_email_enabled() -> bool:
     """メール送信が有効かどうかを判定"""
     return os.getenv("ENABLE_EMAIL_SENDING", "false").lower() == "true"
 
 
-def _validate_mail_config():
+def _validate_mail_config() -> bool:
     """メール設定の妥当性をチェック"""
     mail_username = os.getenv("MAIL_USERNAME")
     mail_password = os.getenv("MAIL_PASSWORD")
@@ -53,7 +54,7 @@ def _validate_mail_config():
     return all([mail_username, mail_password, mail_from])
 
 
-async def send_verification_email(email: str, token: str):
+async def send_verification_email(email: str, token: str) -> None:
     """確認メールを送信する"""
     create_logger(f"メール送信開始 - 宛先: {email}, トークン: {token}")
     encoded_token = quote(token, safe='')
@@ -163,16 +164,15 @@ async def send_verification_email(email: str, token: str):
                 subject="【Blog API】メールアドレスの確認",
                 recipients=[email],
                 body=plain_body,
-                subtype="plain",
+                subtype=MessageType.plain,
                 charset="utf-8"
             )
         else:
             message = MessageSchema(
                 subject="【Blog API】メールアドレスの確認",
                 recipients=[email],
-                body=plain_body,
-                html=html_body,
-                subtype="html",
+                body=html_body,
+                subtype=MessageType.html,
                 charset="utf-8"
             )
         fm = FastMail(conf)
@@ -189,7 +189,7 @@ async def send_verification_email(email: str, token: str):
         )
 
 
-async def send_registration_complete_email(email: str, username: str):
+async def send_registration_complete_email(email: str, username: str) -> None:
     """登録完了メールを送信する"""
     create_logger(f"登録完了メール送信開始 - 宛先: {email}, ユーザー名: {username}")
     content = (
@@ -281,16 +281,15 @@ async def send_registration_complete_email(email: str, username: str):
                 subject="【Blog API】登録完了のお知らせ",
                 recipients=[email],
                 body=plain_body,
-                subtype="plain",
+                subtype=MessageType.plain,
                 charset="utf-8"
             )
         else:
             message = MessageSchema(
                 subject="【Blog API】登録完了のお知らせ",
                 recipients=[email],
-                body=plain_body,
-                html=html_body,
-                subtype="html",
+                body=html_body,
+                subtype=MessageType.html,
                 charset="utf-8"
             )
         # メール送信
@@ -307,7 +306,7 @@ async def send_registration_complete_email(email: str, username: str):
         )
 
 
-async def send_account_deletion_email(email: str, username: str):
+async def send_account_deletion_email(email: str, username: str) -> None:
     """退会完了メールを送信する"""
     create_logger(f"退会完了メール送信開始 - 宛先: {email}, ユーザー名: {username}")
     content = (
@@ -403,16 +402,15 @@ async def send_account_deletion_email(email: str, username: str):
                 subject="【Blog API】退会完了のお知らせ",
                 recipients=[email],
                 body=plain_body,
-                subtype="plain",
+                subtype=MessageType.plain,
                 charset="utf-8"
             )
         else:
             message = MessageSchema(
                 subject="【Blog API】退会完了のお知らせ",
                 recipients=[email],
-                body=plain_body,
-                html=html_body,
-                subtype="html",
+                body=html_body,
+                subtype=MessageType.html,
                 charset="utf-8"
             )
         # メール送信

@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 import urllib.parse
 import markdown
 
-from models import Article
-from schemas import ArticleBase, User, PublicArticle
+from models import Article, User as UserModel
+from schemas import ArticleBase, User as UserSchema, PublicArticle
 from database import get_db, db_env
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
@@ -26,7 +26,7 @@ router = APIRouter(
 )
 async def all_fetch(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user), # 現在のユーザーを取得
+    current_user: UserModel = Depends(get_current_user), # 現在のユーザーを取得
     limit: Optional[int] = Query(
         None, ge=1,
         description="取得する最大記事数（指定しない場合は全件取得）"
@@ -102,7 +102,15 @@ async def all_fetch(
             全{len(user_blogs)}件を取得しました。(総数: {total_count})"
             )
 
-    return user_blogs
+    # Article models を ArticleBase schemas に変換
+    return [
+        ArticleBase(
+            article_id=article.article_id,
+            title=article.title,
+            body=article.body,
+            user_id=article.user_id
+        ) for article in user_blogs
+    ]
 
 
 @router.get(
@@ -148,7 +156,14 @@ async def get_article(
             status_code=status.HTTP_404_NOT_FOUND, \
             detail=f"Article not found {id}"
             )
-    return id_blog
+    
+    # Article model を ArticleBase schema に変換
+    return ArticleBase(
+        article_id=id_blog.article_id,
+        title=id_blog.title,
+        body=id_blog.body,
+        user_id=id_blog.user_id
+    )
 
 @router.post(
     "/articles"
@@ -156,7 +171,7 @@ async def get_article(
 async def create_article(
     blog: ArticleBase,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
     ) -> ArticleBase:
     """新しい記事を作成するエンドポイント
 
@@ -200,7 +215,12 @@ async def create_article(
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
-    return new_blog
+    return ArticleBase(
+        article_id=new_blog.article_id,
+        title=new_blog.title,
+        body=new_blog.body,
+        user_id=new_blog.user_id
+    )
 
 
 @router.put(
@@ -212,7 +232,7 @@ async def update_article(
     article_id: int,
     blog: ArticleBase,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
     ) -> ArticleBase:
     """指定したIDの記事を更新するエンドポイント
 
@@ -283,7 +303,14 @@ async def update_article(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Article not updated. article_id: {article_id}"
         )
-    return update_blog
+    
+    # Article model を ArticleBase schema に変換
+    return ArticleBase(
+        article_id=update_blog.article_id,
+        title=update_blog.title,
+        body=update_blog.body,
+        user_id=update_blog.user_id
+    )
 
 
 @router.delete(
@@ -293,7 +320,7 @@ async def update_article(
 async def delete_article(
     article_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user)
     ) -> None:
     """記事を削除するエンドポイント
 
