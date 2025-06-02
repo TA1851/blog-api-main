@@ -38,7 +38,9 @@ async def get_current_user(
       # SECRET_KEYがNoneでないことを確認
       if SECRET_KEY is None:
           raise credentials_exception
-      
+      # トークンがNoneでないことを確認
+      if token is None:
+          raise credentials_exception
       # トークンを検証してペイロードを取得
       payload = jwt.decode(
         token,
@@ -47,17 +49,18 @@ async def get_current_user(
       )
       email_raw = payload.get("sub")
       id_raw = payload.get("id")
-      
       if email_raw is None or id_raw is None:
           raise credentials_exception
-      
       email: str = str(email_raw)
-      user_id: int = int(id_raw)
-
+      try:
+          user_id: int = int(id_raw)
+      except (ValueError, TypeError):
+          raise credentials_exception
       token_data = TokenData(email=email)
   except JWTError as e:
       print(f"JWTErrorが発生しました: {str(e)}")
       raise credentials_exception
+
   # 直接データベースからユーザーを取得
   user = db.query(User).filter(User.id == user_id).first()
   if user is None:
