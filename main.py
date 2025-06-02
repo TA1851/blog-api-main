@@ -52,8 +52,41 @@ async def handler(
     create_error_logger(
         f"バリデーションエラー: {exc.errors()}"
         )
+    
+    # メールアドレス形式エラーを検出
+    for error in exc.errors():
+        # エラーの場所（フィールド名）を確認
+        location = error.get("loc", [])
+        error_type = error.get("type", "")
+        error_msg = error.get("msg", "")
+        
+        # メールアドレスフィールドのエラーかどうかを判定
+        is_email_field = any("email" in str(loc).lower() for loc in location)
+        
+        # メールアドレス関連のエラータイプを検出
+        email_error_types = [
+            "value_error.email",
+            "value_error", 
+            "type_error.str",
+            "missing"
+        ]
+        
+        # メールアドレスエラーの条件判定
+        if is_email_field and (
+            any(et in error_type for et in email_error_types) or
+            "email" in error_msg.lower() or
+            "valid email" in error_msg.lower() or
+            "@" in str(error.get("input", ""))
+        ):
+            create_error_logger(f"メールアドレス形式エラーを検出: {error}")
+            return JSONResponse(
+                content={"detail": "メールアドレスの形式が不正です。"},
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+    
+    # その他のバリデーションエラーはデフォルトのまま
     return JSONResponse(
-        content={},
+        content={"detail": "入力データが無効です。"},
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
         )
 
