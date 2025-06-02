@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog API - レポートダッシュボード</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f5f5f5; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+        }
+        h1 { 
+            color: #333; 
+            text-align: center; 
+            border-bottom: 3px solid #007acc; 
+            padding-bottom: 10px; 
+        }
+        .section { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            background-color: #fafafa; 
+        }
+        .section h2 { 
+            color: #007acc; 
+            margin-top: 0; 
+        }
+        .file-list { 
+            list-style: none; 
+            padding: 0; 
+        }
+        .file-list li { 
+            margin: 10px 0; 
+            padding: 10px; 
+            background: white; 
+            border-radius: 3px; 
+            border-left: 4px solid #007acc; 
+        }
+        .file-list a { 
+            text-decoration: none; 
+            color: #333; 
+            font-weight: 500; 
+        }
+        .file-list a:hover { 
+            color: #007acc; 
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-around; 
+            margin: 20px 0; 
+        }
+        .stat { 
+            text-align: center; 
+            padding: 15px; 
+            background: #007acc; 
+            color: white; 
+            border-radius: 5px; 
+            min-width: 120px; 
+        }
+        .stat-number { 
+            font-size: 2em; 
+            font-weight: bold; 
+        }
+        .stat-label { 
+            font-size: 0.9em; 
+        }
+        .timestamp { 
+            text-align: center; 
+            color: #666; 
+            font-style: italic; 
+            margin-top: 30px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Blog API レポートダッシュボード</h1>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="test-count">-</div>
+                <div class="stat-label">テストレポート</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="bug-count">-</div>
+                <div class="stat-label">バグレポート</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="coverage-count">-</div>
+                <div class="stat-label">カバレッジレポート</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📊 テスト結果レポート</h2>
+            <ul class="file-list" id="test-results">
+                <li>読み込み中...</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🐛 バグトラッキングレポート</h2>
+            <ul class="file-list" id="bug-reports">
+                <li>読み込み中...</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>📈 カバレッジレポート (最新)</h2>
+            <ul class="file-list" id="coverage-current">
+                <li>読み込み中...</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>📦 カバレッジレポート (アーカイブ)</h2>
+            <ul class="file-list" id="coverage-archived">
+                <li>読み込み中...</li>
+            </ul>
+        </div>
+        
+        <div class="timestamp">
+            最終更新: <span id="timestamp"></span>
+        </div>
+    </div>
+    
+    <script>
+        // タイムスタンプを設定
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('ja-JP');
+        
+        // 統計を更新（実際の実装では動的に取得）
+        document.getElementById('test-count').textContent = '4';
+        document.getElementById('bug-count').textContent = '4';
+        document.getElementById('coverage-count').textContent = '6';
+        
+        // ファイルリストを更新（実際の実装では動的に取得）
+        function updateFileList(elementId, files) {
+            const element = document.getElementById(elementId);
+            if (files.length === 0) {
+                element.innerHTML = '<li>ファイルがありません</li>';
+                return;
+            }
+            
+            element.innerHTML = files.map(file => 
+                `<li><a href="${file.path}" target="_blank">${file.name}</a></li>`
+            ).join('');
+        }
+        
+        // サンプルデータ（実際の実装では動的に取得）
+        setTimeout(() => {
+            updateFileList('test-results', [
+                {name: 'メインテスト結果', path: 'test_results/test_results_main.html'},
+                {name: '認証ルーターテスト', path: 'test_results/test_results_auth_router_final.html'},
+                {name: '記事ルーターテスト', path: 'test_results/test_results_with_article_router.html'}
+            ]);
+            
+            updateFileList('bug-reports', [
+                {name: '包括的バグトラッキング', path: 'bug_reports/comprehensive_bug_tracking_report.html'},
+                {name: '最新バグレポート', path: 'bug_reports/bug_report_latest.html'}
+            ]);
+            
+            updateFileList('coverage-current', [
+                {name: 'メインカバレッジ', path: 'coverage_html/current/main_coverage/index.html'},
+                {name: '完全カバレッジ', path: 'coverage_html/current/full_coverage/index.html'}
+            ]);
+            
+            updateFileList('coverage-archived', [
+                {name: 'ユーザールーターカバレッジ', path: 'coverage_html/archived/user_router_coverage/index.html'}
+            ]);
+        }, 500);
+    </script>
+</body>
+</html>

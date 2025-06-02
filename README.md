@@ -39,6 +39,34 @@
 - tests/: テストスイートとレポート
   - tests/report/: 包括的テストレポート集 📊
 
+### 📁 統合ファイル管理システム ✨
+
+プロジェクトの全ファイルが体系的に整理されています：
+
+- **🎯 reports/**: 統合レポートダッシュボード
+  - **📊 test_results/**: HTMLテスト結果レポート
+  - **🐛 bug_reports/**: バグトラッキングレポート  
+  - **📈 coverage_html/**: HTMLカバレッジレポート
+    - **current/**: 最新カバレッジ (4種類)
+    - **archived/**: 過去のカバレッジ
+  - **📄 json_data/**: JSONデータファイル
+  - **📝 markdown_reports/**: Markdownレポート
+  - **🎨 index.html**: 統合ダッシュボード
+
+- **🗂️ test_results/**: XMLテスト結果管理
+  - **current/**: 最新のテスト結果 (2ファイル)
+  - **coverage/**: カバレッジレポート (5ファイル)
+
+- **📦 test_archives/**: テスト結果アーカイブ
+  - **xml_archive/**: 過去のテスト結果 (14ファイル)
+  - **component_tests/**: コンポーネント別テスト (4ファイル)
+
+- **⚙️ scripts/**: 自動化スクリプト
+  - `organize_xml_files.py`: XML自動整理
+  - `organize_html_files.py`: HTML自動整理  
+  - `unified_organizer.py`: 統合ファイル整理
+  - `XML_AUTOMATION_GUIDE.md`: 自動化設定ガイド
+
 ### APIエンドポイント
 - /api/v1/login: ユーザー認証とトークン発行
 - /api/v1/user: ユーザー登録と管理
