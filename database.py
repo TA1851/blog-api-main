@@ -5,7 +5,7 @@ from typing import Union, Optional, Dict, List, Generator, TypedDict
 from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from sqlalchemy.orm import declarative_base, sessionmaker, Session, DeclarativeBase
 
 
 class EnvironmentConfig(TypedDict, total=False):
@@ -138,8 +138,10 @@ def create_database_engine() -> Engine:
         raise DatabaseConnectionError(f"データベース接続に失敗しました。: {str(e)}")
 
 
-# テーブルオブジェクトを生成するベースクラス
-Base = declarative_base()
+# SQLAlchemy 2.0スタイルのベースクラス
+class Base(DeclarativeBase):
+    """SQLAlchemyのベースクラス"""
+    pass
 engine = create_database_engine()
 
 

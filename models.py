@@ -1,8 +1,9 @@
 """テーブル定義モジュール"""
 from datetime import datetime, timedelta
+from typing import Optional, List
 from uuid import uuid4
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from database import Base
 from logger.custom_logger import create_logger
@@ -21,16 +22,18 @@ class Article(Base):
 
     __tablename__ = "articles"
 
-    # データベースカラムを定義
-    id: int = Column(Integer, primary_key=True, index=True)
-    article_id: int = Column(Integer, nullable=False)
-    title: str = Column(String, nullable=False)
-    body: str = Column(String, nullable=False)
+    # SQLAlchemy 2.0スタイルでデータベースカラムを定義
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    article_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    body: Mapped[str] = mapped_column(String, nullable=False)
     # Userクラスのidを外部キーとして指定する
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id"))
     # 特定の記事を作成したユーザーの情報を取得する
-    owner = relationship("User", back_populates="blogs")
-    create_logger(f"Articleインスタンスが作成されました。")
+    owner: Mapped[Optional["User"]] = relationship("User", back_populates="blogs")
+    
+    def __post_init__(self) -> None:
+        create_logger(f"Articleインスタンスが作成されました。")
 
 
 class User(Base):
@@ -42,34 +45,33 @@ class User(Base):
     :param password: パスワード
     :param is_active: ユーザーの有効状態
     :param blogs: 特定のユーザーが作成した記事の情報を全て取得するためのリレーションシップ
-    :param owner: 特定の記事を作成したユーザーの情報を取得するためのリレーションシップ
     """
 
     __tablename__ = "users"
 
-    # データベースカラムを定義
-    id: int = Column(Integer, primary_key=True, index=True)
-    name: str = Column(String)
-    email: str = Column(String)
-    password: str = Column(String)
-    is_active: bool = Column(Boolean, default=True)
+    # SQLAlchemy 2.0スタイルでデータベースカラムを定義
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[Optional[str]] = mapped_column(String)
+    email: Mapped[Optional[str]] = mapped_column(String)
+    password: Mapped[Optional[str]] = mapped_column(String)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     # 特定のユーザーが作成した記事の情報を全て取得する
-    blogs = relationship("Article", back_populates="owner")
+    blogs: Mapped[List["Article"]] = relationship("Article", back_populates="owner")
 
 
 class EmailVerification(Base):
     """メール確認用のモデル"""
     __tablename__ = 'email_verifications'
 
-    id = Column(Integer, primary_key=True)
-    email = Column(String, unique=True, nullable=False)
-    token = Column(String, unique=True, nullable=False)
-    is_verified = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    expires_at = Column(DateTime)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    token: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
     @classmethod
-    def create_verification(cls, email: str):
+    def create_verification(cls, email: str) -> "EmailVerification":
         """新しい確認レコードを作成"""
         return cls(
             email=email,
