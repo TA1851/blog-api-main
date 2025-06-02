@@ -1,0 +1,3615 @@
+[
+  {
+    "timestamp": "2025-06-02T12:48:05.039849",
+    "summary": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.0,
+      "success_rate": 0
+    },
+    "tests": [
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.016,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.006,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "v1.0.0",
+    "notes": "初回リリース前のテスト"
+  },
+  {
+    "timestamp": "2025-06-02T12:49:35.930686",
+    "summary": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.0,
+      "success_rate": 0
+    },
+    "tests": [
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.016,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.006,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "v1.0.0",
+    "notes": "初回リリース前のテスト"
+  },
+  {
+    "timestamp": "2025-06-02T12:51:57.340406",
+    "summary": {
+      "total": 33,
+      "passed": 33,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.682,
+      "success_rate": 100.0
+    },
+    "tests": [
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.016,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.006,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "v1.0.1",
+    "notes": "XMLパース修正後のテスト"
+  },
+  {
+    "timestamp": "2025-06-02T13:28:12.603589",
+    "summary": {
+      "total": 59,
+      "passed": 59,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.491,
+      "success_rate": 100.0
+    },
+    "tests": [
+      {
+        "id": "65c0690c",
+        "name": "test_check_env_file_default_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "525cc941",
+        "name": "test_check_env_file_custom_str_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a11e40c6",
+        "name": "test_check_env_file_custom_path_object",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2df2af4d",
+        "name": "test_check_env_file_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.005,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ee29ab39",
+        "name": "test_check_env_file_non_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7e19fe73",
+        "name": "test_read_env_var_all_variables_set",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "24e65390",
+        "name": "test_read_env_var_single_cors_origin",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d462406f",
+        "name": "test_read_env_var_posgre_url_fallback",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6868ccd3",
+        "name": "test_read_env_var_missing_variables",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a2d89059",
+        "name": "test_read_env_var_empty_file",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2a749dd0",
+        "name": "test_create_database_engine_production",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c9454c7f",
+        "name": "test_create_database_engine_development",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "744d5248",
+        "name": "test_create_database_engine_no_environment",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b1f60bcc",
+        "name": "test_create_database_engine_production_no_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "35aa53d7",
+        "name": "test_create_database_engine_production_invalid_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "eafa2124",
+        "name": "test_create_database_engine_exception_handling",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "cb5f4247",
+        "name": "test_create_session_success",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7cc71f83",
+        "name": "test_create_session_exception",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a66ea797",
+        "name": "test_get_db_success",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "87b7ef09",
+        "name": "test_get_db_exception_handling",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6d3c8e4a",
+        "name": "test_database_connection_error",
+        "class": "tests.test_database.TestDatabaseConnectionError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "609372a6",
+        "name": "test_environment_config_type_structure",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "318a697f",
+        "name": "test_environment_config_optional_fields",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "00743bd5",
+        "name": "test_environment_config_empty",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4ad322b0",
+        "name": "test_base_class_inheritance",
+        "class": "tests.test_database.TestBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f7df9257",
+        "name": "test_full_database_setup_development",
+        "class": "tests.test_database.TestIntegration",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.004,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "v3.0-database-tests-complete",
+    "notes": "全59テスト（既存33個+新規database.py 26個）すべて成功。database.pyの包括的テストスイートを追加完了。"
+  },
+  {
+    "timestamp": "2025-06-02T13:39:28.108538",
+    "summary": {
+      "total": 59,
+      "passed": 59,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.336,
+      "success_rate": 100.0
+    },
+    "tests": [
+      {
+        "id": "65c0690c",
+        "name": "test_check_env_file_default_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "525cc941",
+        "name": "test_check_env_file_custom_str_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a11e40c6",
+        "name": "test_check_env_file_custom_path_object",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2df2af4d",
+        "name": "test_check_env_file_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ee29ab39",
+        "name": "test_check_env_file_non_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7e19fe73",
+        "name": "test_read_env_var_all_variables_set",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "24e65390",
+        "name": "test_read_env_var_single_cors_origin",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d462406f",
+        "name": "test_read_env_var_posgre_url_fallback",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6868ccd3",
+        "name": "test_read_env_var_missing_variables",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a2d89059",
+        "name": "test_read_env_var_empty_file",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2a749dd0",
+        "name": "test_create_database_engine_production",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c9454c7f",
+        "name": "test_create_database_engine_development",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "744d5248",
+        "name": "test_create_database_engine_no_environment",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b1f60bcc",
+        "name": "test_create_database_engine_production_no_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "35aa53d7",
+        "name": "test_create_database_engine_production_invalid_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "eafa2124",
+        "name": "test_create_database_engine_exception_handling",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "cb5f4247",
+        "name": "test_create_session_success",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7cc71f83",
+        "name": "test_create_session_exception",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a66ea797",
+        "name": "test_get_db_success",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "87b7ef09",
+        "name": "test_get_db_exception_handling",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6d3c8e4a",
+        "name": "test_database_connection_error",
+        "class": "tests.test_database.TestDatabaseConnectionError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "609372a6",
+        "name": "test_environment_config_type_structure",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "318a697f",
+        "name": "test_environment_config_optional_fields",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "00743bd5",
+        "name": "test_environment_config_empty",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4ad322b0",
+        "name": "test_base_class_inheritance",
+        "class": "tests.test_database.TestBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f7df9257",
+        "name": "test_full_database_setup_development",
+        "class": "tests.test_database.TestIntegration",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.004,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "continuous-20250602-133928",
+    "notes": "継続的テスト実行 - 2025年06月02日 13:39:28"
+  },
+  {
+    "timestamp": "2025-06-02T13:44:21.045979",
+    "summary": {
+      "total": 73,
+      "passed": 73,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.478,
+      "success_rate": 100.0
+    },
+    "tests": [
+      {
+        "id": "65c0690c",
+        "name": "test_check_env_file_default_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "525cc941",
+        "name": "test_check_env_file_custom_str_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a11e40c6",
+        "name": "test_check_env_file_custom_path_object",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2df2af4d",
+        "name": "test_check_env_file_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ee29ab39",
+        "name": "test_check_env_file_non_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7e19fe73",
+        "name": "test_read_env_var_all_variables_set",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "24e65390",
+        "name": "test_read_env_var_single_cors_origin",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d462406f",
+        "name": "test_read_env_var_posgre_url_fallback",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6868ccd3",
+        "name": "test_read_env_var_missing_variables",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a2d89059",
+        "name": "test_read_env_var_empty_file",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2a749dd0",
+        "name": "test_create_database_engine_production",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c9454c7f",
+        "name": "test_create_database_engine_development",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "744d5248",
+        "name": "test_create_database_engine_no_environment",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b1f60bcc",
+        "name": "test_create_database_engine_production_no_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "35aa53d7",
+        "name": "test_create_database_engine_production_invalid_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "eafa2124",
+        "name": "test_create_database_engine_exception_handling",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "cb5f4247",
+        "name": "test_create_session_success",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7cc71f83",
+        "name": "test_create_session_exception",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a66ea797",
+        "name": "test_get_db_success",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "87b7ef09",
+        "name": "test_get_db_exception_handling",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6d3c8e4a",
+        "name": "test_database_connection_error",
+        "class": "tests.test_database.TestDatabaseConnectionError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "609372a6",
+        "name": "test_environment_config_type_structure",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "318a697f",
+        "name": "test_environment_config_optional_fields",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "00743bd5",
+        "name": "test_environment_config_empty",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4ad322b0",
+        "name": "test_base_class_inheritance",
+        "class": "tests.test_database.TestBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f7df9257",
+        "name": "test_full_database_setup_development",
+        "class": "tests.test_database.TestIntegration",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "00bfb081",
+        "name": "test_root_endpoint",
+        "class": "tests.test_integration.TestHealthCheck",
+        "status": "passed",
+        "time": 0.007,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7fbde0c6",
+        "name": "test_async_root_endpoint",
+        "class": "tests.test_integration.TestHealthCheck",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3294dde6",
+        "name": "test_docs_endpoint",
+        "class": "tests.test_integration.TestAPIDocumentation",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "480bf3bd",
+        "name": "test_redoc_endpoint",
+        "class": "tests.test_integration.TestAPIDocumentation",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "32ed655e",
+        "name": "test_openapi_json",
+        "class": "tests.test_integration.TestAPIDocumentation",
+        "status": "passed",
+        "time": 0.007,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8a4be489",
+        "name": "test_articles_endpoint_exists",
+        "class": "tests.test_integration.TestArticleAPI",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ecf0724a",
+        "name": "test_articles_async",
+        "class": "tests.test_integration.TestArticleAPI",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ad7fe6d5",
+        "name": "test_user_registration_endpoint",
+        "class": "tests.test_integration.TestUserAPI",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "334433c4",
+        "name": "test_login_endpoint",
+        "class": "tests.test_integration.TestAuthAPI",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a1c4447",
+        "name": "test_cors_preflight",
+        "class": "tests.test_integration.TestCORSConfiguration",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7e9c20ba",
+        "name": "test_nonexistent_endpoint",
+        "class": "tests.test_integration.TestErrorHandling",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "166ef021",
+        "name": "test_method_not_allowed",
+        "class": "tests.test_integration.TestErrorHandling",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4d08bbc8",
+        "name": "test_app_creation",
+        "class": "tests.test_integration.TestApplicationStartup",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "0a331605",
+        "name": "test_app_routes",
+        "class": "tests.test_integration.TestApplicationStartup",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "continuous-20250602-134421",
+    "notes": "継続的テスト実行 - 2025年06月02日 13:44:21"
+  },
+  {
+    "timestamp": "2025-06-02T13:59:49.771278",
+    "summary": {
+      "total": 99,
+      "passed": 99,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "execution_time": 0.798,
+      "success_rate": 100.0
+    },
+    "tests": [
+      {
+        "id": "65c0690c",
+        "name": "test_check_env_file_default_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "525cc941",
+        "name": "test_check_env_file_custom_str_path",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a11e40c6",
+        "name": "test_check_env_file_custom_path_object",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2df2af4d",
+        "name": "test_check_env_file_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ee29ab39",
+        "name": "test_check_env_file_non_existing_file",
+        "class": "tests.test_database.TestCheckEnvFile",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7e19fe73",
+        "name": "test_read_env_var_all_variables_set",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "24e65390",
+        "name": "test_read_env_var_single_cors_origin",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d462406f",
+        "name": "test_read_env_var_posgre_url_fallback",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6868ccd3",
+        "name": "test_read_env_var_missing_variables",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a2d89059",
+        "name": "test_read_env_var_empty_file",
+        "class": "tests.test_database.TestReadEnvVar",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "2a749dd0",
+        "name": "test_create_database_engine_production",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c9454c7f",
+        "name": "test_create_database_engine_development",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "744d5248",
+        "name": "test_create_database_engine_no_environment",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b1f60bcc",
+        "name": "test_create_database_engine_production_no_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "35aa53d7",
+        "name": "test_create_database_engine_production_invalid_url",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "eafa2124",
+        "name": "test_create_database_engine_exception_handling",
+        "class": "tests.test_database.TestCreateDatabaseEngine",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "cb5f4247",
+        "name": "test_create_session_success",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7cc71f83",
+        "name": "test_create_session_exception",
+        "class": "tests.test_database.TestCreateSession",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a66ea797",
+        "name": "test_get_db_success",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "87b7ef09",
+        "name": "test_get_db_exception_handling",
+        "class": "tests.test_database.TestGetDb",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "6d3c8e4a",
+        "name": "test_database_connection_error",
+        "class": "tests.test_database.TestDatabaseConnectionError",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "609372a6",
+        "name": "test_environment_config_type_structure",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "318a697f",
+        "name": "test_environment_config_optional_fields",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "00743bd5",
+        "name": "test_environment_config_empty",
+        "class": "tests.test_database.TestEnvironmentConfig",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4ad322b0",
+        "name": "test_base_class_inheritance",
+        "class": "tests.test_database.TestBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f7df9257",
+        "name": "test_full_database_setup_development",
+        "class": "tests.test_database.TestIntegration",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "00bfb081",
+        "name": "test_root_endpoint",
+        "class": "tests.test_integration.TestHealthCheck",
+        "status": "passed",
+        "time": 0.015,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7fbde0c6",
+        "name": "test_async_root_endpoint",
+        "class": "tests.test_integration.TestHealthCheck",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3294dde6",
+        "name": "test_docs_endpoint",
+        "class": "tests.test_integration.TestAPIDocumentation",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "480bf3bd",
+        "name": "test_redoc_endpoint",
+        "class": "tests.test_integration.TestAPIDocumentation",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "32ed655e",
+        "name": "test_openapi_json",
+        "class": "tests.test_integration.TestAPIDocumentation",
+        "status": "passed",
+        "time": 0.015,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8a4be489",
+        "name": "test_articles_endpoint_exists",
+        "class": "tests.test_integration.TestArticleAPI",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ecf0724a",
+        "name": "test_articles_async",
+        "class": "tests.test_integration.TestArticleAPI",
+        "status": "passed",
+        "time": 0.004,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ad7fe6d5",
+        "name": "test_user_registration_endpoint",
+        "class": "tests.test_integration.TestUserAPI",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "334433c4",
+        "name": "test_login_endpoint",
+        "class": "tests.test_integration.TestAuthAPI",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a1c4447",
+        "name": "test_cors_preflight",
+        "class": "tests.test_integration.TestCORSConfiguration",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "7e9c20ba",
+        "name": "test_nonexistent_endpoint",
+        "class": "tests.test_integration.TestErrorHandling",
+        "status": "passed",
+        "time": 0.003,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "166ef021",
+        "name": "test_method_not_allowed",
+        "class": "tests.test_integration.TestErrorHandling",
+        "status": "passed",
+        "time": 0.002,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4d08bbc8",
+        "name": "test_app_creation",
+        "class": "tests.test_integration.TestApplicationStartup",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "0a331605",
+        "name": "test_app_routes",
+        "class": "tests.test_integration.TestApplicationStartup",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "97ccc55b",
+        "name": "test_article_table_name",
+        "class": "tests.test_models.TestArticleModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "658b4110",
+        "name": "test_article_columns_definition",
+        "class": "tests.test_models.TestArticleModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e0c5a8f0",
+        "name": "test_article_creation",
+        "class": "tests.test_models.TestArticleModel",
+        "status": "passed",
+        "time": 0.004,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "76f15fb7",
+        "name": "test_article_with_user_id",
+        "class": "tests.test_models.TestArticleModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "15a1cb69",
+        "name": "test_article_post_init",
+        "class": "tests.test_models.TestArticleModel",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "9d3d4525",
+        "name": "test_article_relationship_definition",
+        "class": "tests.test_models.TestArticleModel",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8692c617",
+        "name": "test_user_table_name",
+        "class": "tests.test_models.TestUserModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "890a8269",
+        "name": "test_user_columns_definition",
+        "class": "tests.test_models.TestUserModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "717b6fdc",
+        "name": "test_user_creation",
+        "class": "tests.test_models.TestUserModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "263c449f",
+        "name": "test_user_optional_fields",
+        "class": "tests.test_models.TestUserModel",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c133e179",
+        "name": "test_user_is_active_custom_value",
+        "class": "tests.test_models.TestUserModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "9287a5a0",
+        "name": "test_user_relationship_definition",
+        "class": "tests.test_models.TestUserModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "54acf4fb",
+        "name": "test_email_verification_table_name",
+        "class": "tests.test_models.TestEmailVerificationModel",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ac670300",
+        "name": "test_email_verification_columns_definition",
+        "class": "tests.test_models.TestEmailVerificationModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c6a5c2ce",
+        "name": "test_email_verification_creation",
+        "class": "tests.test_models.TestEmailVerificationModel",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "cb47f37f",
+        "name": "test_email_verification_with_datetime",
+        "class": "tests.test_models.TestEmailVerificationModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dc4faf61",
+        "name": "test_create_verification_class_method",
+        "class": "tests.test_models.TestEmailVerificationModel",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c75dca3b",
+        "name": "test_create_verification_returns_instance",
+        "class": "tests.test_models.TestEmailVerificationModel",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "31da51a2",
+        "name": "test_article_user_relationship_consistency",
+        "class": "tests.test_models.TestModelRelationships",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "1513bb4f",
+        "name": "test_foreign_key_consistency",
+        "class": "tests.test_models.TestModelRelationships",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "51fca5f7",
+        "name": "test_all_models_inherit_from_base",
+        "class": "tests.test_models.TestModelTableStructure",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "36cfbf39",
+        "name": "test_table_names_are_unique",
+        "class": "tests.test_models.TestModelTableStructure",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d7e64b7b",
+        "name": "test_model_docstrings_exist",
+        "class": "tests.test_models.TestModelTableStructure",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "acffdb03",
+        "name": "test_user_article_relationship_in_db",
+        "class": "tests.test_models.TestModelsIntegration",
+        "status": "passed",
+        "time": 0.016,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a1d3a82c",
+        "name": "test_email_verification_in_db",
+        "class": "tests.test_models.TestModelsIntegration",
+        "status": "passed",
+        "time": 0.011,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "52755bd6",
+        "name": "test_unique_constraints",
+        "class": "tests.test_models.TestModelsIntegration",
+        "status": "passed",
+        "time": 0.007,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "03ffbeca",
+        "name": "test_custom_exception",
+        "class": "tests.test_schemas.TestLengthMismatchError",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "5d3347b0",
+        "name": "test_valid_article_creation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fefcef67",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "75ac81bc",
+        "name": "test_title_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "64b88588",
+        "name": "test_body_max_length_validation",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4c5641da",
+        "name": "test_body_html_conversion",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.014,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "d4167a62",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestArticleBase",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "fea76519",
+        "name": "test_article_inheritance",
+        "class": "tests.test_schemas.TestArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "656ad3c9",
+        "name": "test_valid_user_creation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.006,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "ffd97366",
+        "name": "test_email_validation",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "aadd39c3",
+        "name": "test_email_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8525aef9",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e81a97bf",
+        "name": "test_optional_fields",
+        "class": "tests.test_schemas.TestUser",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "f32e8d4a",
+        "name": "test_show_user_with_blogs",
+        "class": "tests.test_schemas.TestShowUser",
+        "status": "passed",
+        "time": 0.001,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a599ac72",
+        "name": "test_show_article_with_body_html",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "04f364a9",
+        "name": "test_body_html_with_none_body",
+        "class": "tests.test_schemas.TestShowArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a7cc8a17",
+        "name": "test_valid_login",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "4bc3e4cb",
+        "name": "test_login_email_validation",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "08f7ef2e",
+        "name": "test_password_max_length",
+        "class": "tests.test_schemas.TestLogin",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "dd012747",
+        "name": "test_valid_password_change",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3cf2a6e1",
+        "name": "test_username_email_validation",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "b3c66773",
+        "name": "test_new_password_min_length",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a600d860",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPasswordChange",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "be17db6c",
+        "name": "test_token_creation",
+        "class": "tests.test_schemas.TestToken",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "8c16a85a",
+        "name": "test_token_data_with_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "bfad2719",
+        "name": "test_token_data_without_email",
+        "class": "tests.test_schemas.TestTokenData",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e9093a3e",
+        "name": "test_public_article_creation",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "a22369f8",
+        "name": "test_required_fields",
+        "class": "tests.test_schemas.TestPublicArticle",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "3a0531b1",
+        "name": "test_valid_deletion_request",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "918f18dd",
+        "name": "test_email_validation_for_deletion",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "315ba797",
+        "name": "test_password_min_length",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "e37505c1",
+        "name": "test_validate_passwords_match_success",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      },
+      {
+        "id": "c8d5f3bf",
+        "name": "test_validate_passwords_match_failure",
+        "class": "tests.test_schemas.TestAccountDeletionRequest",
+        "status": "passed",
+        "time": 0.0,
+        "message": "",
+        "detail": ""
+      }
+    ],
+    "version": "continuous-20250602-135949",
+    "notes": "継続的テスト実行 - 2025年06月02日 13:59:49"
+  }
+]

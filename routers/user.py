@@ -206,7 +206,6 @@ async def create_user(
     description="ユーザーのメールアドレスを確認するエンドポイント",
 )
 async def verify_email(
-    self,
     token: str = Query(...),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
