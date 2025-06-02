@@ -85,26 +85,25 @@ class UserRouter:
     "/user",
     status_code=status.HTTP_201_CREATED,
     response_model=UserSchema,
-    summary="User Create",
-    description="ユーザーを作成するエンドポイント（シンプル登録）",
+    summary="User Create (Email Only)",
+    description="メールアドレスのみでユーザーを作成するエンドポイント。パスワードは仮パスワードが自動設定されます。",
     )
     async def create_user(
         self,
         user: UserSchema,
         db: Session = Depends(get_db)
     ) -> UserCreateResponse:
-        """ユーザーを作成するエンドポイント（シンプル登録）"""
+        """メールアドレスのみでユーザーを作成するエンドポイント
+        
+        パスワードは自動的に仮パスワード 'temp_password_123' が設定されます。
+        ユーザーは登録後にパスワード変更エンドポイントでパスワードを設定する必要があります。
+        """
         try:
             # 入力データの検証
             if user.email is None:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="メールアドレスが必要です。"
-                )
-            if user.password is None:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="パスワードが必要です。"
                 )
                 
             create_logger(f"ユーザー作成開始 - メール: {user.email}")
@@ -143,16 +142,14 @@ class UserRouter:
                             detail="このメールアドレスは既に確認済みです。"
                         )
                     else:
-                        # 既存のレコードを更新（パスワードも保存）
+                        # 既存のレコードを更新（メールアドレスのみ）
                         existing_verification.token = str(uuid4())
                         existing_verification.created_at = datetime.utcnow()
                         existing_verification.expires_at = datetime.utcnow() + timedelta(hours=24)
-                        existing_verification.password_hash = Hash.bcrypt(user.password)
                         verification = existing_verification
                         create_logger(f"既存の確認レコードを更新しました: {user.email}")
                 else:
                     verification = EmailVerification.create_verification(user.email)
-                    verification.password_hash = Hash.bcrypt(user.password)
                     db.add(verification)
                     create_logger(f"新しい確認レコードを作成しました: {user.email}")
 
@@ -164,17 +161,20 @@ class UserRouter:
                     "email": user.email
                 }
             else:
-                # ユーザーの作成
+                # メール認証が無効な場合の直接ユーザー作成
                 if user.email is None:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail="メールアドレスが必要です。"
                     )
                 
+                # 仮パスワードを生成
+                temp_password = "temp_password_123"
+                
                 new_user = UserModel(
                     name=user.name if hasattr(user, 'name') and user.name else user.email.split('@')[0],
                     email=user.email,
-                    password=Hash.bcrypt(user.password),
+                    password=Hash.bcrypt(temp_password),
                     is_active=True
                 )
                 db.add(new_user)
@@ -183,7 +183,7 @@ class UserRouter:
                 create_logger(f"ユーザーを直接作成しました: {user.email}")
 
                 return {
-                    "message": "ユーザー登録が完了しました。ログインできます。",
+                    "message": "ユーザー登録が完了しました。仮パスワード 'temp_password_123' でログインして、パスワードを変更してください。",
                     "email": user.email,
                     "id": str(new_user.id),
                     "is_active": str(new_user.is_active)
