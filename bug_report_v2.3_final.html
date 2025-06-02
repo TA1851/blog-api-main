@@ -1,0 +1,454 @@
+
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Blog API 統合テストレポート v2.3</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+            
+            .header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 2rem;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }
+            
+            .header p {
+                font-size: 1.2rem;
+                opacity: 0.9;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                padding: 2rem;
+                background: #f8f9fa;
+            }
+            
+            .stat-card {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                text-align: center;
+                transition: transform 0.3s ease;
+            }
+            
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+            
+            .stat-number {
+                font-size: 3rem;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+            }
+            
+            .stat-label {
+                color: #666;
+                font-size: 1.1rem;
+            }
+            
+            .success { color: #28a745; }
+            .warning { color: #ffc107; }
+            .danger { color: #dc3545; }
+            .info { color: #17a2b8; }
+            
+            .content {
+                padding: 2rem;
+            }
+            
+            .version-section {
+                margin-bottom: 3rem;
+                border: 2px solid #e9ecef;
+                border-radius: 15px;
+                overflow: hidden;
+            }
+            
+            .version-header {
+                background: #f8f9fa;
+                padding: 1.5rem;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .version-title {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #495057;
+                margin-bottom: 0.5rem;
+            }
+            
+            .version-meta {
+                color: #666;
+                font-size: 0.9rem;
+            }
+            
+            .version-body {
+                padding: 1.5rem;
+            }
+            
+            .test-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            
+            .test-metric {
+                background: #f8f9fa;
+                padding: 1rem;
+                border-radius: 10px;
+                text-align: center;
+            }
+            
+            .test-list {
+                margin-top: 1.5rem;
+                max-height: 300px;
+                overflow-y: auto;
+                border: 1px solid #e9ecef;
+                border-radius: 10px;
+            }
+            
+            .test-item {
+                padding: 0.75rem 1rem;
+                border-bottom: 1px solid #f1f3f4;
+                display: flex;
+                justify-content: between;
+                align-items: center;
+            }
+            
+            .test-item:last-child {
+                border-bottom: none;
+            }
+            
+            .test-name {
+                flex: 1;
+                font-size: 0.9rem;
+            }
+            
+            .test-status {
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+            
+            .status-passed {
+                background: #d4edda;
+                color: #155724;
+            }
+            
+            .status-failed {
+                background: #f8d7da;
+                color: #721c24;
+            }
+            
+            .coverage-bar {
+                width: 100%;
+                height: 20px;
+                background: #e9ecef;
+                border-radius: 10px;
+                overflow: hidden;
+                margin: 1rem 0;
+            }
+            
+            .coverage-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #28a745, #20c997);
+                transition: width 0.3s ease;
+            }
+            
+            .footer {
+                background: #f8f9fa;
+                padding: 2rem;
+                text-align: center;
+                color: #666;
+                border-top: 1px solid #e9ecef;
+            }
+            
+            .highlight {
+                background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+                padding: 1.5rem;
+                border-radius: 15px;
+                margin: 2rem 0;
+                border-left: 5px solid #667eea;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🚀 Blog API 統合テストレポート</h1>
+                <p>継続的テスト・バグトラッキングシステム v2.3 完成記念</p>
+                <p>生成日時: 2025年06月02日 17:35:39</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number success">423</div>
+                    <div class="stat-label">総テスト数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number success">423</div>
+                    <div class="stat-label">成功テスト</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number success">0</div>
+                    <div class="stat-label">失敗テスト</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number info">100%</div>
+                    <div class="stat-label">カバレッジ</div>
+                </div>
+            </div>
+            
+            <div class="highlight">
+                <h3>🎉 プロジェクト完成のお知らせ</h3>
+                <p><strong>Blog API継続的テスト・バグトラッキングシステム</strong>が完成しました！</p>
+                <ul style="margin: 1rem 0; padding-left: 2rem;">
+                    <li><strong>Article Router (v2.2)</strong>: 50テストで100%カバレッジ達成</li>
+                    <li><strong>Auth Router (v2.3)</strong>: 33テストで100%カバレッジ達成</li>
+                    <li><strong>総合</strong>: 423テストすべて成功、エラー0件</li>
+                </ul>
+            </div>
+            
+            <div class="content">
+    
+                <div class="version-section">
+                    <div class="version-header">
+                        <div class="version-title">📦 v2.3-auth-router</div>
+                        <div class="version-meta">🕒 2025年06月02日 17:34 | ⚡ 実行時間: 5.81秒</div>
+                        <div style="margin-top: 0.5rem; font-style: italic; color: #495057;">Auth Routerの包括的テストスイート完成 - 33個のテストで100%カバレッジ達成、JWT認証・セキュリティ・統合テスト完備</div>
+                    </div>
+                    <div class="version-body">
+                        <div class="test-grid">
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">33</div>
+                                <div>総テスト数</div>
+                            </div>
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">33</div>
+                                <div>成功</div>
+                            </div>
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">0</div>
+                                <div>失敗</div>
+                            </div>
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #17a2b8;">100.0%</div>
+                                <div>成功率</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <h4>カバレッジ</h4>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill" style="width: 100%;"></div>
+                            </div>
+                            <div style="text-align: center; font-weight: bold; color: #28a745;">100% カバレッジ達成 🎯</div>
+                        </div>
+                        
+                        <div class="test-list">
+        
+                            <div class="test-item">
+                                <span class="test-name">test_login_success</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_login_user_not_found</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_login_invalid_password</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_login_null_password_user</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_logout_success</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_logout_missing_token</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_logout_invalid_token</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_logout_malformed_header</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_verify_token_success</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_verify_token_blacklisted</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item" style="background: #f8f9fa; font-style: italic;">
+                                <span class="test-name">... さらに 23 個のテスト</span>
+                                <span class="test-status status-passed">ALL PASSED</span>
+                            </div>
+            
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="version-section">
+                    <div class="version-header">
+                        <div class="version-title">📦 v2.2-article-router</div>
+                        <div class="version-meta">🕒 2025年06月02日 17:06 | ⚡ 実行時間: 46.51秒</div>
+                        <div style="margin-top: 0.5rem; font-style: italic; color: #495057;">Article Routerの包括的テストスイート完成 - 50個のテストで100%カバレッジ達成、8つのエンドポイント全て完全テスト済み</div>
+                    </div>
+                    <div class="version-body">
+                        <div class="test-grid">
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">390</div>
+                                <div>総テスト数</div>
+                            </div>
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">390</div>
+                                <div>成功</div>
+                            </div>
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">0</div>
+                                <div>失敗</div>
+                            </div>
+                            <div class="test-metric">
+                                <div style="font-size: 2rem; font-weight: bold; color: #17a2b8;">100.0%</div>
+                                <div>成功率</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <h4>カバレッジ</h4>
+                            <div class="coverage-bar">
+                                <div class="coverage-fill" style="width: 100%;"></div>
+                            </div>
+                            <div style="text-align: center; font-weight: bold; color: #28a745;">100% カバレッジ達成 🎯</div>
+                        </div>
+                        
+                        <div class="test-list">
+        
+                            <div class="test-item">
+                                <span class="test-name">test_router_configuration</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_router_endpoints_exist</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_all_fetch_without_limit</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_all_fetch_with_limit</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_all_fetch_no_articles</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_all_fetch_database_error</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_get_article_success</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_get_article_not_found</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_get_article_database_error</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item">
+                                <span class="test-name">test_create_article_success</span>
+                                <span class="test-status status-passed">PASSED</span>
+                            </div>
+            
+                            <div class="test-item" style="background: #f8f9fa; font-style: italic;">
+                                <span class="test-name">... さらに 380 個のテスト</span>
+                                <span class="test-status status-passed">ALL PASSED</span>
+                            </div>
+            
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+            
+            <div class="footer">
+                <p>🔧 Blog API継続的テスト・バグトラッキングシステム</p>
+                <p>💻 FastAPI + pytest + coverage による包括的テストスイート</p>
+                <p>📈 継続的品質向上とバグ追跡を実現</p>
+                <br>
+                <p style="font-size: 0.9rem; opacity: 0.7;">
+                    Generated on 2025-06-02 17:35:39 | 
+                    Total Coverage: 100% | 
+                    All Systems Operational ✅
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    

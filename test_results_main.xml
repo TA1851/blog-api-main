@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="16" skipped="0" tests="29" time="0.792" timestamp="2025-06-02T17:55:52.854067+09:00" hostname="osakatatsuhikonoMac-mini.local"><testcase classname="tests.test_main.TestMainApplication" name="test_app_initialization_success" time="0.314"><failure message="AssertionError: assert 'http://localhost:3000' in ['https://nextjs-app-khaki-two.vercel.app']&#10; +  where ['https://nextjs-app-khaki-two.vercel.app'] = &lt;module 'main' from '/Users/tatu/Documents/GitHub/blog-api-main/main.py'&gt;.allowed_origins">tests/test_main.py:64: in test_app_initialization_success
+    assert 'http://localhost:3000' in main.allowed_origins
+E   AssertionError: assert 'http://localhost:3000' in ['https://nextjs-app-khaki-two.vercel.app']
+E    +  where ['https://nextjs-app-khaki-two.vercel.app'] = &lt;module 'main' from '/Users/tatu/Documents/GitHub/blog-api-main/main.py'&gt;.allowed_origins</failure></testcase><testcase classname="tests.test_main.TestMainApplication" name="test_app_initialization_no_cors_origins" time="0.008"><failure message="AssertionError: expected call not found.&#10;Expected: create_error_logger('CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。')&#10;  Actual: not called.">tests/test_main.py:88: in test_app_initialization_no_cors_origins
+    mock_error_logger.assert_called_with("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:930: in assert_called_with
+    raise AssertionError(error_message)
+E   AssertionError: expected call not found.
+E   Expected: create_error_logger('CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。')
+E     Actual: not called.</failure></testcase><testcase classname="tests.test_main.TestMainApplication" name="test_cors_middleware_configuration" time="0.008" /><testcase classname="tests.test_main.TestMainApplication" name="test_routers_inclusion" time="0.007" /><testcase classname="tests.test_main.TestCORSConfiguration" name="test_cors_origins_parsing_list_format" time="0.001"><failure message="AssertionError: assert {'https://nextjs-app-khaki-two.vercel.app'} == {'http://localhost:3000', 'https://example.com', 'http://127.0.0.1:8000'}&#10;  &#10;  Extra items in the left set:&#10;  'https://nextjs-app-khaki-two.vercel.app'&#10;  Extra items in the right set:&#10;  'http://localhost:3000'&#10;  'https://example.com'&#10;  'http://127.0.0.1:8000'&#10;  &#10;  Full diff:&#10;    {&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;  -     'http://127.0.0.1:8000',&#10;  -     'http://localhost:3000',&#10;  -     'https://example.com',&#10;    }">tests/test_main.py:154: in test_cors_origins_parsing_list_format
+    assert set(main.allowed_origins) == set(expected_origins)
+E   AssertionError: assert {'https://nextjs-app-khaki-two.vercel.app'} == {'http://localhost:3000', 'https://example.com', 'http://127.0.0.1:8000'}
+E     
+E     Extra items in the left set:
+E     'https://nextjs-app-khaki-two.vercel.app'
+E     Extra items in the right set:
+E     'http://localhost:3000'
+E     'https://example.com'
+E     'http://127.0.0.1:8000'
+E     
+E     Full diff:
+E       {
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E     -     'http://127.0.0.1:8000',
+E     -     'http://localhost:3000',
+E     -     'https://example.com',
+E       }</failure></testcase><testcase classname="tests.test_main.TestCORSConfiguration" name="test_cors_origins_non_list_type" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == []&#10;  &#10;  Left contains one more item: 'https://nextjs-app-khaki-two.vercel.app'&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;  + ]">tests/test_main.py:171: in test_cors_origins_non_list_type
+    assert main.allowed_origins == []
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == []
+E     
+E     Left contains one more item: 'https://nextjs-app-khaki-two.vercel.app'
+E     
+E     Full diff:
+E     - []
+E     + [
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E     + ]</failure></testcase><testcase classname="tests.test_main.TestCORSConfiguration" name="test_cors_origins_empty_lists" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == []&#10;  &#10;  Left contains one more item: 'https://nextjs-app-khaki-two.vercel.app'&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;  + ]">tests/test_main.py:188: in test_cors_origins_empty_lists
+    assert main.allowed_origins == []
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == []
+E     
+E     Left contains one more item: 'https://nextjs-app-khaki-two.vercel.app'
+E     
+E     Full diff:
+E     - []
+E     + [
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E     + ]</failure></testcase><testcase classname="tests.test_main.TestExceptionHandling" name="test_email_validation_error_detection" time="0.002"><failure message="assert '\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306e\u5f62\u5f0f\u304c\u4e0d\u6b63\u3067\u3059\u3002' in 'b\'{&quot;detail&quot;:&quot;\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82&quot;}\''&#10; +  where 'b\'{&quot;detail&quot;:&quot;\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82&quot;}\'' = str(b'{&quot;detail&quot;:&quot;\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82&quot;}')&#10; +    where b'{&quot;detail&quot;:&quot;\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82&quot;}' = &lt;starlette.responses.JSONResponse object at 0x107373b90&gt;.body">tests/test_main.py:222: in test_email_validation_error_detection
+    assert "メールアドレスの形式が不正です。" in str(result.body)
+E   assert '\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306e\u5f62\u5f0f\u304c\u4e0d\u6b63\u3067\u3059\u3002' in 'b\'{"detail":"\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82"}\''
+E    +  where 'b\'{"detail":"\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82"}\'' = str(b'{"detail":"\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82"}')
+E    +    where b'{"detail":"\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82"}' = &lt;starlette.responses.JSONResponse object at 0x107373b90&gt;.body</failure></testcase><testcase classname="tests.test_main.TestExceptionHandling" name="test_general_validation_error_handling" time="0.001"><failure message="assert '\u5165\u529b\u30c7\u30fc\u30bf\u304c\u7121\u52b9\u3067\u3059\u3002' in 'b\'{&quot;detail&quot;:&quot;\\xe5\\x85\\xa5\\xe5\\x8a\\x9b\\xe3\\x83\\x87\\xe3\\x83\\xbc\\xe3\\x82\\xbf\\xe3\\x81\\x8c\\xe7\\x84\\xa1\\xe5\\x8a\\xb9\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82&quot;}\''&#10; +  where 'b\'{&quot;detail&quot;:&quot;\\xe5\\x85\\xa5\\xe5\\x8a\\x9b\\xe3\\x83\\x87\\xe3\\x83\\xbc\\xe3\\x82\\xbf\\xe3\\x81\\x8c\\xe7\\x84\\xa1\\xe5\\x8a\\xb9\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82&quot;}\'' = str(b'{&quot;detail&quot;:&quot;\xe5\x85\xa5\xe5\x8a\x9b\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe3\x81\x8c\xe7\x84\xa1\xe5\x8a\xb9\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82&quot;}')&#10; +    where b'{&quot;detail&quot;:&quot;\xe5\x85\xa5\xe5\x8a\x9b\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe3\x81\x8c\xe7\x84\xa1\xe5\x8a\xb9\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82&quot;}' = &lt;starlette.responses.JSONResponse object at 0x1079b7590&gt;.body">tests/test_main.py:254: in test_general_validation_error_handling
+    assert "入力データが無効です。" in str(result.body)
+E   assert '\u5165\u529b\u30c7\u30fc\u30bf\u304c\u7121\u52b9\u3067\u3059\u3002' in 'b\'{"detail":"\\xe5\\x85\\xa5\\xe5\\x8a\\x9b\\xe3\\x83\\x87\\xe3\\x83\\xbc\\xe3\\x82\\xbf\\xe3\\x81\\x8c\\xe7\\x84\\xa1\\xe5\\x8a\\xb9\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82"}\''
+E    +  where 'b\'{"detail":"\\xe5\\x85\\xa5\\xe5\\x8a\\x9b\\xe3\\x83\\x87\\xe3\\x83\\xbc\\xe3\\x82\\xbf\\xe3\\x81\\x8c\\xe7\\x84\\xa1\\xe5\\x8a\\xb9\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82"}\'' = str(b'{"detail":"\xe5\x85\xa5\xe5\x8a\x9b\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe3\x81\x8c\xe7\x84\xa1\xe5\x8a\xb9\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82"}')
+E    +    where b'{"detail":"\xe5\x85\xa5\xe5\x8a\x9b\xe3\x83\x87\xe3\x83\xbc\xe3\x82\xbf\xe3\x81\x8c\xe7\x84\xa1\xe5\x8a\xb9\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82"}' = &lt;starlette.responses.JSONResponse object at 0x1079b7590&gt;.body</failure></testcase><testcase classname="tests.test_main.TestExceptionHandling" name="test_email_error_with_multiple_conditions" time="0.001"><failure message="assert '\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306e\u5f62\u5f0f\u304c\u4e0d\u6b63\u3067\u3059\u3002' in 'b\'{&quot;detail&quot;:&quot;\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82&quot;}\''&#10; +  where 'b\'{&quot;detail&quot;:&quot;\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82&quot;}\'' = str(b'{&quot;detail&quot;:&quot;\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82&quot;}')&#10; +    where b'{&quot;detail&quot;:&quot;\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82&quot;}' = &lt;starlette.responses.JSONResponse object at 0x107adcb50&gt;.body">tests/test_main.py:283: in test_email_error_with_multiple_conditions
+    assert "メールアドレスの形式が不正です。" in str(result.body)
+E   assert '\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306e\u5f62\u5f0f\u304c\u4e0d\u6b63\u3067\u3059\u3002' in 'b\'{"detail":"\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82"}\''
+E    +  where 'b\'{"detail":"\\xe3\\x83\\xa1\\xe3\\x83\\xbc\\xe3\\x83\\xab\\xe3\\x82\\xa2\\xe3\\x83\\x89\\xe3\\x83\\xac\\xe3\\x82\\xb9\\xe3\\x81\\xae\\xe5\\xbd\\xa2\\xe5\\xbc\\x8f\\xe3\\x81\\x8c\\xe4\\xb8\\x8d\\xe6\\xad\\xa3\\xe3\\x81\\xa7\\xe3\\x81\\x99\\xe3\\x80\\x82"}\'' = str(b'{"detail":"\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82"}')
+E    +    where b'{"detail":"\xe3\x83\xa1\xe3\x83\xbc\xe3\x83\xab\xe3\x82\xa2\xe3\x83\x89\xe3\x83\xac\xe3\x82\xb9\xe3\x81\xae\xe5\xbd\xa2\xe5\xbc\x8f\xe3\x81\x8c\xe4\xb8\x8d\xe6\xad\xa3\xe3\x81\xa7\xe3\x81\x99\xe3\x80\x82"}' = &lt;starlette.responses.JSONResponse object at 0x107adcb50&gt;.body</failure></testcase><testcase classname="tests.test_main.TestExceptionHandling" name="test_email_error_with_valid_email_message" time="0.001" /><testcase classname="tests.test_main.TestIntegrationWithTestClient" name="test_app_startup_with_test_client" time="0.001" /><testcase classname="tests.test_main.TestIntegrationWithTestClient" name="test_cors_headers_in_response" time="0.008"><failure message="assert 400 in [200, 404, 405]&#10; +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code">tests/test_main.py:361: in test_cors_headers_in_response
+    assert response.status_code in [200, 404, 405]  # いずれかの有効なレスポンス
+E   assert 400 in [200, 404, 405]
+E    +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code</failure></testcase><testcase classname="tests.test_main.TestMiddlewareStack" name="test_middleware_order_and_configuration" time="0.001" /><testcase classname="tests.test_main.TestMiddlewareStack" name="test_cors_middleware_parameters" time="0.001" /><testcase classname="tests.test_main.TestErrorLogging" name="test_validation_error_logging" time="0.001" /><testcase classname="tests.test_main.TestErrorLogging" name="test_email_error_specific_logging" time="0.001" /><testcase classname="tests.test_main.TestDatabaseInitialization" name="test_database_metadata_creation" time="0.001"><failure message="AssertionError: Expected 'create_all' to be called once. Called 0 times.">tests/test_main.py:496: in test_database_metadata_creation
+    mock_base.metadata.create_all.assert_called_once_with(mock_engine)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:950: in assert_called_once_with
+    raise AssertionError(msg)
+E   AssertionError: Expected 'create_all' to be called once. Called 0 times.</failure></testcase><testcase classname="tests.test_main.TestDatabaseInitialization" name="test_database_initialization_with_exception" time="0.006"><failure message="Failed: DID NOT RAISE &lt;class 'Exception'&gt;">tests/test_main.py:514: in test_database_initialization_with_exception
+    with pytest.raises(Exception, match="Database connection failed"):
+E   Failed: DID NOT RAISE &lt;class 'Exception'&gt;</failure></testcase><testcase classname="tests.test_main.TestApplicationConfiguration" name="test_fastapi_app_configuration" time="0.001" /><testcase classname="tests.test_main.TestApplicationConfiguration" name="test_exception_handler_registration" time="0.002" /><testcase classname="tests.test_main.TestEnvironmentVariables" name="test_cors_origins_environment_parsing" time="0.001"><failure message="AssertionError: assert {'https://nextjs-app-khaki-two.vercel.app'} == {'http://localhost:8080', 'http://0.0.0.0:8000', 'https://app.example.com', 'http://localhost:3000', 'http://127.0.0.1:8000'}&#10;  &#10;  Extra items in the left set:&#10;  'https://nextjs-app-khaki-two.vercel.app'&#10;  Extra items in the right set:&#10;  'http://localhost:8080'&#10;  'http://0.0.0.0:8000'&#10;  'https://app.example.com'&#10;  'http://localhost:3000'&#10;  'http://127.0.0.1:8000'&#10;  &#10;  Full diff:&#10;    {&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;  -     'http://0.0.0.0:8000',&#10;  -     'http://127.0.0.1:8000',&#10;  -     'http://localhost:3000',&#10;  -     'http://localhost:8080',&#10;  -     'https://app.example.com',&#10;    }">tests/test_main.py:587: in test_cors_origins_environment_parsing
+    assert set(main.allowed_origins) == set(expected_all_origins)
+E   AssertionError: assert {'https://nextjs-app-khaki-two.vercel.app'} == {'http://localhost:8080', 'http://0.0.0.0:8000', 'https://app.example.com', 'http://localhost:3000', 'http://127.0.0.1:8000'}
+E     
+E     Extra items in the left set:
+E     'https://nextjs-app-khaki-two.vercel.app'
+E     Extra items in the right set:
+E     'http://localhost:8080'
+E     'http://0.0.0.0:8000'
+E     'https://app.example.com'
+E     'http://localhost:3000'
+E     'http://127.0.0.1:8000'
+E     
+E     Full diff:
+E       {
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E     -     'http://0.0.0.0:8000',
+E     -     'http://127.0.0.1:8000',
+E     -     'http://localhost:3000',
+E     -     'http://localhost:8080',
+E     -     'https://app.example.com',
+E       }</failure></testcase><testcase classname="tests.test_main.TestEnvironmentVariables" name="test_partial_cors_configuration" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == ['https://production.example.com']&#10;  &#10;  At index 0 diff: 'https://nextjs-app-khaki-two.vercel.app' != 'https://production.example.com'&#10;  &#10;  Full diff:&#10;    [&#10;  -     'https://production.example.com',&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;    ]">tests/test_main.py:605: in test_partial_cors_configuration
+    assert main.allowed_origins == ['https://production.example.com']
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == ['https://production.example.com']
+E     
+E     At index 0 diff: 'https://nextjs-app-khaki-two.vercel.app' != 'https://production.example.com'
+E     
+E     Full diff:
+E       [
+E     -     'https://production.example.com',
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E       ]</failure></testcase><testcase classname="tests.test_main.TestEnvironmentVariables" name="test_environment_variable_none_values" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == []&#10;  &#10;  Left contains one more item: 'https://nextjs-app-khaki-two.vercel.app'&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;  + ]">tests/test_main.py:623: in test_environment_variable_none_values
+    assert main.allowed_origins == []
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == []
+E     
+E     Left contains one more item: 'https://nextjs-app-khaki-two.vercel.app'
+E     
+E     Full diff:
+E     - []
+E     + [
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E     + ]</failure></testcase><testcase classname="tests.test_main.TestPerformanceAndResourceUsage" name="test_app_initialization_performance" time="0.001" /><testcase classname="tests.test_main.TestPerformanceAndResourceUsage" name="test_large_cors_origins_list_handling" time="0.001"><failure message="AssertionError: assert 1 == 150&#10; +  where 1 = len(['https://nextjs-app-khaki-two.vercel.app'])&#10; +    where ['https://nextjs-app-khaki-two.vercel.app'] = &lt;module 'main' from '/Users/tatu/Documents/GitHub/blog-api-main/main.py'&gt;.allowed_origins">tests/test_main.py:671: in test_large_cors_origins_list_handling
+    assert len(main.allowed_origins) == expected_total
+E   AssertionError: assert 1 == 150
+E    +  where 1 = len(['https://nextjs-app-khaki-two.vercel.app'])
+E    +    where ['https://nextjs-app-khaki-two.vercel.app'] = &lt;module 'main' from '/Users/tatu/Documents/GitHub/blog-api-main/main.py'&gt;.allowed_origins</failure></testcase><testcase classname="tests.test_main.TestEdgeCases" name="test_exception_handler_with_empty_errors" time="0.001" /><testcase classname="tests.test_main.TestEdgeCases" name="test_exception_handler_with_complex_error_structure" time="0.001" /><testcase classname="tests.test_main.TestEdgeCases" name="test_cors_origins_duplicate_handling" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == ['http://localhost:3000', 'https://example.com', 'http://localhost:3000', 'http://127.0.0.1:8000']&#10;  &#10;  At index 0 diff: 'https://nextjs-app-khaki-two.vercel.app' != 'http://localhost:3000'&#10;  Right contains 3 more items, first extra item: 'https://example.com'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'https://nextjs-app-khaki-two.vercel.app',&#10;  -     'http://localhost:3000',&#10;  -     'https://example.com',&#10;  -     'http://localhost:3000',&#10;  -     'http://127.0.0.1:8000',&#10;    ]">tests/test_main.py:754: in test_cors_origins_duplicate_handling
+    assert main.allowed_origins == expected_origins
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app'] == ['http://localhost:3000', 'https://example.com', 'http://localhost:3000', 'http://127.0.0.1:8000']
+E     
+E     At index 0 diff: 'https://nextjs-app-khaki-two.vercel.app' != 'http://localhost:3000'
+E     Right contains 3 more items, first extra item: 'https://example.com'
+E     
+E     Full diff:
+E       [
+E     +     'https://nextjs-app-khaki-two.vercel.app',
+E     -     'http://localhost:3000',
+E     -     'https://example.com',
+E     -     'http://localhost:3000',
+E     -     'http://127.0.0.1:8000',
+E       ]</failure></testcase></testsuite></testsuites>
