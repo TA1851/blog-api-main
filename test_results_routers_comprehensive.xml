@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="30" skipped="0" tests="38" time="6.480" timestamp="2025-06-02T18:06:27.939557+09:00" hostname="osakatatsuhikonoMac-mini.local"><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_all_fetch_success" time="0.043"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests/test_routers_comprehensive.py:90: in test_all_fetch_success
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_all_fetch_with_pagination" time="0.006"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests/test_routers_comprehensive.py:101: in test_all_fetch_with_pagination
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_get_article_success" time="0.010"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:112: in test_get_article_success
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_get_article_not_found" time="0.006" /><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_create_article_success" time="0.004"><failure message="assert 401 == 201&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests/test_routers_comprehensive.py:139: in test_create_article_success
+    assert response.status_code == 201
+E   assert 401 == 201
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_update_article_success" time="0.005"><failure message="assert 405 == 202&#10; +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code">tests/test_routers_comprehensive.py:156: in test_update_article_success
+    assert response.status_code == 202
+E   assert 405 == 202
+E    +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_delete_article_success" time="0.005"><failure message="assert 405 == 204&#10; +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code">tests/test_routers_comprehensive.py:167: in test_delete_article_success
+    assert response.status_code == 204
+E   assert 405 == 204
+E    +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_get_public_articles_success" time="0.017" /><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_search_public_articles_success" time="0.008" /><testcase classname="tests.test_routers_comprehensive.TestArticleRouterComprehensive" name="test_get_public_article_by_id_success" time="0.005"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:194: in test_get_public_article_by_id_success
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_login_success" time="0.253"><failure message="RuntimeError: トークン生成中に予期しないエラーが発生しました: Object of type MagicMock is not JSON serializable">custom_token.py:104: in create_access_token
+    encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=algorithm)
+.venv/lib/python3.11/site-packages/jose/jwt.py:65: in encode
+    return jws.sign(claims, key, headers=headers, algorithm=algorithm)
+.venv/lib/python3.11/site-packages/jose/jws.py:46: in sign
+    encoded_payload = _encode_payload(payload)
+.venv/lib/python3.11/site-packages/jose/jws.py:150: in _encode_payload
+    payload = json.dumps(
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/json/encoder.py:258: in iterencode
+    return _iterencode(o, 0)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/json/encoder.py:180: in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+E   TypeError: Object of type MagicMock is not JSON serializable
+
+During handling of the above exception, another exception occurred:
+tests/test_routers_comprehensive.py:219: in test_login_success
+    response = client.post("/api/v1/login", data=login_data)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:538: in post
+    return super().post(
+.venv/lib/python3.11/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+.venv/lib/python3.11/site-packages/starlette/testclient.py:437: in request
+    return super().request(
+.venv/lib/python3.11/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+.venv/lib/python3.11/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.11/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.11/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+.venv/lib/python3.11/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:340: in handle_request
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/testclient.py:337: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:290: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:221: in _call_func
+    retval = await retval_or_awaitable
+.venv/lib/python3.11/site-packages/fastapi/applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/applications.py:112: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:187: in __call__
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:165: in __call__
+    await self.app(scope, receive, _send)
+.venv/lib/python3.11/site-packages/starlette/middleware/cors.py:85: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py:62: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:714: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:734: in app
+    await route.handle(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:288: in handle
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:76: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:73: in app
+    response = await f(request)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:301: in app
+    raw_response = await run_endpoint_function(
+.venv/lib/python3.11/site-packages/fastapi/routing.py:212: in run_endpoint_function
+    return await dependant.call(**values)
+routers/auth.py:122: in login
+    access_token = create_access_token(
+custom_token.py:117: in create_access_token
+    raise RuntimeError(f"トークン生成中に予期しないエラーが発生しました: {str(e)}")
+E   RuntimeError: トークン生成中に予期しないエラーが発生しました: Object of type MagicMock is not JSON serializable</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_login_user_not_found" time="0.250"><failure message="TypeError: hash must be unicode or bytes, not unittest.mock.MagicMock">tests/test_routers_comprehensive.py:233: in test_login_user_not_found
+    response = client.post("/api/v1/login", data=login_data)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:538: in post
+    return super().post(
+.venv/lib/python3.11/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+.venv/lib/python3.11/site-packages/starlette/testclient.py:437: in request
+    return super().request(
+.venv/lib/python3.11/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+.venv/lib/python3.11/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.11/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.11/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+.venv/lib/python3.11/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:340: in handle_request
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/testclient.py:337: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:290: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:221: in _call_func
+    retval = await retval_or_awaitable
+.venv/lib/python3.11/site-packages/fastapi/applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/applications.py:112: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:187: in __call__
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:165: in __call__
+    await self.app(scope, receive, _send)
+.venv/lib/python3.11/site-packages/starlette/middleware/cors.py:85: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py:62: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:714: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:734: in app
+    await route.handle(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:288: in handle
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:76: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:73: in app
+    response = await f(request)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:301: in app
+    raw_response = await run_endpoint_function(
+.venv/lib/python3.11/site-packages/fastapi/routing.py:212: in run_endpoint_function
+    return await dependant.call(**values)
+routers/auth.py:112: in login
+    if not user.password or not Hash.verify(
+hashing.py:30: in verify
+    return password_context.verify(plain_password, hashed_password)
+.venv/lib/python3.11/site-packages/passlib/context.py:2343: in verify
+    record = self._get_or_identify_record(hash, scheme, category)
+.venv/lib/python3.11/site-packages/passlib/context.py:2031: in _get_or_identify_record
+    return self._identify_record(hash, category)
+.venv/lib/python3.11/site-packages/passlib/context.py:1122: in identify_record
+    raise ExpectedStringError(hash, "hash")
+E   TypeError: hash must be unicode or bytes, not unittest.mock.MagicMock</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_login_invalid_password" time="0.285"><failure message="assert 404 == 401&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:248: in test_login_invalid_password
+    assert response.status_code == 401
+E   assert 404 == 401
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_logout_success" time="0.270"><failure message="AttributeError: &lt;module 'routers.auth' from '/Users/tatu/Documents/GitHub/blog-api-main/routers/auth.py'&gt; does not have the attribute 'blacklisted_tokens'">/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:1375: in patched
+    with self.decoration_helper(patched,
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py:137: in __enter__
+    return next(self.gen)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:1357: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py:517: in enter_context
+    result = _enter(cm)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:1446: in __enter__
+    original, local = self.get_original()
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:1419: in get_original
+    raise AttributeError(
+E   AttributeError: &lt;module 'routers.auth' from '/Users/tatu/Documents/GitHub/blog-api-main/routers/auth.py'&gt; does not have the attribute 'blacklisted_tokens'</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_logout_no_token" time="0.263" /><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_change_password_success" time="0.300"><failure message="assert 422 == 200&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code">tests/test_routers_comprehensive.py:280: in test_change_password_success
+    assert response.status_code == 200
+E   assert 422 == 200
+E    +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_get_articles_legacy_success" time="0.276"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:291: in test_get_articles_legacy_success
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestAuthRouterComprehensive" name="test_get_articles_legacy_empty" time="0.265"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:299: in test_get_articles_legacy_empty
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_create_user_success" time="0.012"><failure message="assert 404 == 201&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:330: in test_create_user_success
+    assert response.status_code == 201
+E   assert 404 == 201
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_create_user_email_exists" time="0.005"><failure message="assert 404 == 400&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:347: in test_create_user_email_exists
+    assert response.status_code == 400
+E   assert 404 == 400
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_create_user_invalid_email_domain" time="0.028"><failure message="assert 404 == 400&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:363: in test_create_user_invalid_email_domain
+    assert response.status_code == 400
+E   assert 404 == 400
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_verify_email_success" time="0.010"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:375: in test_verify_email_success
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_verify_email_invalid_token" time="0.019"><failure message="assert 404 == 400&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:384: in test_verify_email_invalid_token
+    assert response.status_code == 400
+E   assert 404 == 400
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_get_current_user_info" time="0.009"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:397: in test_get_current_user_info
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_update_user_success" time="0.005"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:415: in test_update_user_success
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestUserRouterComprehensive" name="test_delete_user_success" time="0.004"><failure message="TypeError: TestClient.delete() got an unexpected keyword argument 'json'">tests/test_routers_comprehensive.py:434: in test_delete_user_success
+    response = client.delete("/api/v1/users/me", json=delete_data, headers=headers)
+E   TypeError: TestClient.delete() got an unexpected keyword argument 'json'</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersErrorHandling" name="test_article_database_error" time="0.001"><failure message="AttributeError: 'TestRoutersErrorHandling' object has no attribute 'mock_db'">tests/test_routers_comprehensive.py:445: in test_article_database_error
+    mock_get_db.return_value = self.mock_db
+E   AttributeError: 'TestRoutersErrorHandling' object has no attribute 'mock_db'</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersErrorHandling" name="test_auth_database_error" time="0.008"><failure message="TypeError: hash must be unicode or bytes, not unittest.mock.MagicMock">tests/test_routers_comprehensive.py:462: in test_auth_database_error
+    response = client.post("/api/v1/login", data=login_data)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:538: in post
+    return super().post(
+.venv/lib/python3.11/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+.venv/lib/python3.11/site-packages/starlette/testclient.py:437: in request
+    return super().request(
+.venv/lib/python3.11/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+.venv/lib/python3.11/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.11/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.11/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+.venv/lib/python3.11/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:340: in handle_request
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/testclient.py:337: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:290: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:221: in _call_func
+    retval = await retval_or_awaitable
+.venv/lib/python3.11/site-packages/fastapi/applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/applications.py:112: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:187: in __call__
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:165: in __call__
+    await self.app(scope, receive, _send)
+.venv/lib/python3.11/site-packages/starlette/middleware/cors.py:85: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py:62: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:714: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:734: in app
+    await route.handle(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:288: in handle
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:76: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:73: in app
+    response = await f(request)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:301: in app
+    raw_response = await run_endpoint_function(
+.venv/lib/python3.11/site-packages/fastapi/routing.py:212: in run_endpoint_function
+    return await dependant.call(**values)
+routers/auth.py:112: in login
+    if not user.password or not Hash.verify(
+hashing.py:30: in verify
+    return password_context.verify(plain_password, hashed_password)
+.venv/lib/python3.11/site-packages/passlib/context.py:2343: in verify
+    record = self._get_or_identify_record(hash, scheme, category)
+.venv/lib/python3.11/site-packages/passlib/context.py:2031: in _get_or_identify_record
+    return self._identify_record(hash, category)
+.venv/lib/python3.11/site-packages/passlib/context.py:1122: in identify_record
+    raise ExpectedStringError(hash, "hash")
+E   TypeError: hash must be unicode or bytes, not unittest.mock.MagicMock</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersErrorHandling" name="test_user_database_error" time="0.024"><failure message="assert 404 == 500&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:477: in test_user_database_error
+    assert response.status_code == 500
+E   assert 404 == 500
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersPerformance" name="test_large_article_list_performance" time="0.251"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests/test_routers_comprehensive.py:499: in test_large_article_list_performance
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersPerformance" name="test_concurrent_login_requests" time="0.093" /><testcase classname="tests.test_routers_comprehensive.TestRoutersSecurityFeatures" name="test_jwt_token_validation" time="0.014" /><testcase classname="tests.test_routers_comprehensive.TestRoutersSecurityFeatures" name="test_expired_token_handling" time="0.003" /><testcase classname="tests.test_routers_comprehensive.TestRoutersSecurityFeatures" name="test_email_domain_validation" time="0.005"><failure message="assert 404 == 400&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:562: in test_email_domain_validation
+    assert response.status_code == 400
+E   assert 404 == 400
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersSecurityFeatures" name="test_password_hashing_security" time="0.827" /><testcase classname="tests.test_routers_comprehensive.TestRoutersValidation" name="test_article_validation_empty_title" time="0.013"><failure message="assert 401 in [400, 422]&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests/test_routers_comprehensive.py:587: in test_article_validation_empty_title
+    assert response.status_code in [400, 422]  # バリデーションエラー
+E   assert 401 in [400, 422]
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersValidation" name="test_user_validation_invalid_email" time="0.003"><failure message="assert 404 in [400, 422]&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:598: in test_user_validation_invalid_email
+    assert response.status_code in [400, 422]  # バリデーションエラー
+E   assert 404 in [400, 422]
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase><testcase classname="tests.test_routers_comprehensive.TestRoutersValidation" name="test_password_strength_validation" time="0.005"><failure message="assert 404 in [400, 422]&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">tests/test_routers_comprehensive.py:612: in test_password_strength_validation
+    assert response.status_code in [400, 422]
+E   assert 404 in [400, 422]
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code</failure></testcase></testsuite></testsuites>

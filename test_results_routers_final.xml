@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="19" skipped="0" tests="28" time="1.213" timestamp="2025-06-02T18:13:28.582358+09:00" hostname="osakatatsuhikonoMac-mini.local"><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_get_all_articles_success" time="0.017"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:62: in test_get_all_articles_success
+    assert response.status_code == status.HTTP_200_OK
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_get_article_by_id_success" time="0.005"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:82: in test_get_article_by_id_success
+    assert response.status_code == status.HTTP_200_OK
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_create_article_success" time="0.004"><failure message="assert 401 == 201&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   201 = status.HTTP_201_CREATED">tests/test_routers_final.py:107: in test_create_article_success
+    assert response.status_code == status.HTTP_201_CREATED
+E   assert 401 == 201
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   201 = status.HTTP_201_CREATED</failure></testcase><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_update_article_success" time="0.003"><failure message="assert 405 == 202&#10; +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code&#10; +  and   202 = status.HTTP_202_ACCEPTED">tests/test_routers_final.py:133: in test_update_article_success
+    assert response.status_code == status.HTTP_202_ACCEPTED
+E   assert 405 == 202
+E    +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code
+E    +  and   202 = status.HTTP_202_ACCEPTED</failure></testcase><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_delete_article_success" time="0.004"><failure message="assert 405 == 204&#10; +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code&#10; +  and   204 = status.HTTP_204_NO_CONTENT">tests/test_routers_final.py:153: in test_delete_article_success
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+E   assert 405 == 204
+E    +  where 405 = &lt;Response [405 Method Not Allowed]&gt;.status_code
+E    +  and   204 = status.HTTP_204_NO_CONTENT</failure></testcase><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_get_public_articles" time="0.009" /><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_search_public_articles" time="0.004"><failure message="assert 422 == 200&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:182: in test_search_public_articles
+    assert response.status_code == status.HTTP_200_OK
+E   assert 422 == 200
+E    +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestArticleRouterFinal" name="test_get_public_article_by_id" time="0.003"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:194: in test_get_public_article_by_id
+    assert response.status_code == status.HTTP_200_OK
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestAuthRouterFinal" name="test_login_success" time="0.004"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:217: in test_login_success
+    assert response.status_code == status.HTTP_200_OK
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestAuthRouterFinal" name="test_login_invalid_credentials" time="0.003" /><testcase classname="tests.test_routers_final.TestAuthRouterFinal" name="test_logout_success" time="0.001" /><testcase classname="tests.test_routers_final.TestAuthRouterFinal" name="test_change_password_success" time="0.030"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:263: in test_change_password_success
+    assert response.status_code == status.HTTP_200_OK
+E   assert 404 == 200
+E    +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestUserRouterFinal" name="test_create_user_success" time="0.008"><failure message="assert 500 == 201&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code&#10; +  and   201 = status.HTTP_201_CREATED">tests/test_routers_final.py:282: in test_create_user_success
+    assert response.status_code == status.HTTP_201_CREATED
+E   assert 500 == 201
+E    +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+E    +  and   201 = status.HTTP_201_CREATED</failure></testcase><testcase classname="tests.test_routers_final.TestUserRouterFinal" name="test_verify_email_success" time="0.003"><failure message="sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: email_verifications.password_hash&#10;[SQL: SELECT email_verifications.id AS email_verifications_id, email_verifications.email AS email_verifications_email, email_verifications.token AS email_verifications_token, email_verifications.password_hash AS email_verifications_password_hash, email_verifications.is_verified AS email_verifications_is_verified, email_verifications.created_at AS email_verifications_created_at, email_verifications.expires_at AS email_verifications_expires_at &#10;FROM email_verifications &#10;WHERE email_verifications.token = ?&#10; LIMIT ? OFFSET ?]&#10;[parameters: ('test_verification_token', 1, 0)]&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)">.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1964: in _exec_single_context
+    self.dialect.do_execute(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py:945: in do_execute
+    cursor.execute(statement, parameters)
+E   sqlite3.OperationalError: no such column: email_verifications.password_hash
+
+The above exception was the direct cause of the following exception:
+tests/test_routers_final.py:300: in test_verify_email_success
+    response = client.get("/api/v1/verify-email?token=test_verification_token")
+.venv/lib/python3.11/site-packages/starlette/testclient.py:465: in get
+    return super().get(
+.venv/lib/python3.11/site-packages/httpx/_client.py:1053: in get
+    return self.request(
+.venv/lib/python3.11/site-packages/starlette/testclient.py:437: in request
+    return super().request(
+.venv/lib/python3.11/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+.venv/lib/python3.11/site-packages/httpx/_client.py:914: in send
+    response = self._send_handling_auth(
+.venv/lib/python3.11/site-packages/httpx/_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv/lib/python3.11/site-packages/httpx/_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+.venv/lib/python3.11/site-packages/httpx/_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+.venv/lib/python3.11/site-packages/starlette/testclient.py:340: in handle_request
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/testclient.py:337: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:290: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.11/site-packages/anyio/from_thread.py:221: in _call_func
+    retval = await retval_or_awaitable
+.venv/lib/python3.11/site-packages/fastapi/applications.py:1054: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/applications.py:112: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:187: in __call__
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/middleware/errors.py:165: in __call__
+    await self.app(scope, receive, _send)
+.venv/lib/python3.11/site-packages/starlette/middleware/cors.py:85: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py:62: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:714: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:734: in app
+    await route.handle(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:288: in handle
+    await self.app(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/routing.py:76: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.11/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.11/site-packages/starlette/routing.py:73: in app
+    response = await f(request)
+.venv/lib/python3.11/site-packages/fastapi/routing.py:301: in app
+    raw_response = await run_endpoint_function(
+.venv/lib/python3.11/site-packages/fastapi/routing.py:212: in run_endpoint_function
+    return await dependant.call(**values)
+routers/user.py:230: in verify_email
+    ).first()
+.venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2759: in first
+    return self.limit(1)._iter().first()  # type: ignore
+.venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2858: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py:2365: in execute
+    return self._execute_internal(
+.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py:2251: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+.venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py:306: in orm_execute_statement
+    result = conn.execute(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py:523: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1638: in _execute_clauseelement
+    ret = self._execute_context(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1843: in _execute_context
+    return self._exec_single_context(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1983: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:2352: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1964: in _exec_single_context
+    self.dialect.do_execute(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py:945: in do_execute
+    cursor.execute(statement, parameters)
+E   sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: email_verifications.password_hash
+E   [SQL: SELECT email_verifications.id AS email_verifications_id, email_verifications.email AS email_verifications_email, email_verifications.token AS email_verifications_token, email_verifications.password_hash AS email_verifications_password_hash, email_verifications.is_verified AS email_verifications_is_verified, email_verifications.created_at AS email_verifications_created_at, email_verifications.expires_at AS email_verifications_expires_at 
+E   FROM email_verifications 
+E   WHERE email_verifications.token = ?
+E    LIMIT ? OFFSET ?]
+E   [parameters: ('test_verification_token', 1, 0)]
+E   (Background on this error at: https://sqlalche.me/e/20/e3q8)</failure></testcase><testcase classname="tests.test_routers_final.TestUserRouterFinal" name="test_get_user_success" time="0.003"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:320: in test_get_user_success
+    assert response.status_code == status.HTTP_200_OK
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestUserRouterFinal" name="test_resend_verification_success" time="0.002"><failure message="assert 400 == 200&#10; +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code&#10; +  and   200 = status.HTTP_200_OK">tests/test_routers_final.py:331: in test_resend_verification_success
+    assert response.status_code == status.HTTP_200_OK
+E   assert 400 == 200
+E    +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code
+E    +  and   200 = status.HTTP_200_OK</failure></testcase><testcase classname="tests.test_routers_final.TestUserRouterFinal" name="test_delete_account_success" time="0.001"><failure message="TypeError: TestClient.delete() got an unexpected keyword argument 'json'">tests/test_routers_final.py:351: in test_delete_account_success
+    response = client.delete("/api/v1/user", json=deletion_data)
+E   TypeError: TestClient.delete() got an unexpected keyword argument 'json'</failure></testcase><testcase classname="tests.test_routers_final.TestRoutersErrorHandlingFinal" name="test_unauthorized_access" time="0.001" /><testcase classname="tests.test_routers_final.TestRoutersErrorHandlingFinal" name="test_invalid_token_format" time="0.001" /><testcase classname="tests.test_routers_final.TestRoutersErrorHandlingFinal" name="test_expired_token" time="0.001" /><testcase classname="tests.test_routers_final.TestRoutersErrorHandlingFinal" name="test_forbidden_access" time="0.003"><failure message="assert 401 == 403&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   403 = status.HTTP_403_FORBIDDEN">tests/test_routers_final.py:404: in test_forbidden_access
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+E   assert 401 == 403
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   403 = status.HTTP_403_FORBIDDEN</failure></testcase><testcase classname="tests.test_routers_final.TestRoutersErrorHandlingFinal" name="test_not_found_error" time="0.003" /><testcase classname="tests.test_routers_final.TestRoutersErrorHandlingFinal" name="test_validation_error" time="0.002"><failure message="assert 401 == 422&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   422 = status.HTTP_422_UNPROCESSABLE_ENTITY">tests/test_routers_final.py:436: in test_validation_error
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+E   assert 401 == 422
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   422 = status.HTTP_422_UNPROCESSABLE_ENTITY</failure></testcase><testcase classname="tests.test_routers_final.TestRoutersPerformanceFinal" name="test_concurrent_article_creation" time="0.008"><failure message="assert 401 == 201&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   201 = status.HTTP_201_CREATED">tests/test_routers_final.py:470: in test_concurrent_article_creation
+    assert response.status_code == status.HTTP_201_CREATED
+E   assert 401 == 201
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   201 = status.HTTP_201_CREATED</failure></testcase><testcase classname="tests.test_routers_final.TestRoutersPerformanceFinal" name="test_load_testing_public_articles" time="0.021" /><testcase classname="tests.test_routers_final.TestRoutersSecurityFeaturesFinal" name="test_jwt_token_validation" time="0.001" /><testcase classname="tests.test_routers_final.TestRoutersSecurityFeaturesFinal" name="test_password_hashing_security" time="0.004"><failure message="assert 500 == 201&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code&#10; +  and   201 = status.HTTP_201_CREATED">tests/test_routers_final.py:526: in test_password_hashing_security
+    assert response.status_code == status.HTTP_201_CREATED
+E   assert 500 == 201
+E    +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+E    +  and   201 = status.HTTP_201_CREATED</failure></testcase><testcase classname="tests.test_routers_final.TestRoutersSecurityFeaturesFinal" name="test_input_sanitization" time="0.004"><failure message="assert 401 == 201&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code&#10; +  and   201 = status.HTTP_201_CREATED">tests/test_routers_final.py:552: in test_input_sanitization
+    assert response.status_code == status.HTTP_201_CREATED
+E   assert 401 == 201
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+E    +  and   201 = status.HTTP_201_CREATED</failure></testcase></testsuite></testsuites>
