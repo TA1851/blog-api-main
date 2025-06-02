@@ -1,5 +1,5 @@
 """認証機能を実装するためのルーターモジュール"""
-from typing import List, Set
+from typing import List, Set, Dict, Any
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
@@ -12,6 +12,21 @@ from custom_token import create_access_token
 from models import User, Article
 from logger.custom_logger import create_logger, create_error_logger
 from utils.email_sender import send_registration_complete_email
+
+
+# 認証レスポンスの型定義
+from typing import TypedDict
+
+class LoginResponse(TypedDict):
+    """ログインレスポンスの型定義"""
+    access_token: str
+    token_type: str
+
+class TokenResponse(TypedDict):
+    """トークンレスポンスの型定義"""
+    access_token: str
+    token_type: str
+    user_id: str
 
 
 router = APIRouter(
@@ -42,7 +57,7 @@ def get_db():
 async def login(
     request: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
-    ) -> dict:
+    ) -> LoginResponse:
     """ユーザー認証を行い、認証に成功した場合はアクセストークン（JWT）を返します。
 
     ログインエンドポイント：
@@ -228,10 +243,17 @@ async def get_all_blogs(
 
 
 @router.post('/change-password')
+class PasswordChangeResponse(TypedDict):
+    """パスワード変更レスポンスの型定義"""
+    message: str
+    user_id: str
+
+# 既存のコード...
+
 async def change_password(
     request: PasswordChange,
     db: Session = Depends(get_db)
-) -> dict:
+) -> PasswordChangeResponse:
     """仮パスワードから新パスワードへの変更を行うエンドポイント
 
     パスワード変更エンドポイント：

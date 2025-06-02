@@ -1,15 +1,24 @@
 """データベース接続モジュール"""
 import os
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Dict, List, Generator, TypedDict
 from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 
+class EnvironmentConfig(TypedDict, total=False):
+    """環境変数設定の型定義"""
+    environment: Optional[str]
+    posgre_url: Optional[str]
+    secret_key: Optional[str]
+    algo: Optional[str]
+    cors_origins: Optional[List[str]]
+
+
 def check_env_file(
-    default_env_path: Union[Path, str] = None
+    default_env_path: Optional[Union[Path, str]] = None
     ) -> Optional[Path]:
     """ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。
 
@@ -23,7 +32,7 @@ def check_env_file(
         else default_env_path
 
     if not default_env_path.exists():
-        print(".envファイルが見つかりません")
+        print("スキップ処理")
     else:
         print("処理を開始します。")
     return default_env_path
@@ -31,7 +40,7 @@ def check_env_file(
 env_var = check_env_file()
 
 
-def read_env_var(env_path: Path) -> dict:
+def read_env_var(env_path: Path) -> EnvironmentConfig:
     """dotenvモジュールのload_dotenv関数でENVファイルから環境変数を取得し、ログに記録する。
 
     file_id: 環境変数から取得したファイルID
@@ -39,7 +48,7 @@ def read_env_var(env_path: Path) -> dict:
     database_url: 環境変数から取得したDB_URL
     """
     load_dotenv(dotenv_path=env_path)
-    result = {}
+    result: EnvironmentConfig = {}
 
     # TODO: 開発時に切り替える（環境変数）
     environment = os.getenv("ENVIRONMENT")
@@ -73,11 +82,11 @@ def read_env_var(env_path: Path) -> dict:
     if not result:
         print("環境変数の取得に失敗しました。")
         # 空の辞書でも返すように修正（エラーで停止させない）
-        return {}
+        return EnvironmentConfig()
     else:
         return result
 
-db_env = read_env_var(env_var)
+db_env = read_env_var(env_var) if env_var else EnvironmentConfig()
 
 
 class DatabaseConnectionError(Exception):
@@ -135,7 +144,7 @@ engine = create_database_engine()
 
 
 # セッションを作成
-def create_session(engine: Engine) -> Session:
+def create_session(engine: Engine) -> sessionmaker[Session]:
     """SQLAlchemyのセッションを作成：データベースに接続し、データの操作を行う前処理を行う。
 
     :param engine: SQLAlchemyのエンジンオブジェクト
@@ -166,7 +175,7 @@ def create_session(engine: Engine) -> Session:
 session = create_session(engine)
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     """データベースセッションを取得する
 
     :return: データベースセッション

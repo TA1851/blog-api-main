@@ -1,6 +1,7 @@
 """ユーザ認証機能を実装するためのルーターモジュール"""
 import traceback
 import os
+from typing import Dict, Any, List, Optional
 from fastapi import APIRouter, status, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -15,6 +16,12 @@ from hashing import Hash
 from logger.custom_logger import create_logger, create_error_logger
 from utils.email_sender import send_verification_email, send_account_deletion_email
 from utils.email_validator import is_valid_email_domain
+
+
+# APIレスポンスの型定義
+UserCreateResponse = Dict[str, str]
+UserDeleteResponse = Dict[str, str]
+UserUpdateResponse = Dict[str, str]
 
 
 router = APIRouter(
@@ -112,7 +119,7 @@ class UserRouter:
     async def create_user(
         user: UserSchema,
         db: Session = Depends(get_db)
-    ) -> dict:
+    ) -> UserCreateResponse:
         """ユーザーを作成するエンドポイント（シンプル登録）"""
         try:
             create_logger(f"ユーザー作成開始 - メール: {user.email}")

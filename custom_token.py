@@ -2,7 +2,7 @@
 # import pprint
 import os
 from enum import Enum
-from typing import Optional
+from typing import Optional, Dict, Any, Union
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
@@ -11,6 +11,10 @@ from sqlalchemy.orm import Session
 from database import db_env, get_db
 from models import User
 from logger.custom_logger import create_logger, create_error_logger
+
+
+# JWTペイロードの型定義
+JWTPayload = Dict[str, Union[str, int, float, datetime]]
 
 
 router = APIRouter(
@@ -46,14 +50,14 @@ class TokenConfig:
 
 
 def create_access_token(
-    data: dict,
+    data: JWTPayload,
     expires_delta: Optional[timedelta] = None,
     token_type: TokenType = TokenType.ACCESS
-    ):
+) -> str:
     """アクセストークンを作成する関数（改善版）
 
     :param data: トークンに含めるデータ
-    :type data: dict
+    :type data: JWTPayload
     :param expires_delta: トークンの有効期限
     :type expires_delta: timedelta
     :param token_type: トークンの種類
@@ -117,7 +121,7 @@ def verify_token_with_type(
     token: str,
     expected_type: TokenType,
     credentials_exception: Exception
-    ) -> dict:
+    ) -> JWTPayload:
     """トークンタイプを検証する関数
 
     :param token: 検証するトークン
@@ -127,7 +131,7 @@ def verify_token_with_type(
     :param credentials_exception: 認証例外
     :type credentials_exception: HTTPException
     :return: トークンのペイロード
-    :rtype: dict
+    :rtype: JWTPayload
     :raises Exception: トークンが無効または期待と異なるタイプの場合
     """
     try:
