@@ -394,25 +394,39 @@ async def resend_verification_email(
 )
 async def delete_user_account(
     deletion_request: AccountDeletionRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
 ) -> Dict[str, str]:
-    """ユーザーアカウントを削除するエンドポイント
+    """ユーザーアカウントを削除するエンドポイント（認証必須）
+
+    このエンドポイントは認証されたユーザーのみアクセス可能で、
+    ユーザーは自分のアカウントのみ削除できます。
 
     :param deletion_request: 退会リクエストデータ
     :type deletion_request: AccountDeletionRequest
     :param db: データベースセッション
     :type db: Session
+    :param current_user: 現在の認証されたユーザー
+    :type current_user: UserModel
     :return: 退会完了メッセージ
     :rtype: dict
-    :raises HTTPException: ユーザーが見つからない、パスワードが間違っている場合
+    :raises HTTPException: ユーザーが見つからない、パスワードが間違っている、認証エラー、権限なしの場合
     """
     try:
-        create_logger(f"退会処理開始 - メール: {deletion_request.email}")
+        create_logger(f"退会処理開始 - メール: {deletion_request.email}, 認証ユーザー: {current_user.email}")
 
         # パスワード一致チェック
         deletion_request.validate_passwords_match()
 
-        # ユーザーの存在確認
+        # 認証されたユーザーが削除対象のユーザーと同じかチェック
+        if current_user.email != deletion_request.email:
+            create_error_logger(f"権限なし: 認証ユーザー({current_user.email})が他のユーザー({deletion_request.email})のアカウント削除を試行")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="自分のアカウントのみ削除できます"
+            )
+
+        # ユーザーの存在確認（認証されたユーザーと同じなので基本的には存在するはず）
         user = db.query(UserModel).filter(
             UserModel.email == deletion_request.email
         ).first()

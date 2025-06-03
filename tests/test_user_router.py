@@ -727,6 +727,124 @@ class TestUserRouterEdgeCases:
             assert "メールアドレスの確認が完了しました" in result["message"]
 
 
+class TestDeleteUserAccountWithAuth:
+    """delete_user_account エンドポイント（認証機能あり）のテスト"""
+    
+    @pytest.fixture
+    def mock_db(self):
+        """モックデータベースセッション"""
+        db = MagicMock(spec=Session)
+        db.query.return_value.filter.return_value.all.return_value = []
+        db.commit = MagicMock()
+        db.rollback = MagicMock()
+        db.close = MagicMock()
+        db.delete = MagicMock()
+        return db
+    
+    @pytest.fixture
+    def mock_current_user(self):
+        """モック認証ユーザー"""
+        user = MagicMock()
+        user.id = 123
+        user.email = "test@example.com"
+        user.password = "hashed_password"
+        return user
+    
+    @pytest.fixture
+    def valid_deletion_request(self):
+        """有効な削除リクエスト"""
+        return AccountDeletionRequest(
+            email="test@example.com",
+            password="password123",
+            confirm_password="password123"
+        )
+    
+    @pytest.fixture
+    def unauthorized_deletion_request(self):
+        """権限のない削除リクエスト（異なるメールアドレス）"""
+        return AccountDeletionRequest(
+            email="other@example.com",
+            password="password123",
+            confirm_password="password123"
+        )
+    
+    def test_delete_user_account_unauthorized_different_email(self, mock_db, mock_current_user, unauthorized_deletion_request):
+        """認証ユーザーと異なるメールアドレスでアカウント削除を試行する場合のテスト"""
+        with pytest.raises(HTTPException) as exc_info:
+            asyncio.run(delete_user_account(unauthorized_deletion_request, mock_db, mock_current_user))
+        
+        assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
+        assert "自分のアカウントのみ削除できます" in exc_info.value.detail
+        mock_db.rollback.assert_called_once()
+    
+    @patch('routers.user.send_account_deletion_email')
+    @patch('routers.user.Hash.verify')
+    def test_delete_user_account_success_with_auth(self, mock_hash_verify, mock_send_email, mock_db, mock_current_user, valid_deletion_request):
+        """認証機能ありで正常なアカウント削除のテスト"""
+        mock_hash_verify.return_value = True
+        mock_send_email.return_value = AsyncMock()
+        
+        # 記事のモック
+        mock_articles = [MagicMock(), MagicMock()]
+        
+        # 認証レコードのモック
+        mock_verification_records = [MagicMock()]
+        
+        # クエリのモック設定
+        user_query = MagicMock()
+        user_query.filter.return_value.first.return_value = mock_current_user
+        
+        article_query = MagicMock()
+        article_query.filter.return_value.all.return_value = mock_articles
+        
+        verification_query = MagicMock()
+        verification_query.filter.return_value.all.return_value = mock_verification_records
+        
+        mock_db.query.side_effect = [user_query, article_query, verification_query]
+        
+        result = asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
+        
+        assert "退会処理が完了しました" in result["message"]
+        assert result["email"] == "test@example.com"
+        assert result["deleted_articles_count"] == "2"
+        
+        # 削除処理の確認
+        assert mock_db.delete.call_count >= 4
+        mock_db.commit.assert_called_once()
+    
+    def test_delete_user_account_password_mismatch_with_auth(self, mock_db, mock_current_user):
+        """認証機能ありでパスワード不一致の場合のテスト"""
+        deletion_request = AccountDeletionRequest(
+            email="test@example.com",
+            password="password123",
+            confirm_password="different456"
+        )
+        
+        with pytest.raises(HTTPException) as exc_info:
+            asyncio.run(delete_user_account(deletion_request, mock_db, mock_current_user))
+        
+        assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
+        assert "パスワードと確認用パスワードが一致しません" in str(exc_info.value.detail)
+        mock_db.rollback.assert_called_once()
+    
+    @patch('routers.user.Hash.verify')
+    def test_delete_user_account_wrong_password_with_auth(self, mock_hash_verify, mock_db, mock_current_user, valid_deletion_request):
+        """認証機能ありでパスワードが間違っている場合のテスト"""
+        mock_hash_verify.return_value = False
+        
+        # ユーザークエリのモック
+        user_query = MagicMock()
+        user_query.filter.return_value.first.return_value = mock_current_user
+        mock_db.query.return_value = user_query
+        
+        with pytest.raises(HTTPException) as exc_info:
+            asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
+        
+        assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
+        assert "パスワードが正しくありません" in exc_info.value.detail
+        mock_db.rollback.assert_called_once()
+
+
 # テスト実行用の設定
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
