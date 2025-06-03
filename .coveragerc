@@ -1,0 +1,13 @@
+[run]
+omit = 
+    run_continuous_tests.py
+    generate_summary_report.py
+
+[report]
+omit =
+    run_continuous_tests.py
+    generate_summary_report.py
+    update_main_bug_history.py
+
+[html]
+directory = htmlcov
