@@ -112,9 +112,29 @@
 - `test_schemas.py`: スキーマ検証 (40テスト)
 - `test_integration.py`: 統合テスト (14テスト)
 
-
-
-[カバレッジレポート](Coverage_Report_20250603.html)
+## カバレッジレポート
+```
+Name                       Stmts   Miss  Cover   Missing
+--------------------------------------------------------
+custom_token.py               94      0   100%
+database.py                   89      2    98%   84-86
+hashing.py                     9      0   100%
+logger/__init__.py             0      0   100%
+logger/custom_logger.py       21      0   100%
+main.py                       42      3    93%   30, 40-42
+models.py                     37      0   100%
+oauth2.py                     37      0   100%
+routers/__init__.py            0      0   100%
+routers/article.py           156      0   100%
+routers/auth.py               98      0   100%
+routers/user.py              201      5    98%   162, 435-436, 443, 456
+schemas.py                    89     10    89%   64-77
+utils/__init__.py              0      0   100%
+utils/email_sender.py        113      4    96%   229, 280, 347, 409
+utils/email_validator.py      23      0   100%
+--------------------------------------------------------
+TOTAL                       1009     24    98%
+```
 
 
 # 🐛 継続的バグトラッキングレポート
