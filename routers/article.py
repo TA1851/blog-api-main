@@ -75,7 +75,6 @@ async def all_fetch(
                 f"ユーザーID: {current_user.id}  \
                 のブログ記事を全件取得しました。全{total_count}件")
     except ValueError as e:
-        # pprint.pprint(str(e))
         create_error_logger(f"ブログ記事の取得に失敗しました。")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -295,7 +294,6 @@ async def update_article(
             f"記事を更新しました。article_id: {article_id}, \
             user_id: {current_user.id}")
     except ValueError as e:
-        # pprint.pprint(str(e))
         create_error_logger(
             f"記事の更新に失敗しました。 \
             article_id: {article_id}")
@@ -315,13 +313,13 @@ async def update_article(
 
 @router.delete(
     "/articles",
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_200_OK
 )
 async def delete_article(
     article_id: int,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
-    ) -> None:
+    ) -> dict:
     """記事を削除するエンドポイント
 
     :param article_id: 記事のID
@@ -354,7 +352,6 @@ async def delete_article(
         print(f"記事を削除しました。article_id: {article_id}")
         create_logger(f"記事を削除しました。article_id: {article_id}")
     except ValueError as e:
-        # pprint.pprint(str(e))
         create_error_logger(
             f"記事の削除に失敗しました。article_id: {article_id}"
         )
