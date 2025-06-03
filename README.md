@@ -89,16 +89,18 @@
 このプロジェクトでは包括的なテストスイートと継続的品質管理を実装しています：
 
 #### テスト統計
-- **総テスト数**: 300テスト
-- **成功率**: 100%
-- **コードカバレッジ**: 98.5%
+- **総テスト数**: 496テスト
+- **成功率**: 89.9%
+- **コードカバレッジ**: 98%
 - **品質スコア**: A+
 
 #### テストレポート
 詳細なテストレポートは [`tests/report/`](tests/report/) ディレクトリで確認できます：
 - 📝 **Markdownレポート**: 包括的なテスト結果とカバレッジ分析
 - 🐛 **バグトラッキング**: 継続的な品質監視レポート
-- 📈 **カバレッジレポート**: HTMLカバレッジ可視化
+- 📈 **カバレッジレポート**: 
+  - [`htmlcov/index.html`](htmlcov/index.html): 最新のHTMLカバレッジレポート
+  - [`Coverage_Report_20250603.html`](Coverage_Report_20250603.html): 2025年6月3日付けのカバレッジレポート
 - 📋 **テスト結果**: XML形式の詳細結果
 
 #### 主要テストモジュール
@@ -112,7 +114,7 @@
 - `test_schemas.py`: スキーマ検証 (40テスト)
 - `test_integration.py`: 統合テスト (14テスト)
 
-## カバレッジレポート
+## カバレッジレポート（2025年6月3日更新）
 ```
 Name                       Stmts   Miss  Cover   Missing
 --------------------------------------------------------
@@ -135,6 +137,11 @@ utils/email_validator.py      23      0   100%
 --------------------------------------------------------
 TOTAL                       1009     24    98%
 ```
+
+> **注意**: `coverage html` コマンドを実行する際に、特定のファイルを除外したい場合は以下のコマンドを使用できます:
+> ```bash
+> coverage html --omit="run_continuous_tests.py,generate_summary_report.py"
+> ```
 
 
 # 🐛 継続的バグトラッキングレポート
@@ -165,3 +172,5 @@ TOTAL                       1009     24    98%
 - **tests.test_main.TestExceptionHandling::test_email_validation_error_detection**
 - **tests.test_main.TestExceptionHandling::test_email_error_with_multiple_conditions**
 - **tests.test_main.TestExceptionHandling::test_general_validation_error_handling**
+
+> **注**: 完全なバグトラッキングレポートは [`bug_history.json`](bug_history.json) で確認できます。
