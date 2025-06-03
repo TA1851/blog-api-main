@@ -114,7 +114,7 @@
 
 
 
-[カバレッジレポート](blog-api-main/htmlcov/index.html)
+[カバレッジレポート](Coverage_Report_20250603.html)
 
 
 # 🐛 継続的バグトラッキングレポート
