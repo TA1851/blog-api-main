@@ -219,7 +219,9 @@ class TestExceptionHandling:
         
         assert isinstance(result, JSONResponse)
         assert result.status_code == status.HTTP_400_BAD_REQUEST
-        assert "メールアドレスの形式が不正です。" in str(result.body)
+        # バイナリデータをUTF-8でデコードしてから比較
+        response_data = result.body.decode('utf-8')
+        assert "メールアドレスの形式が不正です。" in response_data
         
         # エラーログ呼び出し確認
         assert mock_error_logger.call_count >= 1
@@ -251,7 +253,9 @@ class TestExceptionHandling:
         
         assert isinstance(result, JSONResponse)
         assert result.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        assert "入力データが無効です。" in str(result.body)
+        # バイナリデータをUTF-8でデコードしてから比較
+        response_data = result.body.decode('utf-8')
+        assert "入力データが無効です。" in response_data
     
     @patch('main.Base')
     @patch('main.engine')
@@ -280,7 +284,9 @@ class TestExceptionHandling:
         
         assert isinstance(result, JSONResponse)
         assert result.status_code == status.HTTP_400_BAD_REQUEST
-        assert "メールアドレスの形式が不正です。" in str(result.body)
+        # バイナリデータをUTF-8でデコードしてから比較
+        response_data = result.body.decode('utf-8')
+        assert "メールアドレスの形式が不正です。" in response_data
     
     @patch('main.Base')
     @patch('main.engine')
