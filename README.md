@@ -99,8 +99,7 @@
 - 📝 **Markdownレポート**: 包括的なテスト結果とカバレッジ分析
 - 🐛 **バグトラッキング**: 継続的な品質監視レポート
 - 📈 **カバレッジレポート**: 
-  - [`htmlcov/index.html`](https://github.com/TA1851/blog-api-main/blob/main/reports/index.html): 最新のHTMLカバレッジレポート
-  - [`Coverage_Report_20250603.html`](): 2025年6月3日付けのカバレッジレポート
+  - [`htmlcov/index.html`](https://github.com/TA1851/blog-api-main/blob/main/tests/report/markdown_reports/COVERAGE_REPORT_20250603.md): 最新のHTMLカバレッジレポート
 - 📋 **テスト結果**: XML形式の詳細結果
 
 #### 主要テストモジュール
