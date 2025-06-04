@@ -7,7 +7,7 @@ import urllib.parse
 import markdown
 
 from models import Article, User as UserModel
-from schemas import ArticleBase, User as PublicArticle
+from schemas import ArticleBase, PublicArticle
 from database import get_db
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
