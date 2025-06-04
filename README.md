@@ -39,6 +39,12 @@
 - tests/: テストスイートとレポート
   - tests/report/: 包括的テストレポート集 📊
 
+### ER図
+コードでER図をかけるサービス(dbdiagram.io)を利用しました。
+
+[dbdiagram.io](https://dbdiagram.io/home?utm_source=dbdiagram)
+
+![ER図](/img/Untitled.png)
 ### 📁 統合ファイル管理システム ✨
 
 プロジェクトの全ファイルが体系的に整理されています：

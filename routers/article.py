@@ -7,12 +7,12 @@ import urllib.parse
 import markdown
 
 from models import Article, User as UserModel
-from schemas import ArticleBase, User as UserSchema, PublicArticle
-from database import get_db, db_env
+from schemas import ArticleBase, User as PublicArticle
+from database import get_db
 from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
 
-
+# TODO:APIレスポンスの型定義
 router = APIRouter(
     prefix="/api/v1",
     tags=["articles"],
@@ -26,10 +26,10 @@ router = APIRouter(
 )
 async def all_fetch(
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user), # 現在のユーザーを取得
+    current_user: UserModel = Depends(get_current_user),
     limit: Optional[int] = Query(
         None, ge=1,
-        description="取得する最大記事数（指定しない場合は全件取得）"
+        description="取得する記事数（指定しない場合は全件取得）"
         )
 ) -> List[ArticleBase]:
     """ログインユーザーが作成した記事のみを取得するエンドポイント
@@ -62,7 +62,7 @@ async def all_fetch(
 
         query = db.query(Article).filter(Article.user_id == current_user.id)
 
-        # limitが指定されている場合の処理
+        # 記事数を指定する場合
         if limit:
             user_blogs = query.limit(limit).all()
             create_logger(
@@ -83,7 +83,6 @@ async def all_fetch(
 
     # 記事が見つからない場合は空のリストを返す
     if not user_blogs:
-        print(f"ユーザーID: {current_user.id} の記事が見つかりませんでした")
         create_error_logger(
             f"ユーザーID: {current_user.id} のブログ記事が見つかりませんでした。"
             )
@@ -101,7 +100,6 @@ async def all_fetch(
             全{len(user_blogs)}件を取得しました。(総数: {total_count})"
             )
 
-    # Article models を ArticleBase schemas に変換
     return [
         ArticleBase(
             article_id=article.article_id,
@@ -142,21 +140,18 @@ async def get_article(
         print(id_blog)
         create_logger("指定したIDのブログ記事を取得しました。")
     except ValueError as e:
-        # pprint.pprint(str(e))
         create_error_logger(f"指定したIDのブログ記事に失敗しました。")
-        # エラー発生時に明示的な４０４を返す
+        # エラー発生時に明示的な404を返す
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, \
             detail=f"Article not found {id}"
             )
-    # id_blogがNoneの場合は、HTTPExceptionを発生させる
+    # 記事が見つからない場合は404エラーを返す
     if not id_blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, \
             detail=f"Article not found {id}"
             )
-    
-    # Article model を ArticleBase schema に変換
     return ArticleBase(
         article_id=id_blog.article_id,
         title=id_blog.title,
@@ -190,7 +185,7 @@ async def create_article(
 
     :rtype: ArticleBase
     """
-    # タイトルと本文の検証 - 空やNULLの場合はエラー
+    # タイトルか本文が空だと400エラーを返す
     if blog.title is None or blog.title.strip() == "":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -201,8 +196,10 @@ async def create_article(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="本文は必須項目です"
         )
-    # 自動採番処理
-    max_article_id = db.query(func.max(Article.article_id)).scalar() or 0
+    # 記事は自動採番する
+    max_article_id = db.query(
+        func.max(Article.article_id
+                )).scalar() or 0
     new_article_id = max_article_id + 1
 
     new_blog = Article(
@@ -260,7 +257,7 @@ async def update_article(
     :raises ValueError: データベースのクエリに失敗した場合
     """
     try:
-        # article_idとuser_idでフィルタリングして記事を取得(ログインユーザーの記事を更新)
+        # ログインユーザーの記事を更新
         update_blog = db.query(Article).filter(
             Article.article_id == article_id,
             Article.user_id == current_user.id
@@ -272,7 +269,7 @@ async def update_article(
                 detail=f"Article not found or you do not have permission \
                 -> Article_id:{article_id}"
             )
-        # タイトルと本文の検証 - 空やNULLの場合はエラー
+        # タイトルと本文が空の場合は400エラーを返す
         if blog.title is None or blog.title.strip() == "":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -283,13 +280,10 @@ async def update_article(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="本文は必須項目です"
             )
-        # 記事の内容を更新
         update_blog.title = blog.title
         update_blog.body = blog.body
         db.commit()
         db.refresh(update_blog)
-
-        print(f"記事を更新しました。article_id: {article_id}")
         create_logger(
             f"記事を更新しました。article_id: {article_id}, \
             user_id: {current_user.id}")
@@ -301,8 +295,6 @@ async def update_article(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Article not updated. article_id: {article_id}"
         )
-    
-    # Article model を ArticleBase schema に変換
     return ArticleBase(
         article_id=update_blog.article_id,
         title=update_blog.title,
@@ -371,7 +363,7 @@ async def get_public_articles(
     db: Session = Depends(get_db),
     limit: Optional[int] = Query(
         None, ge=1,
-        description="取得する最大記事数（指定しない場合は全件取得）"
+        description="取得する記事数（指定しない場合は全件取得）"
     ),
     skip: Optional[int] = Query(
         0, ge=0,
@@ -381,22 +373,28 @@ async def get_public_articles(
     """認証なしでパブリック記事を取得するエンドポイント
 
     :param db: データベースセッション
+
     :type db: Session
+
     :param limit: 取得する最大記事数
+
     :type limit: Optional[int]
+
     :param skip: スキップする記事数
+
     :type skip: Optional[int]
+
     :return: パブリック記事のリスト
+
     :rtype: List[PublicArticle]
+
     :raises HTTPException: データベースエラーが発生した場合
     """
     try:
         # 記事の総数を取得
         total_count = db.query(Article).count()
-
-        # 基本クエリ（記事ID順でソート）
+        # 記事ID順でソート
         query = db.query(Article).order_by(Article.article_id.desc())
-
         # skipが指定されている場合
         if skip:
             query = query.offset(skip)
@@ -416,12 +414,14 @@ async def get_public_articles(
             ))
         if limit:
             create_logger(
-                f"パブリック記事を取得しました。全{total_count}件中{len(result_articles)}件表示 "
+                f"パブリック記事を取得しました。 \
+                全{total_count}件中{len(result_articles)}件表示 "
                 f"(skip: {skip}, limit: {limit})"
             )
         else:
             create_logger(
-                f"パブリック記事を全件取得しました。全{total_count}件 (skip: {skip})"
+                f"パブリック記事を全件取得しました。 \
+                全{total_count}件 (skip: {skip})"
             )
     except Exception as e:
         create_error_logger(f"パブリック記事の取得に失敗しました: {str(e)}")
@@ -438,11 +438,12 @@ async def get_public_articles(
     response_model=List[PublicArticle]
 )
 async def search_public_articles(
-    q: str = Query(..., min_length=1, description="検索キーワード（日本語対応）"),
+    q: str = Query(..., min_length=1,
+    description="検索キーワード（日本語対応）"),
     db: Session = Depends(get_db),
     limit: Optional[int] = Query(
         10, ge=1, le=100,
-        description="取得する最大記事数（1-100、デフォルト10）"
+        description="取得する最大記事数（デフォルト：10）"
     ),
     skip: Optional[int] = Query(
         0, ge=0,
@@ -452,15 +453,25 @@ async def search_public_articles(
     """キーワードでパブリック記事を検索するエンドポイント（日本語対応）
 
     :param q: 検索キーワード（日本語・英語対応）
+
     :type q: str
+
     :param db: データベースセッション
+
     :type db: Session
+
     :param limit: 取得する最大記事数
+
     :type limit: Optional[int]
+
     :param skip: スキップする記事数
+
     :type skip: Optional[int]
+
     :return: 検索結果の記事リスト
+
     :rtype: List[PublicArticle]
+
     :raises HTTPException: データベースエラーが発生した場合
     """
     try:
@@ -524,18 +535,27 @@ async def get_public_article_by_id(
     """指定されたIDのパブリック記事を取得するエンドポイント
 
     :param article_id: 取得する記事のID
+
     :type article_id: int
+
     :param db: データベースセッション
+
     :type db: Session
+
     :return: 指定されたIDの記事詳細
+
     :rtype: PublicArticle
+
     :raises HTTPException: 記事が見つからない場合や取得エラーが発生した場合
     """
     try:
         # 記事IDで記事を検索
-        article = db.query(Article).filter(Article.article_id == article_id).first()
+        article = db.query(Article).filter \
+        (Article.article_id == article_id).first()
         if not article:
-            create_error_logger(f"記事が見つかりません。ID: {article_id}")
+            create_error_logger(
+                f"記事が見つかりません。ID: {article_id}"
+                )
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"記事ID {article_id} の記事が見つかりません"
@@ -548,12 +568,15 @@ async def get_public_article_by_id(
             title=article.title,
             body_html=body_html
         )
-        create_logger(f"記事詳細を取得しました。ID: {article_id}, タイトル: {article.title}")
-    except HTTPException:
-        # HTTPException は再度発生させる
-        raise
+        create_logger(
+            f"記事詳細を取得しました。ID: {article_id}, \
+            タイトル: {article.title}"
+            )
     except Exception as e:
-        create_error_logger(f"記事詳細の取得に失敗しました。ID: {article_id}, エラー: {str(e)}")
+        create_error_logger(
+            f"記事詳細の取得に失敗しました。 \
+            ID: {article_id}, エラー: {str(e)}"
+            )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="記事詳細の取得に失敗しました"

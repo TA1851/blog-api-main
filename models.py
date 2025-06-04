@@ -13,10 +13,15 @@ class Article(Base):
     """SQLAlchemyのBaseクラスを継承して、記事情報のテーブルを定義する。
 
     :param id: 自動付与されるDBのID
+
     :param article_id: 記事のID
+
     :param title: 記事のタイトル
+
     :param body: 記事の本文
+
     :param user_id: 記事を作成したユーザーのID
+
     :param owner: 特定の記事を作成したユーザーの情報を取得するためのリレーションシップ
     """
 
@@ -31,25 +36,30 @@ class Article(Base):
     user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id"))
     # 特定の記事を作成したユーザーの情報を取得する
     owner: Mapped[Optional["User"]] = relationship("User", back_populates="blogs")
-    
+
+
     def __post_init__(self) -> None:
         create_logger(f"Articleインスタンスが作成されました。")
 
 
 class User(Base):
-    """SQLAlchemyのBaseクラスを継承して、ユーザー情報のテーブルを定義する。
+    """SQLAlchemy2.0スタイルでテーブルを定義する。
 
     :param id: 自動付与されるDBのID
+
     :param name: ユーザー名
+
     :param email: メールアドレス
+
     :param password: パスワード
+
     :param is_active: ユーザーの有効状態
+
     :param blogs: 特定のユーザーが作成した記事の情報を全て取得するためのリレーションシップ
     """
 
     __tablename__ = "users"
 
-    # SQLAlchemy 2.0スタイルでデータベースカラムを定義
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[Optional[str]] = mapped_column(String)
     email: Mapped[Optional[str]] = mapped_column(String)

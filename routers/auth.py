@@ -1,12 +1,12 @@
 """認証機能を実装するためのルーターモジュール"""
-from typing import List, Set, Dict, Any, Generator
+from typing import List, Set, Dict, Generator
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from schemas import Login, ShowArticle, PasswordChange
-from database import session, db_env
+from schemas import ShowArticle, PasswordChange
+from database import session
 from hashing import Hash
 from custom_token import create_access_token
 from models import User, Article
@@ -21,6 +21,7 @@ class LoginResponse(TypedDict):
     """ログインレスポンスの型定義"""
     access_token: str
     token_type: str
+
 
 class TokenResponse(TypedDict):
     """トークンレスポンスの型定義"""
@@ -41,16 +42,19 @@ def get_db() -> Generator[Session, None, None]:
     db = session()
     try:
         yield db
-        # print("DBセッションをコミットしました")
-        create_logger("DBセッションをコミットしました")
+        create_logger(
+            "DBセッションをコミットしました"
+            )
     except Exception as e:
-        # pprint.pprint(str(e))
-        create_error_logger(f"DBセッションのコミットに失敗しました。: {str(e)}")
+        create_error_logger(
+            f"DBセッションのコミットに失敗しました。: {str(e)}"
+            )
         raise
     finally:
         db.close()
-        # print("DBセッションをクローズしました")
-        create_logger("DBセッションをクローズしました")
+        create_logger(
+            "DBセッションをクローズしました"
+        )
 
 
 @router.post('/login')
@@ -58,7 +62,7 @@ async def login(
     request: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
     ) -> LoginResponse:
-    """ユーザー認証を行い、認証に成功した場合はアクセストークン（JWT）を返します。
+    """ユーザー認証を行い、ログインする
 
     ログインエンドポイント：
     ```
@@ -103,8 +107,9 @@ async def login(
 
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
-        # print(f"User not found with email: {request.username}")
-        create_error_logger(f"無効なユーザー名です: {request.username}")
+        create_error_logger(
+            f"無効なユーザー名です: {request.username}"
+            )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"無効なユーザー名です"
@@ -114,7 +119,9 @@ async def login(
         user.password
     ):
         # print("Password verification failed")
-        create_error_logger(f"無効なパスワードです: {request.password}")
+        create_error_logger(
+            f"無効なパスワードです: {request.password}"
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="無効なパスワードです"
@@ -122,15 +129,14 @@ async def login(
     access_token = create_access_token(
         data={"sub": user.email or "", "id": user.id}
     )
-    create_logger(f"ログインに成功しました: {user.email or 'unknown'}")
+    create_logger(
+        f"ログインに成功しました: {user.email or 'unknown'}"
+        )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
 # OAuth2スキームを定義
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
-
-
-# ブラックリストを保持するセット
 token_blacklist: Set[str] = set()
 
 
@@ -142,10 +148,15 @@ def verify_token(
     """トークンを検証し、無効化されたトークンを拒否する
 
     :param token: 認証トークン（ヘッダーから自動取得）
+
     :type token: str
+
     :raises HTTPException: トークンが無効な場合
+
     :return: トークンのペイロード
+
     :rtype: dict
+
     :raises HTTPException: トークンが無効化されている場合
     """
     if token in token_blacklist:
@@ -155,7 +166,9 @@ def verify_token(
         )
     try:
         # トークンの検証ロジックを実装
-        payload = jwt.decode(token, "your-secret-key", algorithms=["HS256"])
+        payload = jwt.decode(
+            token, "your-secret-key", algorithms=["HS256"]
+            )
         email = payload.get("sub")
         if email is None:
             raise HTTPException(
@@ -168,6 +181,7 @@ def verify_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="無効なトークンです"
         )
+
 
 @router.post(
     '/logout'
@@ -188,7 +202,7 @@ async def logout(
     ```
     Authorizationヘッダーから自動取得
     ```
-    
+
     レスポンス：成功時(200 OK), 失敗時(401 Unauthorized)
     ```
     {
