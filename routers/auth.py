@@ -69,37 +69,28 @@ async def login(
     http://127.0.0.1:8080/api/v1/login
     ```
 
-    注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください：
-    ```
-    http://127.0.0.1:8080/api/v1/change-password
-    ```
+    注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください::
 
-    パラメータ：
-    ```
-    username: ユーザー名（メールアドレス）
-    password: パスワード
-    ```
+        http://127.0.0.1:8080/api/v1/change-password
 
-    レスポンス：成功時(200 OK), 失敗時(404 Not Found)
-    ```
-    {
-        "access_token": "JWTトークン文字列",
-        "token_type": "bearer"
-    }
-    ```
+    パラメータ::
+
+        username: ユーザー名（メールアドレス）
+        password: パスワード
+
+    レスポンス：成功時(200 OK), 失敗時(404 Not Found)::
+
+        {
+            "access_token": "JWTトークン文字列",
+            "token_type": "bearer"
+        }
 
     :param request: OAuth2PasswordRequestForm
-
     :type request: OAuth2PasswordRequestForm
-
     :param db: データベースセッション
-
     :type db: Session
-
     :return: アクセストークンを返します。token_type:bearer
-
     :rtype: dict
-
     :raises HTTPException: ユーザー名またはパスワードが無効な場合
     """
     print(f"Login attempt with username: {request.username}")
@@ -193,42 +184,34 @@ async def logout(
     ) -> Dict[str, str]:
     """ログアウトエンドポイント:https://127.0.0.1:8000/api/v1/logout
 
-    リクエストヘッダー
-    ```
-    Authorization: Bearer <token>
-    Content-Type: application/json
-    ```
-    パラメータ：
-    ```
-    Authorizationヘッダーから自動取得
-    ```
+    リクエストヘッダー::
 
-    レスポンス：成功時(200 OK), 失敗時(401 Unauthorized)
-    ```
-    {
-        "message": "ログアウトしました"
-    }
-    ```
+        Authorization: Bearer <token>
+        Content-Type: application/json
+
+    パラメータ::
+
+        Authorizationヘッダーから自動取得
+
+    レスポンス：成功時(200 OK), 失敗時(401 Unauthorized)::
+
+        {
+            "message": "ログアウトしました"
+        }
+
     エラー時：
     401 Unauthorized：トークンが無効な場合
-    422 Unprocessable Entity：トークンが既に無効化されている場合
-    ```
-    {
-        "detail": "トークンが無効化されています"
-    }
-    ```
+    422 Unprocessable Entity：トークンが既に無効化されている場合::
+
+        {
+            "detail": "トークンが無効化されています"
+        }
 
     :param token: 認証トークン（ヘッダーから自動取得）
-
-    :type token: Bearer
-
+    :type token: str
     :raises HTTPException: トークンが無効な場合
-
-    :return: ログアウトしました。
-
+    :return: ログアウト結果メッセージ
     :rtype: dict
-
-    :raises HTTPException: トークンが無効化されている場合
     """
     # トークンをブラックリストに追加して無効化
     token_blacklist.add(token)
@@ -283,29 +266,26 @@ async def change_password(
     http://127.0.0.1:8080/api/v1/change-password
     ```
 
-    パラメータ：
-    ```
-    username: ユーザー名（メールアドレス）
-    temp_password: 現在の仮パスワード
-    new_password: 新しいパスワード
-    ```
+    パラメータ::
 
-    レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request)
-    ```
-    {
-        "access_token": "JWTトークン文字列",
-        "token_type": "bearer",
-        "message": "パスワードが正常に変更されました。登録完了メールを送信しました。"
-    }
-    ```
-    
+        username: ユーザー名（メールアドレス）
+        temp_password: 現在の仮パスワード
+        new_password: 新しいパスワード
+
+    レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request)::
+
+        {
+            "message": "パスワードが正常に変更されました。",
+            "user_id": "ユーザーID"
+        }
+
     注意：パスワード変更成功後、登録完了メールが自動的に送信されます。
 
     :param request: PasswordChange
     :type request: PasswordChange
     :param db: データベースセッション
     :type db: Session
-    :return: アクセストークンとメッセージを返します
+    :return: パスワード変更結果とユーザーIDを返します
     :rtype: dict
     :raises HTTPException: ユーザー名または仮パスワードが無効な場合
     """

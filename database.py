@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+from exceptions import DatabaseConnectionError
 
 
 class EnvironmentConfig(TypedDict, total=False):
@@ -104,11 +105,6 @@ db_env: EnvironmentConfig = read_env_var(env_var) \
     if env_var else EnvironmentConfig()
 
 
-class DatabaseConnectionError(Exception):
-    """データベース接続エラーを表すカスタム例外"""
-    pass
-
-
 # データベースエンジンを作成
 def create_database_engine() -> Engine:
     """データベースエンジンを作成する。
@@ -143,8 +139,15 @@ def create_database_engine() -> Engine:
             )
             return engine
         else:
+            # 開発環境用SQLiteエンジンを作成
+            sqlite_url = "sqlite:///blog.db"
             print(
-                "データベースに接続できません。"
+                f"開発環境: SQLiteデータベースに接続します ({sqlite_url})"
+            )
+            engine = create_engine(
+                sqlite_url,
+                connect_args={"check_same_thread": False},
+                echo=False
             )
             return engine
     except Exception as e:
