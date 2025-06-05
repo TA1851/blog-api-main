@@ -67,8 +67,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">check_env_file</span><span class="p">(</span>
     <span class="n">default_env_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;開発環境では、デフォルトで`.env`ファイルを使用し、</span>
-<span class="sd">    本番環境では、Renderから環境変数を取得します。</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;・開発環境：「.env」ファイルを使用する。</span>
+
+<span class="sd">    ・本番環境：Renderから環境変数を取得する。</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">default_env_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">default_env_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;.env&#39;</span>
@@ -165,7 +166,7 @@
 <div class="viewcode-block" id="create_database_engine">
 <a class="viewcode-back" href="../database.html#database.create_database_engine">[ドキュメント]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_database_engine</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Engine</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースURLを取得し、データベースエンジンを作成する。</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースエンジンを作成する。</span>
 
 <span class="sd">    ・開発環境ではSQLite、本番環境ではPostgreSQLを使用します。</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -230,17 +231,18 @@
 
 <span class="sd">    :param engine: SQLAlchemyのエンジンオブジェクト</span>
 
-<span class="sd">    :param SessionLocal:</span>
-<span class="sd">        ・autocommit=False（デフォルト値）:</span>
-<span class="sd">        CRUD操作をグループ化して、全ての処理が成功した場合、データベースに反映されるようにできます。</span>
+<span class="sd">    :param autocommit=False（デフォルト値）:</span>
+<span class="sd">        CRUD操作をグループ化して、全ての処理が成功した場合、</span>
+<span class="sd">        データベースに反映されるようにできます。</span>
 
-<span class="sd">        　エラーが発生した場合はrollback()を呼び出して全ての変更を取り消せます。</span>
+<span class="sd">        エラーが発生した場合はrollback()を呼び出して全ての変更を取り消せます。</span>
 
-<span class="sd">        ・autoflush=False:</span>
-<span class="sd">        大量のオブジェクトを追加/更新する場合、各オペレーションでフラッシュが発生するのを避けられます。</span>
+<span class="sd">    :param autoflush=False:</span>
+<span class="sd">        大量のオブジェクトを追加/更新する場合、</span>
+<span class="sd">        各オペレーションでフラッシュが発生するのを避けられます。</span>
 <span class="sd">        デフォルト値はTrueです。</span>
 
-<span class="sd">        ・bind=engine: エンジンを生成する呼び出し可能オブジェクト</span>
+<span class="sd">    :param bind=engine: エンジンを生成する呼び出し可能オブジェクト</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">SessionLocal</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span>

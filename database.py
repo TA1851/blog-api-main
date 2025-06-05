@@ -23,7 +23,7 @@ class EnvironmentConfig(TypedDict, total=False):
 def check_env_file(
     default_env_path: Optional[Union[Path, str]] = None
     ) -> Optional[Path]:
-    """・開発環境：「.env」ファイルを使用する。
+    """・開発環境：.envファイルを使用する。
 
     ・本番環境：Renderから環境変数を取得する。
     """
@@ -145,12 +145,8 @@ def create_database_engine() -> Engine:
             )
             return engine
         else:
-            # 開発環境またはENVIRONMENTが未設定の場合はSQLiteを使用
-            sqlite_path = "sqlite:///./blog.db"
-            engine = create_engine(
-                sqlite_path,
-                connect_args={"check_same_thread": False},
-                echo=False
+            create_error_logger(
+                "データベースに接続できません。"
             )
             return engine
     except Exception as e:
