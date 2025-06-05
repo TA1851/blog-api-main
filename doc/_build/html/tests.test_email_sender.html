@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_email_sender module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_email_validator module" href="tests.test_email_validator.html" />
+    <link rel="prev" title="tests.test_database module" href="tests.test_database.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_email_sender module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios"><code class="docutils literal notranslate"><span class="pre">TestEdgeCasesAndErrorScenarios</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestEmailContentAndFormatting"><code class="docutils literal notranslate"><span class="pre">TestEmailContentAndFormatting</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestEmailSenderHelperFunctions"><code class="docutils literal notranslate"><span class="pre">TestEmailSenderHelperFunctions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestEnvironmentVariableHandling"><code class="docutils literal notranslate"><span class="pre">TestEnvironmentVariableHandling</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestIntegrationScenarios"><code class="docutils literal notranslate"><span class="pre">TestIntegrationScenarios</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestPerformanceConsiderations"><code class="docutils literal notranslate"><span class="pre">TestPerformanceConsiderations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestPrintDevModeEmail"><code class="docutils literal notranslate"><span class="pre">TestPrintDevModeEmail</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestSendAccountDeletionEmail"><code class="docutils literal notranslate"><span class="pre">TestSendAccountDeletionEmail</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestSendRegistrationCompleteEmail"><code class="docutils literal notranslate"><span class="pre">TestSendRegistrationCompleteEmail</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_sender.TestSendVerificationEmail"><code class="docutils literal notranslate"><span class="pre">TestSendVerificationEmail</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_email_sender module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_email_sender.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_email_sender">
+<span id="tests-test-email-sender-module"></span><h1>tests.test_email_sender module<a class="headerlink" href="#module-tests.test_email_sender" title="Link to this heading"></a></h1>
+<p>Email Sender Module Test Suite</p>
+<p>Comprehensive test coverage for utils/email_sender.py module including:
+- Configuration validation
+- Email sending functionality
+- Error handling scenarios
+- Environment variable handling
+- Development mode testing
+- Production mode simulation
+- URL encoding and formatting</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEdgeCasesAndErrorScenarios">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestEdgeCasesAndErrorScenarios</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEdgeCasesAndErrorScenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test edge cases and error scenarios</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_email_with_special_characters">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_email_with_special_characters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEdgeCasesAndErrorScenarios.test_email_with_special_characters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_email_with_special_characters" title="Link to this definition"></a></dt>
+<dd><p>Test email sending with special characters in email and token</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_empty_string_parameters">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_empty_string_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEdgeCasesAndErrorScenarios.test_empty_string_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_empty_string_parameters" title="Link to this definition"></a></dt>
+<dd><p>Test functions with empty string parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_email_format">
+<span class="sig-name descname"><span class="pre">test_mail_config_with_invalid_email_format</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_email_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_email_format" title="Link to this definition"></a></dt>
+<dd><p>Test mail config with invalid email format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_port">
+<span class="sig-name descname"><span class="pre">test_mail_config_with_invalid_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_port" title="Link to this definition"></a></dt>
+<dd><p>Test mail config with non-numeric port</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_unicode_characters_in_username">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_unicode_characters_in_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEdgeCasesAndErrorScenarios.test_unicode_characters_in_username"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_unicode_characters_in_username" title="Link to this definition"></a></dt>
+<dd><p>Test email functions with unicode characters in username</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailContentAndFormatting">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestEmailContentAndFormatting</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailContentAndFormatting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailContentAndFormatting" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test email content generation and formatting</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailContentAndFormatting.test_account_deletion_email_content">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_account_deletion_email_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailContentAndFormatting.test_account_deletion_email_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailContentAndFormatting.test_account_deletion_email_content" title="Link to this definition"></a></dt>
+<dd><p>Test account deletion email content elements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailContentAndFormatting.test_registration_complete_email_content">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_registration_complete_email_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailContentAndFormatting.test_registration_complete_email_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailContentAndFormatting.test_registration_complete_email_content" title="Link to this definition"></a></dt>
+<dd><p>Test registration complete email content elements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailContentAndFormatting.test_verification_email_content_includes_required_elements">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_verification_email_content_includes_required_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailContentAndFormatting.test_verification_email_content_includes_required_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailContentAndFormatting.test_verification_email_content_includes_required_elements" title="Link to this definition"></a></dt>
+<dd><p>Test that verification email includes all required content elements</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestEmailSenderHelperFunctions</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test helper functions for email configuration and validation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_boolean_conversion">
+<span class="sig-name descname"><span class="pre">test_get_mail_config_boolean_conversion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_get_mail_config_boolean_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_boolean_conversion" title="Link to this definition"></a></dt>
+<dd><p>Test boolean conversion for STARTTLS and SSL_TLS</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_port_conversion">
+<span class="sig-name descname"><span class="pre">test_get_mail_config_port_conversion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_get_mail_config_port_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_port_conversion" title="Link to this definition"></a></dt>
+<dd><p>Test port number conversion from string to integer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_with_custom_values">
+<span class="sig-name descname"><span class="pre">test_get_mail_config_with_custom_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_get_mail_config_with_custom_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_with_custom_values" title="Link to this definition"></a></dt>
+<dd><p>Test get_mail_config with custom environment values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_with_default_values">
+<span class="sig-name descname"><span class="pre">test_get_mail_config_with_default_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_get_mail_config_with_default_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_with_default_values" title="Link to this definition"></a></dt>
+<dd><p>Test get_mail_config with default environment values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_default">
+<span class="sig-name descname"><span class="pre">test_is_email_enabled_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_is_email_enabled_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_default" title="Link to this definition"></a></dt>
+<dd><p>Test _is_email_enabled default behavior when env var not set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_false">
+<span class="sig-name descname"><span class="pre">test_is_email_enabled_false</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_is_email_enabled_false"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_false" title="Link to this definition"></a></dt>
+<dd><p>Test _is_email_enabled returns False when disabled</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_true">
+<span class="sig-name descname"><span class="pre">test_is_email_enabled_true</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_is_email_enabled_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_true" title="Link to this definition"></a></dt>
+<dd><p>Test _is_email_enabled returns True when enabled</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_all_empty">
+<span class="sig-name descname"><span class="pre">test_validate_mail_config_all_empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_validate_mail_config_all_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_all_empty" title="Link to this definition"></a></dt>
+<dd><p>Test _validate_mail_config with all empty values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_empty_values">
+<span class="sig-name descname"><span class="pre">test_validate_mail_config_empty_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_validate_mail_config_empty_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_empty_values" title="Link to this definition"></a></dt>
+<dd><p>Test _validate_mail_config with empty string values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_from">
+<span class="sig-name descname"><span class="pre">test_validate_mail_config_missing_from</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_validate_mail_config_missing_from"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_from" title="Link to this definition"></a></dt>
+<dd><p>Test _validate_mail_config with missing from address</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_password">
+<span class="sig-name descname"><span class="pre">test_validate_mail_config_missing_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_validate_mail_config_missing_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_password" title="Link to this definition"></a></dt>
+<dd><p>Test _validate_mail_config with missing password</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_username">
+<span class="sig-name descname"><span class="pre">test_validate_mail_config_missing_username</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_validate_mail_config_missing_username"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_username" title="Link to this definition"></a></dt>
+<dd><p>Test _validate_mail_config with missing username</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_valid">
+<span class="sig-name descname"><span class="pre">test_validate_mail_config_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEmailSenderHelperFunctions.test_validate_mail_config_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_valid" title="Link to this definition"></a></dt>
+<dd><p>Test _validate_mail_config with valid configuration</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEnvironmentVariableHandling">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestEnvironmentVariableHandling</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEnvironmentVariableHandling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEnvironmentVariableHandling" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test environment variable handling and edge cases</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEnvironmentVariableHandling.test_cors_origins_handling">
+<span class="sig-name descname"><span class="pre">test_cors_origins_handling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEnvironmentVariableHandling.test_cors_origins_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEnvironmentVariableHandling.test_cors_origins_handling" title="Link to this definition"></a></dt>
+<dd><p>Test CORS origins environment variable handling</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEnvironmentVariableHandling.test_server_port_custom">
+<span class="sig-name descname"><span class="pre">test_server_port_custom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEnvironmentVariableHandling.test_server_port_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEnvironmentVariableHandling.test_server_port_custom" title="Link to this definition"></a></dt>
+<dd><p>Test SERVER_PORT custom value</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestEnvironmentVariableHandling.test_server_port_default">
+<span class="sig-name descname"><span class="pre">test_server_port_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestEnvironmentVariableHandling.test_server_port_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestEnvironmentVariableHandling.test_server_port_default" title="Link to this definition"></a></dt>
+<dd><p>Test SERVER_PORT default value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestIntegrationScenarios">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestIntegrationScenarios</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestIntegrationScenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestIntegrationScenarios" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test integration scenarios and realistic use cases</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestIntegrationScenarios.test_complete_user_registration_flow">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_complete_user_registration_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestIntegrationScenarios.test_complete_user_registration_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestIntegrationScenarios.test_complete_user_registration_flow" title="Link to this definition"></a></dt>
+<dd><p>Test complete user registration email flow</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestIntegrationScenarios.test_user_deletion_flow">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_user_deletion_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestIntegrationScenarios.test_user_deletion_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestIntegrationScenarios.test_user_deletion_flow" title="Link to this definition"></a></dt>
+<dd><p>Test user account deletion email flow</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPerformanceConsiderations">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestPerformanceConsiderations</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPerformanceConsiderations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPerformanceConsiderations" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test performance-related aspects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPerformanceConsiderations.test_config_creation_efficiency">
+<span class="sig-name descname"><span class="pre">test_config_creation_efficiency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPerformanceConsiderations.test_config_creation_efficiency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPerformanceConsiderations.test_config_creation_efficiency" title="Link to this definition"></a></dt>
+<dd><p>Test that config creation is efficient for repeated calls</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPerformanceConsiderations.test_multiple_concurrent_emails">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_multiple_concurrent_emails</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPerformanceConsiderations.test_multiple_concurrent_emails"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPerformanceConsiderations.test_multiple_concurrent_emails" title="Link to this definition"></a></dt>
+<dd><p>Test handling multiple concurrent email requests</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPrintDevModeEmail">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestPrintDevModeEmail</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPrintDevModeEmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPrintDevModeEmail" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test the development mode email printing function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_basic">
+<span class="sig-name descname"><span class="pre">test_print_dev_mode_email_basic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPrintDevModeEmail.test_print_dev_mode_email_basic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_basic" title="Link to this definition"></a></dt>
+<dd><p>Test basic dev mode email printing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_with_verification_url">
+<span class="sig-name descname"><span class="pre">test_print_dev_mode_email_with_verification_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPrintDevModeEmail.test_print_dev_mode_email_with_verification_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_with_verification_url" title="Link to this definition"></a></dt>
+<dd><p>Test dev mode email printing with verification URL</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_without_verification_url">
+<span class="sig-name descname"><span class="pre">test_print_dev_mode_email_without_verification_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestPrintDevModeEmail.test_print_dev_mode_email_without_verification_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_without_verification_url" title="Link to this definition"></a></dt>
+<dd><p>Test dev mode email printing without verification URL</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendAccountDeletionEmail">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestSendAccountDeletionEmail</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendAccountDeletionEmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendAccountDeletionEmail" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test the send_account_deletion_email function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_dev_mode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_account_deletion_email_dev_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendAccountDeletionEmail.test_send_account_deletion_email_dev_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_dev_mode" title="Link to this definition"></a></dt>
+<dd><p>Test account deletion email in development mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_exception">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_account_deletion_email_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendAccountDeletionEmail.test_send_account_deletion_email_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_exception" title="Link to this definition"></a></dt>
+<dd><p>Test exception handling in account deletion email</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_invalid_config">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_account_deletion_email_invalid_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendAccountDeletionEmail.test_send_account_deletion_email_invalid_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_invalid_config" title="Link to this definition"></a></dt>
+<dd><p>Test account deletion email with invalid configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_successful">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_account_deletion_email_successful</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendAccountDeletionEmail.test_send_account_deletion_email_successful"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_successful" title="Link to this definition"></a></dt>
+<dd><p>Test successful account deletion email sending</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendRegistrationCompleteEmail">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestSendRegistrationCompleteEmail</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendRegistrationCompleteEmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendRegistrationCompleteEmail" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test the send_registration_complete_email function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_dev_mode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_registration_complete_email_dev_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendRegistrationCompleteEmail.test_send_registration_complete_email_dev_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_dev_mode" title="Link to this definition"></a></dt>
+<dd><p>Test registration complete email in development mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_exception">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_registration_complete_email_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendRegistrationCompleteEmail.test_send_registration_complete_email_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_exception" title="Link to this definition"></a></dt>
+<dd><p>Test exception handling in registration complete email</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_invalid_config">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_registration_complete_email_invalid_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendRegistrationCompleteEmail.test_send_registration_complete_email_invalid_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_invalid_config" title="Link to this definition"></a></dt>
+<dd><p>Test registration complete email with invalid configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_successful">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_registration_complete_email_successful</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendRegistrationCompleteEmail.test_send_registration_complete_email_successful"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_successful" title="Link to this definition"></a></dt>
+<dd><p>Test successful registration complete email sending</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_sender.</span></span><span class="sig-name descname"><span class="pre">TestSendVerificationEmail</span></span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test the send_verification_email function</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.setup_env_vars">
+<span class="sig-name descname"><span class="pre">setup_env_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.setup_env_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.setup_env_vars" title="Link to this definition"></a></dt>
+<dd><p>Setup common environment variables for tests</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_config_none_exception">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_config_none_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_config_none_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_config_none_exception" title="Link to this definition"></a></dt>
+<dd><p>Test handling when mail config returns None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_dev_mode_disabled">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_dev_mode_disabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_dev_mode_disabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_dev_mode_disabled" title="Link to this definition"></a></dt>
+<dd><p>Test verification email in development mode (email disabled)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_exception_handling">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_exception_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_exception_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_exception_handling" title="Link to this definition"></a></dt>
+<dd><p>Test exception handling during email sending</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_html_mode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_html_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_html_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_html_mode" title="Link to this definition"></a></dt>
+<dd><p>Test email sending in HTML mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_invalid_config">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_invalid_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capsys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_invalid_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_invalid_config" title="Link to this definition"></a></dt>
+<dd><p>Test verification email with invalid mail configuration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_plain_text_mode">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_plain_text_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_plain_text_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_plain_text_mode" title="Link to this definition"></a></dt>
+<dd><p>Test email sending in plain text mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_successful_sending">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_successful_sending</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_successful_sending"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_successful_sending" title="Link to this definition"></a></dt>
+<dd><p>Test successful email sending in production mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_url_generation_local">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_url_generation_local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_url_generation_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_url_generation_local" title="Link to this definition"></a></dt>
+<dd><p>Test verification URL generation for local environment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_url_generation_production">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_send_verification_email_url_generation_production</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_sender.html#TestSendVerificationEmail.test_send_verification_email_url_generation_production"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_url_generation_production" title="Link to this definition"></a></dt>
+<dd><p>Test verification URL generation for production environment</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_database.html" class="btn btn-neutral float-left" title="tests.test_database module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_email_validator.html" class="btn btn-neutral float-right" title="tests.test_email_validator module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

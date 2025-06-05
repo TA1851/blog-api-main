@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_routers_corrected module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_schemas module" href="tests.test_schemas.html" />
+    <link rel="prev" title="tests.test_oauth2 module" href="tests.test_oauth2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_routers_corrected module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestArticleRouterCorrected"><code class="docutils literal notranslate"><span class="pre">TestArticleRouterCorrected</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestAuthRouterCorrected"><code class="docutils literal notranslate"><span class="pre">TestAuthRouterCorrected</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestConfig"><code class="docutils literal notranslate"><span class="pre">TestConfig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestRoutersErrorHandling"><code class="docutils literal notranslate"><span class="pre">TestRoutersErrorHandling</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestRoutersIntegration"><code class="docutils literal notranslate"><span class="pre">TestRoutersIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestRoutersPerformance"><code class="docutils literal notranslate"><span class="pre">TestRoutersPerformance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestRoutersSecurity"><code class="docutils literal notranslate"><span class="pre">TestRoutersSecurity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestRoutersValidation"><code class="docutils literal notranslate"><span class="pre">TestRoutersValidation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.TestUserRouterCorrected"><code class="docutils literal notranslate"><span class="pre">TestUserRouterCorrected</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.auth_headers"><code class="docutils literal notranslate"><span class="pre">auth_headers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.client"><code class="docutils literal notranslate"><span class="pre">client()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.mock_article"><code class="docutils literal notranslate"><span class="pre">mock_article()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.mock_db"><code class="docutils literal notranslate"><span class="pre">mock_db()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_routers_corrected.mock_user"><code class="docutils literal notranslate"><span class="pre">mock_user()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_routers_corrected module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_routers_corrected.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_routers_corrected">
+<span id="tests-test-routers-corrected-module"></span><h1>tests.test_routers_corrected module<a class="headerlink" href="#module-tests.test_routers_corrected" title="Link to this heading"></a></h1>
+<p>Corrected Router Test Suite for Blog API
+修正されたBlog APIルーターの包括的テストスイート</p>
+<p>This module contains comprehensive tests for all router modules:
+- Article Router (/api/v1/articles)
+- Auth Router (/api/v1/login, /api/v1/logout, /api/v1/change-password)
+- User Router (/api/v1/user)</p>
+<p>Test Coverage:
+- CRUD operations
+- Authentication flows  
+- Error handling
+- Input validation
+- Security features
+- Performance metrics</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestArticleRouterCorrected</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Corrected tests for Article Router endpoints</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_create_article_success">
+<span class="sig-name descname"><span class="pre">test_create_article_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_create_article_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_create_article_success" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/articles - successful creation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_delete_article_success">
+<span class="sig-name descname"><span class="pre">test_delete_article_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_delete_article_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_delete_article_success" title="Link to this definition"></a></dt>
+<dd><p>Test DELETE /api/v1/articles - successful deletion</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_get_all_articles_success">
+<span class="sig-name descname"><span class="pre">test_get_all_articles_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_get_all_articles_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_all_articles_success" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/articles - successful retrieval</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_get_article_by_id_success">
+<span class="sig-name descname"><span class="pre">test_get_article_by_id_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_get_article_by_id_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_article_by_id_success" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/articles/{id} - successful retrieval</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_get_public_article_by_id">
+<span class="sig-name descname"><span class="pre">test_get_public_article_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_get_public_article_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_public_article_by_id" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/public/articles/{article_id} - public article access</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_get_public_articles">
+<span class="sig-name descname"><span class="pre">test_get_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_get_public_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_public_articles" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/public/articles - public access</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_search_public_articles">
+<span class="sig-name descname"><span class="pre">test_search_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_search_public_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_search_public_articles" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/public/articles/search - search functionality</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestArticleRouterCorrected.test_update_article_success">
+<span class="sig-name descname"><span class="pre">test_update_article_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestArticleRouterCorrected.test_update_article_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestArticleRouterCorrected.test_update_article_success" title="Link to this definition"></a></dt>
+<dd><p>Test PUT /api/v1/articles - successful update</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestAuthRouterCorrected">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestAuthRouterCorrected</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestAuthRouterCorrected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestAuthRouterCorrected" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Corrected tests for Auth Router endpoints</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestAuthRouterCorrected.test_change_password_success">
+<span class="sig-name descname"><span class="pre">test_change_password_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestAuthRouterCorrected.test_change_password_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestAuthRouterCorrected.test_change_password_success" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/change-password - successful password change</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestAuthRouterCorrected.test_get_article_success">
+<span class="sig-name descname"><span class="pre">test_get_article_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestAuthRouterCorrected.test_get_article_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestAuthRouterCorrected.test_get_article_success" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/article - get article endpoint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestAuthRouterCorrected.test_login_invalid_credentials">
+<span class="sig-name descname"><span class="pre">test_login_invalid_credentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestAuthRouterCorrected.test_login_invalid_credentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestAuthRouterCorrected.test_login_invalid_credentials" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/login - invalid credentials</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestAuthRouterCorrected.test_login_success">
+<span class="sig-name descname"><span class="pre">test_login_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestAuthRouterCorrected.test_login_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestAuthRouterCorrected.test_login_success" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/login - successful login</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestAuthRouterCorrected.test_logout_success">
+<span class="sig-name descname"><span class="pre">test_logout_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestAuthRouterCorrected.test_logout_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestAuthRouterCorrected.test_logout_success" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/logout - successful logout</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestConfig</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test configuration constants</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.API_V1_PREFIX">
+<span class="sig-name descname"><span class="pre">API_V1_PREFIX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/api/v1'</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.API_V1_PREFIX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.BASE_URL">
+<span class="sig-name descname"><span class="pre">BASE_URL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.BASE_URL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.PERFORMANCE_THRESHOLD_MS">
+<span class="sig-name descname"><span class="pre">PERFORMANCE_THRESHOLD_MS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1000</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.PERFORMANCE_THRESHOLD_MS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.RATE_LIMIT_CALLS">
+<span class="sig-name descname"><span class="pre">RATE_LIMIT_CALLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.RATE_LIMIT_CALLS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.TEST_ARTICLE_CONTENT">
+<span class="sig-name descname"><span class="pre">TEST_ARTICLE_CONTENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'This</span> <span class="pre">is</span> <span class="pre">test</span> <span class="pre">content'</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.TEST_ARTICLE_CONTENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.TEST_ARTICLE_TITLE">
+<span class="sig-name descname"><span class="pre">TEST_ARTICLE_TITLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Test</span> <span class="pre">Article'</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.TEST_ARTICLE_TITLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.TEST_USER_EMAIL">
+<span class="sig-name descname"><span class="pre">TEST_USER_EMAIL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'test&#64;example.com'</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.TEST_USER_EMAIL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestConfig.TEST_USER_PASSWORD">
+<span class="sig-name descname"><span class="pre">TEST_USER_PASSWORD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'testpass123'</span></em><a class="headerlink" href="#tests.test_routers_corrected.TestConfig.TEST_USER_PASSWORD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersErrorHandling">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestRoutersErrorHandling</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersErrorHandling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersErrorHandling" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test error handling scenarios across all routers</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersErrorHandling.test_duplicate_user_creation">
+<span class="sig-name descname"><span class="pre">test_duplicate_user_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersErrorHandling.test_duplicate_user_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersErrorHandling.test_duplicate_user_creation" title="Link to this definition"></a></dt>
+<dd><p>Test creating user with existing email</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersErrorHandling.test_invalid_article_id">
+<span class="sig-name descname"><span class="pre">test_invalid_article_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersErrorHandling.test_invalid_article_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersErrorHandling.test_invalid_article_id" title="Link to this definition"></a></dt>
+<dd><p>Test accessing non-existent article</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersErrorHandling.test_invalid_user_id">
+<span class="sig-name descname"><span class="pre">test_invalid_user_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersErrorHandling.test_invalid_user_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersErrorHandling.test_invalid_user_id" title="Link to this definition"></a></dt>
+<dd><p>Test accessing non-existent user</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersErrorHandling.test_unauthorized_access">
+<span class="sig-name descname"><span class="pre">test_unauthorized_access</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersErrorHandling.test_unauthorized_access"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersErrorHandling.test_unauthorized_access" title="Link to this definition"></a></dt>
+<dd><p>Test unauthorized access to protected endpoints</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestRoutersIntegration</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Integration tests spanning multiple router functionalities</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersIntegration.test_complete_user_article_workflow">
+<span class="sig-name descname"><span class="pre">test_complete_user_article_workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersIntegration.test_complete_user_article_workflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersIntegration.test_complete_user_article_workflow" title="Link to this definition"></a></dt>
+<dd><p>Test complete workflow: user creation -&gt; login -&gt; article creation -&gt; retrieval</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersPerformance">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestRoutersPerformance</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersPerformance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersPerformance" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test performance characteristics of router endpoints</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersPerformance.test_article_list_performance">
+<span class="sig-name descname"><span class="pre">test_article_list_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersPerformance.test_article_list_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersPerformance.test_article_list_performance" title="Link to this definition"></a></dt>
+<dd><p>Test performance of article listing endpoint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersPerformance.test_concurrent_login_requests">
+<span class="sig-name descname"><span class="pre">test_concurrent_login_requests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersPerformance.test_concurrent_login_requests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersPerformance.test_concurrent_login_requests" title="Link to this definition"></a></dt>
+<dd><p>Test handling of concurrent login requests</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersSecurity">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestRoutersSecurity</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersSecurity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersSecurity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test security aspects of router endpoints</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersSecurity.test_authentication_token_validation">
+<span class="sig-name descname"><span class="pre">test_authentication_token_validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersSecurity.test_authentication_token_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersSecurity.test_authentication_token_validation" title="Link to this definition"></a></dt>
+<dd><p>Test authentication token validation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersSecurity.test_rate_limiting_simulation">
+<span class="sig-name descname"><span class="pre">test_rate_limiting_simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersSecurity.test_rate_limiting_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersSecurity.test_rate_limiting_simulation" title="Link to this definition"></a></dt>
+<dd><p>Test rate limiting behavior simulation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersSecurity.test_sql_injection_protection">
+<span class="sig-name descname"><span class="pre">test_sql_injection_protection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersSecurity.test_sql_injection_protection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersSecurity.test_sql_injection_protection" title="Link to this definition"></a></dt>
+<dd><p>Test protection against SQL injection attacks</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersSecurity.test_xss_protection">
+<span class="sig-name descname"><span class="pre">test_xss_protection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersSecurity.test_xss_protection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersSecurity.test_xss_protection" title="Link to this definition"></a></dt>
+<dd><p>Test protection against XSS attacks</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersValidation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestRoutersValidation</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersValidation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersValidation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test input validation across all routers</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersValidation.test_empty_article_title">
+<span class="sig-name descname"><span class="pre">test_empty_article_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersValidation.test_empty_article_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersValidation.test_empty_article_title" title="Link to this definition"></a></dt>
+<dd><p>Test article creation with empty title</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersValidation.test_invalid_email_format">
+<span class="sig-name descname"><span class="pre">test_invalid_email_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersValidation.test_invalid_email_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersValidation.test_invalid_email_format" title="Link to this definition"></a></dt>
+<dd><p>Test user creation with invalid email format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersValidation.test_missing_required_fields">
+<span class="sig-name descname"><span class="pre">test_missing_required_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersValidation.test_missing_required_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersValidation.test_missing_required_fields" title="Link to this definition"></a></dt>
+<dd><p>Test requests with missing required fields</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestRoutersValidation.test_weak_password">
+<span class="sig-name descname"><span class="pre">test_weak_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestRoutersValidation.test_weak_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestRoutersValidation.test_weak_password" title="Link to this definition"></a></dt>
+<dd><p>Test user creation with weak password</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestUserRouterCorrected">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">TestUserRouterCorrected</span></span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestUserRouterCorrected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestUserRouterCorrected" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Corrected tests for User Router endpoints</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestUserRouterCorrected.test_create_user_success">
+<span class="sig-name descname"><span class="pre">test_create_user_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestUserRouterCorrected.test_create_user_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestUserRouterCorrected.test_create_user_success" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/user - successful user creation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestUserRouterCorrected.test_delete_user_account_success">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestUserRouterCorrected.test_delete_user_account_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestUserRouterCorrected.test_delete_user_account_success" title="Link to this definition"></a></dt>
+<dd><p>Test DELETE /api/v1/user/delete-account - successful account deletion</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestUserRouterCorrected.test_get_user_success">
+<span class="sig-name descname"><span class="pre">test_get_user_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestUserRouterCorrected.test_get_user_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestUserRouterCorrected.test_get_user_success" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/user/{user_id} - successful user retrieval</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestUserRouterCorrected.test_resend_verification_success">
+<span class="sig-name descname"><span class="pre">test_resend_verification_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestUserRouterCorrected.test_resend_verification_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestUserRouterCorrected.test_resend_verification_success" title="Link to this definition"></a></dt>
+<dd><p>Test POST /api/v1/resend-verification - successful verification resend</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.TestUserRouterCorrected.test_verify_email_success">
+<span class="sig-name descname"><span class="pre">test_verify_email_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#TestUserRouterCorrected.test_verify_email_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.TestUserRouterCorrected.test_verify_email_success" title="Link to this definition"></a></dt>
+<dd><p>Test GET /api/v1/verify-email - successful email verification</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.auth_headers">
+<span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">auth_headers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#auth_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.auth_headers" title="Link to this definition"></a></dt>
+<dd><p>Create authentication headers</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.client">
+<span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.client" title="Link to this definition"></a></dt>
+<dd><p>Create test client</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.mock_article">
+<span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">mock_article</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#mock_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.mock_article" title="Link to this definition"></a></dt>
+<dd><p>Create mock article for testing</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.mock_db">
+<span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.mock_db" title="Link to this definition"></a></dt>
+<dd><p>Create mock database session</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_routers_corrected.mock_user">
+<span class="sig-prename descclassname"><span class="pre">tests.test_routers_corrected.</span></span><span class="sig-name descname"><span class="pre">mock_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_routers_corrected.html#mock_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_routers_corrected.mock_user" title="Link to this definition"></a></dt>
+<dd><p>Create mock user for testing</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_oauth2.html" class="btn btn-neutral float-left" title="tests.test_oauth2 module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_schemas.html" class="btn btn-neutral float-right" title="tests.test_schemas module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

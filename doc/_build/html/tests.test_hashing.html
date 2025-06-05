@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_hashing module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_integration module" href="tests.test_integration.html" />
+    <link rel="prev" title="tests.test_email_validator module" href="tests.test_email_validator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_hashing module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestBcryptHashing"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestEdgeCases"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestErrorHandling"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestHashClass"><code class="docutils literal notranslate"><span class="pre">TestHashClass</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestHashSecurity"><code class="docutils literal notranslate"><span class="pre">TestHashSecurity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestIntegration"><code class="docutils literal notranslate"><span class="pre">TestIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestPasswordContext"><code class="docutils literal notranslate"><span class="pre">TestPasswordContext</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestPasswordVerification"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_hashing.TestPerformance"><code class="docutils literal notranslate"><span class="pre">TestPerformance</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_hashing module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_hashing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_hashing">
+<span id="tests-test-hashing-module"></span><h1>tests.test_hashing module<a class="headerlink" href="#module-tests.test_hashing" title="Link to this heading"></a></h1>
+<p>ハッシュ化モジュールのテストスイート</p>
+<p>このテストスイートは以下をカバーします：
+- パスワードのハッシュ化機能
+- パスワード検証機能
+- bcrypt設定のテスト
+- セキュリティ関連のテスト
+- エラーハンドリング
+- パフォーマンステスト</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestBcryptHashing</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>パスワードハッシュ化のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_basic_hashing">
+<span class="sig-name descname"><span class="pre">test_bcrypt_basic_hashing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_basic_hashing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_basic_hashing" title="Link to this definition"></a></dt>
+<dd><p>基本的なパスワードハッシュ化テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_different_passwords_different_hashes">
+<span class="sig-name descname"><span class="pre">test_bcrypt_different_passwords_different_hashes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_different_passwords_different_hashes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_different_passwords_different_hashes" title="Link to this definition"></a></dt>
+<dd><p>異なるパスワードは異なるハッシュを生成</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_empty_password">
+<span class="sig-name descname"><span class="pre">test_bcrypt_empty_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_empty_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_empty_password" title="Link to this definition"></a></dt>
+<dd><p>空文字パスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_hash_format">
+<span class="sig-name descname"><span class="pre">test_bcrypt_hash_format</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_hash_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_hash_format" title="Link to this definition"></a></dt>
+<dd><p>bcryptハッシュの形式確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_long_password">
+<span class="sig-name descname"><span class="pre">test_bcrypt_long_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_long_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_long_password" title="Link to this definition"></a></dt>
+<dd><p>長いパスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_rounds_configuration">
+<span class="sig-name descname"><span class="pre">test_bcrypt_rounds_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_rounds_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_rounds_configuration" title="Link to this definition"></a></dt>
+<dd><p>bcryptのラウンド数設定確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_same_password_different_salts">
+<span class="sig-name descname"><span class="pre">test_bcrypt_same_password_different_salts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_same_password_different_salts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_same_password_different_salts" title="Link to this definition"></a></dt>
+<dd><p>同じパスワードでも異なるソルトで異なるハッシュ</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_special_characters">
+<span class="sig-name descname"><span class="pre">test_bcrypt_special_characters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_special_characters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_special_characters" title="Link to this definition"></a></dt>
+<dd><p>特殊文字を含むパスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_unicode_password">
+<span class="sig-name descname"><span class="pre">test_bcrypt_unicode_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_unicode_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_unicode_password" title="Link to this definition"></a></dt>
+<dd><p>Unicode文字を含むパスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestBcryptHashing.test_bcrypt_version_identifier">
+<span class="sig-name descname"><span class="pre">test_bcrypt_version_identifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestBcryptHashing.test_bcrypt_version_identifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestBcryptHashing.test_bcrypt_version_identifier" title="Link to this definition"></a></dt>
+<dd><p>bcryptバージョン識別子の確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestEdgeCases</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>エッジケースのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases.test_binary_like_password_safe">
+<span class="sig-name descname"><span class="pre">test_binary_like_password_safe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases.test_binary_like_password_safe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases.test_binary_like_password_safe" title="Link to this definition"></a></dt>
+<dd><p>安全なバイナリ風パスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases.test_newline_password">
+<span class="sig-name descname"><span class="pre">test_newline_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases.test_newline_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases.test_newline_password" title="Link to this definition"></a></dt>
+<dd><p>改行を含むパスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases.test_null_byte_password_error">
+<span class="sig-name descname"><span class="pre">test_null_byte_password_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases.test_null_byte_password_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases.test_null_byte_password_error" title="Link to this definition"></a></dt>
+<dd><p>NULL バイトを含むパスワードでのエラー</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases.test_numeric_only_password">
+<span class="sig-name descname"><span class="pre">test_numeric_only_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases.test_numeric_only_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases.test_numeric_only_password" title="Link to this definition"></a></dt>
+<dd><p>数字のみのパスワード</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases.test_password_size_limit">
+<span class="sig-name descname"><span class="pre">test_password_size_limit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases.test_password_size_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases.test_password_size_limit" title="Link to this definition"></a></dt>
+<dd><p>パスワードサイズ制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestEdgeCases.test_very_long_password">
+<span class="sig-name descname"><span class="pre">test_very_long_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestEdgeCases.test_very_long_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestEdgeCases.test_very_long_password" title="Link to this definition"></a></dt>
+<dd><p>長いパスワードの処理（制限内）</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestErrorHandling</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>エラーハンドリングのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling.test_bcrypt_context_error_handling">
+<span class="sig-name descname"><span class="pre">test_bcrypt_context_error_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling.test_bcrypt_context_error_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling.test_bcrypt_context_error_handling" title="Link to this definition"></a></dt>
+<dd><p>password_contextでエラーが発生した場合の処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling.test_bcrypt_none_password">
+<span class="sig-name descname"><span class="pre">test_bcrypt_none_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling.test_bcrypt_none_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling.test_bcrypt_none_password" title="Link to this definition"></a></dt>
+<dd><p>Noneパスワードの処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling.test_verify_context_error_handling">
+<span class="sig-name descname"><span class="pre">test_verify_context_error_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling.test_verify_context_error_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling.test_verify_context_error_handling" title="Link to this definition"></a></dt>
+<dd><p>password_context.verifyでエラーが発生した場合の処理</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling.test_verify_invalid_hash_format">
+<span class="sig-name descname"><span class="pre">test_verify_invalid_hash_format</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling.test_verify_invalid_hash_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling.test_verify_invalid_hash_format" title="Link to this definition"></a></dt>
+<dd><p>不正なハッシュ形式での検証</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling.test_verify_none_hash">
+<span class="sig-name descname"><span class="pre">test_verify_none_hash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling.test_verify_none_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling.test_verify_none_hash" title="Link to this definition"></a></dt>
+<dd><p>Noneハッシュでの検証</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestErrorHandling.test_verify_none_password">
+<span class="sig-name descname"><span class="pre">test_verify_none_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestErrorHandling.test_verify_none_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestErrorHandling.test_verify_none_password" title="Link to this definition"></a></dt>
+<dd><p>None平文パスワードの検証</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashClass">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestHashClass</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashClass" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hashクラスのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashClass.test_hash_class_exists">
+<span class="sig-name descname"><span class="pre">test_hash_class_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashClass.test_hash_class_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashClass.test_hash_class_exists" title="Link to this definition"></a></dt>
+<dd><p>Hashクラスが存在することを確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashClass.test_hash_methods_are_static">
+<span class="sig-name descname"><span class="pre">test_hash_methods_are_static</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashClass.test_hash_methods_are_static"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashClass.test_hash_methods_are_static" title="Link to this definition"></a></dt>
+<dd><p>Hashクラスのメソッドがstaticmethodであることを確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashSecurity">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestHashSecurity</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashSecurity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashSecurity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>セキュリティ関連のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashSecurity.test_hash_strength">
+<span class="sig-name descname"><span class="pre">test_hash_strength</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashSecurity.test_hash_strength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashSecurity.test_hash_strength" title="Link to this definition"></a></dt>
+<dd><p>ハッシュの強度確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashSecurity.test_hash_timing_consistency">
+<span class="sig-name descname"><span class="pre">test_hash_timing_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashSecurity.test_hash_timing_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashSecurity.test_hash_timing_consistency" title="Link to this definition"></a></dt>
+<dd><p>ハッシュ化の時間的一貫性（タイミング攻撃対策）</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashSecurity.test_salt_randomness">
+<span class="sig-name descname"><span class="pre">test_salt_randomness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashSecurity.test_salt_randomness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashSecurity.test_salt_randomness" title="Link to this definition"></a></dt>
+<dd><p>ソルトのランダム性確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestHashSecurity.test_verify_timing_consistency">
+<span class="sig-name descname"><span class="pre">test_verify_timing_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestHashSecurity.test_verify_timing_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestHashSecurity.test_verify_timing_consistency" title="Link to this definition"></a></dt>
+<dd><p>検証の時間的一貫性</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestIntegration</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>統合テスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestIntegration.test_concurrent_operations_simulation">
+<span class="sig-name descname"><span class="pre">test_concurrent_operations_simulation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestIntegration.test_concurrent_operations_simulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestIntegration.test_concurrent_operations_simulation" title="Link to this definition"></a></dt>
+<dd><p>並行操作のシミュレーション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestIntegration.test_cross_platform_compatibility">
+<span class="sig-name descname"><span class="pre">test_cross_platform_compatibility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestIntegration.test_cross_platform_compatibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestIntegration.test_cross_platform_compatibility" title="Link to this definition"></a></dt>
+<dd><p>クロスプラットフォーム互換性テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestIntegration.test_full_password_lifecycle">
+<span class="sig-name descname"><span class="pre">test_full_password_lifecycle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestIntegration.test_full_password_lifecycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestIntegration.test_full_password_lifecycle" title="Link to this definition"></a></dt>
+<dd><p>完全なパスワードライフサイクルテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordContext">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestPasswordContext</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordContext" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>password_contextの設定テスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordContext.test_deprecated_schemes">
+<span class="sig-name descname"><span class="pre">test_deprecated_schemes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordContext.test_deprecated_schemes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordContext.test_deprecated_schemes" title="Link to this definition"></a></dt>
+<dd><p>非推奨スキームの設定確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordContext.test_password_context_configuration">
+<span class="sig-name descname"><span class="pre">test_password_context_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordContext.test_password_context_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordContext.test_password_context_configuration" title="Link to this definition"></a></dt>
+<dd><p>password_contextの設定値確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordContext.test_password_context_creation">
+<span class="sig-name descname"><span class="pre">test_password_context_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordContext.test_password_context_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordContext.test_password_context_creation" title="Link to this definition"></a></dt>
+<dd><p>password_contextが正しく作成されることをテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordContext.test_password_context_schemes">
+<span class="sig-name descname"><span class="pre">test_password_context_schemes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordContext.test_password_context_schemes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordContext.test_password_context_schemes" title="Link to this definition"></a></dt>
+<dd><p>設定されているスキームの確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestPasswordVerification</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>パスワード検証のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification.test_verify_case_sensitive">
+<span class="sig-name descname"><span class="pre">test_verify_case_sensitive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification.test_verify_case_sensitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification.test_verify_case_sensitive" title="Link to this definition"></a></dt>
+<dd><p>パスワードの大文字小文字区別</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification.test_verify_correct_password">
+<span class="sig-name descname"><span class="pre">test_verify_correct_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification.test_verify_correct_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification.test_verify_correct_password" title="Link to this definition"></a></dt>
+<dd><p>正しいパスワードの検証</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification.test_verify_empty_password">
+<span class="sig-name descname"><span class="pre">test_verify_empty_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification.test_verify_empty_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification.test_verify_empty_password" title="Link to this definition"></a></dt>
+<dd><p>空文字パスワードの検証</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification.test_verify_incorrect_password">
+<span class="sig-name descname"><span class="pre">test_verify_incorrect_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification.test_verify_incorrect_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification.test_verify_incorrect_password" title="Link to this definition"></a></dt>
+<dd><p>間違ったパスワードの検証</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification.test_verify_multiple_passwords">
+<span class="sig-name descname"><span class="pre">test_verify_multiple_passwords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification.test_verify_multiple_passwords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification.test_verify_multiple_passwords" title="Link to this definition"></a></dt>
+<dd><p>複数のパスワード/ハッシュペアの検証</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPasswordVerification.test_verify_whitespace_password">
+<span class="sig-name descname"><span class="pre">test_verify_whitespace_password</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPasswordVerification.test_verify_whitespace_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPasswordVerification.test_verify_whitespace_password" title="Link to this definition"></a></dt>
+<dd><p>空白文字を含むパスワードの検証</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPerformance">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_hashing.</span></span><span class="sig-name descname"><span class="pre">TestPerformance</span></span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPerformance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPerformance" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>パフォーマンステスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPerformance.test_hashing_performance">
+<span class="sig-name descname"><span class="pre">test_hashing_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPerformance.test_hashing_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPerformance.test_hashing_performance" title="Link to this definition"></a></dt>
+<dd><p>ハッシュ化のパフォーマンステスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPerformance.test_multiple_operations_performance">
+<span class="sig-name descname"><span class="pre">test_multiple_operations_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPerformance.test_multiple_operations_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPerformance.test_multiple_operations_performance" title="Link to this definition"></a></dt>
+<dd><p>複数操作のパフォーマンステスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_hashing.TestPerformance.test_verification_performance">
+<span class="sig-name descname"><span class="pre">test_verification_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_hashing.html#TestPerformance.test_verification_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_hashing.TestPerformance.test_verification_performance" title="Link to this definition"></a></dt>
+<dd><p>検証のパフォーマンステスト</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_email_validator.html" class="btn btn-neutral float-left" title="tests.test_email_validator module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_integration.html" class="btn btn-neutral float-right" title="tests.test_integration module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_custom_token &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_custom_token</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;custom_tokenモジュールの包括的テストスイート</span>
+
+<span class="sd">このテストスイートは以下をカバーします：</span>
+<span class="sd">- TokenType Enumの検証</span>
+<span class="sd">- TokenConfigクラスの設定テスト</span>
+<span class="sd">- create_access_token関数の全機能テスト</span>
+<span class="sd">- verify_token_with_type関数のテスト</span>
+<span class="sd">- verify_token関数のテスト</span>
+<span class="sd">- get_user_by_id関数のテスト</span>
+<span class="sd">- エラーハンドリングのテスト</span>
+<span class="sd">- 環境変数設定のテスト</span>
+<span class="sd">- JWTセキュリティシナリオのテスト</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mock</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">MagicMock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">sessionmaker</span>
+
+<span class="c1"># テスト対象のインポート</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">custom_token</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TokenType</span><span class="p">,</span>
+    <span class="n">TokenConfig</span><span class="p">,</span>
+    <span class="n">create_access_token</span><span class="p">,</span>
+    <span class="n">verify_token_with_type</span><span class="p">,</span>
+    <span class="n">verify_token</span><span class="p">,</span>
+    <span class="n">get_user_by_id</span><span class="p">,</span>
+    <span class="n">JWTPayload</span><span class="p">,</span>
+    <span class="n">SECRET_KEY</span><span class="p">,</span>
+    <span class="n">ALGORITHM</span><span class="p">,</span>
+    <span class="n">ACCESS_TOKEN_EXPIRE_MINUTES</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Base</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenData</span>
+
+
+<div class="viewcode-block" id="TestTokenType">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestTokenType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TokenType Enumのテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestTokenType.test_token_type_values">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenType.test_token_type_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_token_type_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TokenTypeの値が正しく定義されているかテスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;access&quot;</span>
+        <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;email_verification&quot;</span>
+        <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PASSWORD_RESET</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;password_reset&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenType.test_token_type_enum_members">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenType.test_token_type_enum_members">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_token_type_enum_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TokenTypeのメンバーが期待通りかテスト&quot;&quot;&quot;</span>
+        <span class="n">expected_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ACCESS&quot;</span><span class="p">,</span> <span class="s2">&quot;EMAIL_VERIFICATION&quot;</span><span class="p">,</span> <span class="s2">&quot;PASSWORD_RESET&quot;</span><span class="p">}</span>
+        <span class="n">actual_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">member</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">TokenType</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="n">actual_types</span> <span class="o">==</span> <span class="n">expected_types</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenType.test_token_type_comparison">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenType.test_token_type_comparison">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_token_type_comparison</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TokenTypeの比較テスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span> <span class="o">==</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span>
+        <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span> <span class="o">!=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span>
+        <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span> <span class="o">!=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PASSWORD_RESET</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenType.test_token_type_string_representation">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenType.test_token_type_string_representation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_token_type_string_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TokenTypeの文字列表現テスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;TokenType.ACCESS&quot;</span>
+        <span class="k">assert</span> <span class="nb">repr</span><span class="p">(</span><span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;TokenType.ACCESS: &#39;access&#39;&gt;&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestTokenConfig">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestTokenConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TokenConfigクラスのテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestTokenConfig.test_default_expires_structure">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenConfig.test_default_expires_structure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_default_expires_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;DEFAULT_EXPIRESの構造が正しいかテスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenConfig.test_access_token_default_expiry">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenConfig.test_access_token_default_expiry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_access_token_default_expiry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;アクセストークンのデフォルト有効期限テスト&quot;&quot;&quot;</span>
+        <span class="n">access_expire</span> <span class="o">=</span> <span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">access_expire</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">access_expire</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">access_expire</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3600</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenConfig.test_email_verification_token_default_expiry">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenConfig.test_email_verification_token_default_expiry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_verification_token_default_expiry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール確認トークンのデフォルト有効期限テスト&quot;&quot;&quot;</span>
+        <span class="n">email_expire</span> <span class="o">=</span> <span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email_expire</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">email_expire</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">email_expire</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3600</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenConfig.test_password_reset_token_default_expiry">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenConfig.test_password_reset_token_default_expiry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_password_reset_token_default_expiry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードリセットトークンのデフォルト有効期限テスト&quot;&quot;&quot;</span>
+        <span class="n">reset_expire</span> <span class="o">=</span> <span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="p">[</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PASSWORD_RESET</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_expire</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">reset_expire</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">reset_expire</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1800</span></div>
+
+    
+<div class="viewcode-block" id="TestTokenConfig.test_all_token_types_have_defaults">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestTokenConfig.test_all_token_types_have_defaults">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_all_token_types_have_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;すべてのトークンタイプにデフォルト設定があるかテスト&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">token_type</span> <span class="ow">in</span> <span class="n">TokenType</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">token_type</span> <span class="ow">in</span> <span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="p">[</span><span class="n">token_type</span><span class="p">],</span> <span class="n">timedelta</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestCreateAccessToken">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCreateAccessToken</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create_access_token関数のテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestCreateAccessToken.valid_data">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.valid_data">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なテストデータ&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.mock_env_vars">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.mock_env_vars">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_env_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数のモック&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ALGORITHM&#39;</span><span class="p">:</span> <span class="s1">&#39;HS256&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ENVIRONMENT&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span>
+        <span class="p">}):</span>
+            <span class="k">yield</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_basic">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_basic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;基本的なアクセストークン作成テスト&quot;&quot;&quot;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        
+        <span class="c1"># トークンをデコードして検証</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">assert</span> <span class="s2">&quot;exp&quot;</span> <span class="ow">in</span> <span class="n">decoded</span>
+        <span class="k">assert</span> <span class="s2">&quot;iat&quot;</span> <span class="ow">in</span> <span class="n">decoded</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_with_custom_expiry">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_custom_expiry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_with_custom_expiry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;カスタム有効期限でのトークン作成テスト&quot;&quot;&quot;</span>
+        <span class="n">custom_expiry</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">expires_delta</span><span class="o">=</span><span class="n">custom_expiry</span><span class="p">)</span>
+        
+        <span class="n">decoded</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        <span class="n">exp_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;exp&quot;</span><span class="p">],</span> <span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        <span class="n">iat_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;iat&quot;</span><span class="p">],</span> <span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        
+        <span class="c1"># 有効期限が約2時間後かチェック（数秒の誤差を許容）</span>
+        <span class="n">expected_duration</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">actual_duration</span> <span class="o">=</span> <span class="n">exp_time</span> <span class="o">-</span> <span class="n">iat_time</span>
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">actual_duration</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">-</span> <span class="n">expected_duration</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mi">5</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_with_different_token_types">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_different_token_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_with_different_token_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;異なるトークンタイプでの作成テスト&quot;&quot;&quot;</span>
+        <span class="c1"># EMAIL_VERIFICATIONトークン</span>
+        <span class="n">email_token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">token_type</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span><span class="p">)</span>
+        <span class="n">decoded_email</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">email_token</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">decoded_email</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span><span class="o">.</span><span class="n">value</span>
+        
+        <span class="c1"># PASSWORD_RESETトークン</span>
+        <span class="n">reset_token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">token_type</span><span class="o">=</span><span class="n">TokenType</span><span class="o">.</span><span class="n">PASSWORD_RESET</span><span class="p">)</span>
+        <span class="n">decoded_reset</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">reset_token</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">decoded_reset</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">PASSWORD_RESET</span><span class="o">.</span><span class="n">value</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_empty_data_error">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_empty_data_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_empty_data_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;空データでのエラーテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;データが空です&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">({})</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;データが空です&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_invalid_data_type_error">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_invalid_data_type_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_invalid_data_type_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効なデータ型でのエラーテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;データは辞書形式である必要があります&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">(</span><span class="s2">&quot;invalid_data&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;データは辞書形式である必要があります&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;データは辞書形式である必要があります&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_missing_secret_key_error">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_missing_secret_key_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_missing_secret_key_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SECRET_KEY未設定でのエラーテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">):</span>
+                <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_jwt_error">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_jwt_error">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.jwt.encode&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_jwt_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_encode</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;JWT生成エラーのテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_encode</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">JWTError</span><span class="p">(</span><span class="s2">&quot;JWT encoding failed&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;トークン生成に失敗しました&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_unexpected_error">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_unexpected_error">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.jwt.encode&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_unexpected_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_encode</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;予期しないエラーのテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_encode</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unexpected error&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;トークン生成中に予期しないエラーが発生しました&quot;</span><span class="p">):</span>
+            <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_token_structure">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_token_structure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_token_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;生成されたトークンの構造テスト&quot;&quot;&quot;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        
+        <span class="c1"># 必須フィールドの存在確認</span>
+        <span class="n">required_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;exp&quot;</span><span class="p">,</span> <span class="s2">&quot;iat&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required_fields</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">decoded</span>
+        
+        <span class="c1"># データ型の確認</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;exp&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;iat&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decoded</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateAccessToken.test_create_access_token_development_logging">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_development_logging">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_access_token_development_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;開発環境でのログ出力テスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ALGORITHM&#39;</span><span class="p">:</span> <span class="s1">&#39;HS256&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ENVIRONMENT&#39;</span><span class="p">:</span> <span class="s1">&#39;development&#39;</span>
+        <span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;custom_token.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">create_access_token</span><span class="p">(</span><span class="n">valid_data</span><span class="p">)</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                <span class="n">call_args</span> <span class="o">=</span> <span class="n">mock_logger</span><span class="o">.</span><span class="n">call_args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="s2">&quot;トークン生成成功&quot;</span> <span class="ow">in</span> <span class="n">call_args</span>
+                <span class="k">assert</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">call_args</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestVerifyTokenWithType">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestVerifyTokenWithType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;verify_token_with_type関数のテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.valid_token_data">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.valid_token_data">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_token_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なトークンデータ&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span><span class="p">}</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.mock_env_vars">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.mock_env_vars">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_env_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数のモック&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ALGORITHM&#39;</span><span class="p">:</span> <span class="s1">&#39;HS256&#39;</span>
+        <span class="p">}):</span>
+            <span class="k">yield</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.credentials_exception">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.credentials_exception">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">credentials_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証例外&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Could not validate credentials&quot;</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_success">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_token_data</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なトークンの検証成功テスト&quot;&quot;&quot;</span>
+        <span class="c1"># トークンを作成</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">valid_token_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># 検証</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_wrong_type">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_wrong_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_wrong_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;間違ったトークンタイプでの検証失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># EMAIL_VERIFICATIONトークンを作成</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># ACCESSトークンとして検証（失敗するはず）</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_missing_secret_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_token_data</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SECRET_KEY未設定でのエラーテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;dummy_token&quot;</span>
+            
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">):</span>
+                <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_invalid_token">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_invalid_token">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_invalid_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効なトークンでの検証失敗テスト&quot;&quot;&quot;</span>
+        <span class="n">invalid_token</span> <span class="o">=</span> <span class="s2">&quot;invalid.token.string&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">invalid_token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_expired_token">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_expired_token">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_expired_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;期限切れトークンでの検証失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># 期限切れトークンを作成</span>
+        <span class="n">expired_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 1時間前に期限切れ</span>
+        <span class="p">}</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">expired_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_missing_type_field">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_type_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_missing_type_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;typeフィールドが欠けているトークンのテスト&quot;&quot;&quot;</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># typeフィールドなし</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyTokenWithType.test_verify_token_with_type_error_logging">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_error_logging">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_with_type_error_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;エラーログ出力のテスト&quot;&quot;&quot;</span>
+        <span class="n">invalid_token</span> <span class="o">=</span> <span class="s2">&quot;invalid.token.string&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">invalid_token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+        
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
+        <span class="n">call_args</span> <span class="o">=</span> <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">call_args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s2">&quot;トークン検証エラー&quot;</span> <span class="ow">in</span> <span class="n">call_args</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestVerifyToken">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestVerifyToken</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;verify_token関数のテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestVerifyToken.mock_db_session">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.mock_db_session">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.mock_user">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.mock_user">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックユーザー&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">User</span><span class="p">)</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Test User&quot;</span>
+        <span class="k">return</span> <span class="n">user</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.credentials_exception">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.credentials_exception">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">credentials_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証例外&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Could not validate credentials&quot;</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.mock_env_vars">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.mock_env_vars">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_env_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数のモック&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ALGORITHM&#39;</span><span class="p">:</span> <span class="s1">&#39;HS256&#39;</span>
+        <span class="p">}):</span>
+            <span class="k">yield</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.test_verify_token_success">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.test_verify_token_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.SECRET_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.ALGORITHM&#39;</span><span class="p">,</span> <span class="s1">&#39;HS256&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.get_user_by_id&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;schemas.TokenData&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_token_data_class</span><span class="p">,</span> <span class="n">mock_get_user</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なトークンの検証成功テスト&quot;&quot;&quot;</span>
+        <span class="c1"># モックの設定</span>
+        <span class="n">mock_get_user</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="c1"># トークンデータを作成</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># 検証</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">mock_user</span>
+        <span class="n">mock_get_user</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        <span class="n">mock_token_data_class</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.test_verify_token_missing_secret_key">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_secret_key">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.SECRET_KEY&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_missing_secret_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SECRET_KEY未設定でのエラーテスト&quot;&quot;&quot;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;dummy_token&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.test_verify_token_missing_email">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_email">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.SECRET_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.ALGORITHM&#39;</span><span class="p">,</span> <span class="s1">&#39;HS256&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_missing_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;emailフィールドが欠けているトークンのテスト&quot;&quot;&quot;</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># subフィールドなし</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.test_verify_token_missing_id">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_id">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.SECRET_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.ALGORITHM&#39;</span><span class="p">,</span> <span class="s1">&#39;HS256&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_missing_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;idフィールドが欠けているトークンのテスト&quot;&quot;&quot;</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>  <span class="c1"># idフィールドなし</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.test_verify_token_invalid_token">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.test_verify_token_invalid_token">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.SECRET_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.ALGORITHM&#39;</span><span class="p">,</span> <span class="s1">&#39;HS256&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_invalid_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効なトークンでの検証失敗テスト&quot;&quot;&quot;</span>
+        <span class="n">invalid_token</span> <span class="o">=</span> <span class="s2">&quot;invalid.token.string&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">invalid_token</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyToken.test_verify_token_error_logging">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestVerifyToken.test_verify_token_error_logging">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.SECRET_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.ALGORITHM&#39;</span><span class="p">,</span> <span class="s1">&#39;HS256&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.get_user_by_id&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_error_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_get_user</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;エラーログ出力のテスト&quot;&quot;&quot;</span>
+        <span class="n">invalid_token</span> <span class="o">=</span> <span class="s2">&quot;invalid.token.string&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">invalid_token</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestGetUserById">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestGetUserById</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;get_user_by_id関数のテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestGetUserById.mock_db_session">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.mock_db_session">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestGetUserById.mock_user">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.mock_user">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックユーザー&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">User</span><span class="p">)</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Test User&quot;</span>
+        <span class="k">return</span> <span class="n">user</span></div>
+
+    
+<div class="viewcode-block" id="TestGetUserById.test_get_user_by_id_success">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.test_get_user_by_id_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_user_by_id_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザー取得成功テスト&quot;&quot;&quot;</span>
+        <span class="c1"># モックの設定</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_db_session</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="c1"># 実行</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">get_user_by_id</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">mock_user</span>
+        <span class="n">mock_db_session</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestGetUserById.test_get_user_by_id_not_found">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.test_get_user_by_id_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_user_by_id_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザーが見つからない場合のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># モックの設定</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_db_session</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># ユーザーが見つからない</span>
+        
+        <span class="c1"># 実行と検証</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">get_user_by_id</span><span class="p">(</span><span class="mi">999</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+        <span class="k">assert</span> <span class="s2">&quot;User with id 999 not found&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestGetUserById.test_get_user_by_id_different_ids">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.test_get_user_by_id_different_ids">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_user_by_id_different_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;異なるIDでのユーザー取得テスト&quot;&quot;&quot;</span>
+        <span class="c1"># モックの設定</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_db_session</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="c1"># 異なるIDでテスト</span>
+        <span class="k">for</span> <span class="n">user_id</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">123</span><span class="p">]:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">get_user_by_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">mock_user</span></div>
+
+    
+<div class="viewcode-block" id="TestGetUserById.test_get_user_by_id_zero_id">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.test_get_user_by_id_zero_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_user_by_id_zero_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ID=0でのテスト&quot;&quot;&quot;</span>
+        <span class="c1"># モックの設定</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_db_session</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">get_user_by_id</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+        <span class="k">assert</span> <span class="s2">&quot;User with id 0 not found&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestGetUserById.test_get_user_by_id_negative_id">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestGetUserById.test_get_user_by_id_negative_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_user_by_id_negative_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;負のIDでのテスト&quot;&quot;&quot;</span>
+        <span class="c1"># モックの設定</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_db_session</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">get_user_by_id</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">mock_db_session</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+        <span class="k">assert</span> <span class="s2">&quot;User with id -1 not found&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestIntegrationScenarios">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIntegrationScenarios</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;統合テストシナリオ&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.mock_env_vars">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios.mock_env_vars">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_env_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数のモック&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_secret_key_12345&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ALGORITHM&#39;</span><span class="p">:</span> <span class="s1">&#39;HS256&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ENVIRONMENT&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span>
+        <span class="p">}):</span>
+            <span class="k">yield</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.credentials_exception">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios.credentials_exception">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">credentials_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証例外&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Could not validate credentials&quot;</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.test_full_token_lifecycle">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios.test_full_token_lifecycle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_full_token_lifecycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;トークンの完全なライフサイクルテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 1. トークン作成</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+        
+        <span class="c1"># 2. トークン検証</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+        
+        <span class="c1"># 3. 検証結果の確認</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">assert</span> <span class="s2">&quot;exp&quot;</span> <span class="ow">in</span> <span class="n">payload</span>
+        <span class="k">assert</span> <span class="s2">&quot;iat&quot;</span> <span class="ow">in</span> <span class="n">payload</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.test_different_token_types_lifecycle">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios.test_different_token_types_lifecycle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_different_token_types_lifecycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;異なるトークンタイプのライフサイクルテスト&quot;&quot;&quot;</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        
+        <span class="c1"># 各トークンタイプをテスト</span>
+        <span class="k">for</span> <span class="n">token_type</span> <span class="ow">in</span> <span class="n">TokenType</span><span class="p">:</span>
+            <span class="c1"># トークン作成</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span> <span class="n">token_type</span><span class="o">=</span><span class="n">token_type</span><span class="p">)</span>
+            
+            <span class="c1"># 正しいタイプで検証（成功）</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">token_type</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">token_type</span><span class="o">.</span><span class="n">value</span>
+            
+            <span class="c1"># 間違ったタイプで検証（失敗）</span>
+            <span class="n">other_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">TokenType</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">token_type</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">other_types</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+                    <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">other_types</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.test_token_expiry_scenarios">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios.test_token_expiry_scenarios">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_token_expiry_scenarios</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;トークン有効期限のシナリオテスト&quot;&quot;&quot;</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        
+        <span class="c1"># 長い有効期限でトークン作成（テスト用）</span>
+        <span class="n">long_expiry</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span> <span class="n">expires_delta</span><span class="o">=</span><span class="n">long_expiry</span><span class="p">)</span>
+        
+        <span class="c1"># 即座に検証（成功）</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        
+        <span class="c1"># 期限切れトークンのテスト（過去の時刻で作成）</span>
+        <span class="n">expired_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># 1時間前に期限切れ</span>
+            <span class="s2">&quot;iat&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>   <span class="c1"># 2時間前に発行</span>
+        <span class="p">}</span>
+        <span class="n">expired_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">expired_data</span><span class="p">,</span> <span class="s2">&quot;test_secret_key_12345&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># 期限切れトークンの検証（失敗）</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">expired_token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.test_security_scenarios">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestIntegrationScenarios.test_security_scenarios">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_security_scenarios</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_env_vars</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;セキュリティシナリオのテスト&quot;&quot;&quot;</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        
+        <span class="c1"># 正しいキーでトークン作成</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+        
+        <span class="c1"># 正しいキーで検証（成功）</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        
+        <span class="c1"># 間違ったキーで検証を試行（失敗）</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;wrong_key&#39;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+                <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestErrorHandling">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestErrorHandling">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestErrorHandling</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;エラーハンドリングのテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestErrorHandling.test_environment_variable_edge_cases">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestErrorHandling.test_environment_variable_edge_cases">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_environment_variable_edge_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数のエッジケースのテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 空文字列の環境変数</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">):</span>
+                <span class="n">create_access_token</span><span class="p">({</span><span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">})</span>
+        
+        <span class="c1"># None値の環境変数</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">):</span>
+                <span class="n">create_access_token</span><span class="p">({</span><span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">})</span></div>
+
+    
+<div class="viewcode-block" id="TestErrorHandling.test_malformed_token_scenarios">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestErrorHandling.test_malformed_token_scenarios">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_malformed_token_scenarios</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;不正な形式のトークンのテスト&quot;&quot;&quot;</span>
+        <span class="n">credentials_exception</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Invalid token&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="n">malformed_tokens</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;invalid&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;not.a.jwt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;too.many.parts.here.invalid&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;header.payload&quot;</span><span class="p">,</span>  <span class="c1"># 3つのパートが必要</span>
+            <span class="s2">&quot;invalid_base64.invalid_base64.invalid_base64&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_key&#39;</span><span class="p">}):</span>
+            <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">malformed_tokens</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+                    <span class="n">verify_token_with_type</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestErrorHandling.test_comprehensive_error_logging">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestErrorHandling.test_comprehensive_error_logging">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;custom_token.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_comprehensive_error_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;包括的なエラーログのテスト&quot;&quot;&quot;</span>
+        <span class="c1"># エラーログが呼ばれることを確認</span>
+        <span class="n">credentials_exception</span> <span class="o">=</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Test exception&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;test_key&#39;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+                <span class="n">verify_token_with_type</span><span class="p">(</span><span class="s2">&quot;invalid_token&quot;</span><span class="p">,</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">,</span> <span class="n">credentials_exception</span><span class="p">)</span>
+        
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;トークン検証エラー&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">mock_error_logger</span><span class="o">.</span><span class="n">call_args</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestConstants">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestConstants">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestConstants</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;定数のテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestConstants.test_algorithm_constant">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestConstants.test_algorithm_constant">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_algorithm_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ALGORITHMの定数テスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">ALGORITHM</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ALGORITHM</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestConstants.test_access_token_expire_minutes_constant">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestConstants.test_access_token_expire_minutes_constant">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_access_token_expire_minutes_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ACCESS_TOKEN_EXPIRE_MINUTESの定数テスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">ACCESS_TOKEN_EXPIRE_MINUTES</span> <span class="o">==</span> <span class="mi">60</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ACCESS_TOKEN_EXPIRE_MINUTES</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestConstants.test_jwt_payload_type_hint">
+<a class="viewcode-back" href="../../tests.test_custom_token.html#tests.test_custom_token.TestConstants.test_jwt_payload_type_hint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_jwt_payload_type_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;JWTPayload型ヒントのテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 型ヒントが正しく定義されているかの簡単なテスト</span>
+        <span class="n">test_payload</span><span class="p">:</span> <span class="n">JWTPayload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()}</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># テストの実行</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--tb=short&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

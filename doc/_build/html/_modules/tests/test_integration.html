@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_integration &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_integration</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">FastAPI Blog API 統合テストスイート</span>
+<span class="sd">実際のAPIエンドポイントをテストして、全体的な機能を検証します。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">httpx</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncClient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># プロジェクトルートをパスに追加</span>
+<span class="n">project_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">project_root</span><span class="p">))</span>
+
+<span class="c1"># main.pyからアプリケーションをインポート</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;警告: main.pyからappをインポートできませんでした: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="client">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.client">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;テストクライアントのフィクスチャ&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;アプリケーションが利用できません&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="async_client">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.async_client">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_client</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;非同期テストクライアントのフィクスチャ&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;アプリケーションが利用できません&quot;</span><span class="p">)</span>
+    <span class="c1"># httpx.AsyncClientの正しい使用方法</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">httpx</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASGITransport</span>
+    <span class="n">transport</span> <span class="o">=</span> <span class="n">ASGITransport</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncClient</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://test&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ac</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">ac</span></div>
+
+
+<div class="viewcode-block" id="TestHealthCheck">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestHealthCheck">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestHealthCheck</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ヘルスチェックエンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestHealthCheck.test_root_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestHealthCheck.test_root_endpoint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_root_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ルートエンドポイントのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># ルートエンドポイントが存在しない場合は404を期待</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>  <span class="c1"># ルートエンドポイントが定義されていない</span></div>
+
+    
+<div class="viewcode-block" id="TestHealthCheck.test_async_root_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestHealthCheck.test_async_root_endpoint">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_async_root_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">async_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;非同期ルートエンドポイントのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">async_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;非同期クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>  <span class="c1"># ルートエンドポイントが定義されていない</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestAPIDocumentation">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestAPIDocumentation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestAPIDocumentation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API ドキュメントエンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestAPIDocumentation.test_docs_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestAPIDocumentation.test_docs_endpoint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_docs_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;OpenAPI ドキュメントエンドポイントのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/docs&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="c1"># Content-Typeがtext/htmlであることを確認</span>
+        <span class="k">assert</span> <span class="s2">&quot;text/html&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content-type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestAPIDocumentation.test_redoc_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestAPIDocumentation.test_redoc_endpoint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_redoc_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ReDoc ドキュメントエンドポイントのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/redoc&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="k">assert</span> <span class="s2">&quot;text/html&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content-type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestAPIDocumentation.test_openapi_json">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestAPIDocumentation.test_openapi_json">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_openapi_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;OpenAPI仕様JSONのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/openapi.json&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content-type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;application/json&quot;</span>
+        
+        <span class="c1"># OpenAPIスキーマの基本構造をチェック</span>
+        <span class="n">openapi_schema</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;openapi&quot;</span> <span class="ow">in</span> <span class="n">openapi_schema</span>
+        <span class="k">assert</span> <span class="s2">&quot;info&quot;</span> <span class="ow">in</span> <span class="n">openapi_schema</span>
+        <span class="k">assert</span> <span class="s2">&quot;paths&quot;</span> <span class="ow">in</span> <span class="n">openapi_schema</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestArticleAPI">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestArticleAPI">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestArticleAPI</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;記事APIのテスト（利用可能な場合）&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestArticleAPI.test_articles_endpoint_exists">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestArticleAPI.test_articles_endpoint_exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_articles_endpoint_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;記事一覧エンドポイントの存在確認&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># /api/v1/articles エンドポイントをテスト</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/v1/articles&quot;</span><span class="p">)</span>
+        <span class="c1"># 401 (認証が必要) または 200 (正常) または 422 (バリデーションエラー) を期待</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">401</span><span class="p">,</span> <span class="mi">422</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="TestArticleAPI.test_articles_async">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestArticleAPI.test_articles_async">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_articles_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">async_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;非同期記事一覧エンドポイントのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">async_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;非同期クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/v1/articles&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">401</span><span class="p">,</span> <span class="mi">422</span><span class="p">]</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestUserAPI">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestUserAPI">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUserAPI</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザーAPIのテスト（利用可能な場合）&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestUserAPI.test_user_registration_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestUserAPI.test_user_registration_endpoint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_user_registration_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザー登録エンドポイントの存在確認&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># POST /user エンドポイントの存在確認</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/user&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{})</span>
+        <span class="c1"># 422 (バリデーションエラー) または 405 (Method Not Allowed) を期待</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">422</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">404</span><span class="p">]</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestAuthAPI">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestAuthAPI">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestAuthAPI</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;認証APIのテスト（利用可能な場合）&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestAuthAPI.test_login_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestAuthAPI.test_login_endpoint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ログインエンドポイントの存在確認&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># POST /login エンドポイントの存在確認</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/login&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{})</span>
+        <span class="c1"># 422 (バリデーションエラー) または 405 (Method Not Allowed) を期待</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">422</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">404</span><span class="p">]</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestCORSConfiguration">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestCORSConfiguration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCORSConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CORS設定のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestCORSConfiguration.test_cors_preflight">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestCORSConfiguration.test_cors_preflight">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_preflight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CORS プリフライトリクエストのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/articles&quot;</span><span class="p">,</span>  <span class="c1"># 存在するエンドポイントを使用</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;Origin&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Access-Control-Request-Method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Access-Control-Request-Headers&quot;</span><span class="p">:</span> <span class="s2">&quot;Content-Type&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="c1"># CORS が設定されている場合、適切なヘッダーが返される</span>
+        <span class="c1"># 400はCORSの設定に問題がある可能性があるため、許可する</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestErrorHandling">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestErrorHandling">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestErrorHandling</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;エラーハンドリングのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestErrorHandling.test_nonexistent_endpoint">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestErrorHandling.test_nonexistent_endpoint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_nonexistent_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;存在しないエンドポイントのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/nonexistent-endpoint&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span></div>
+
+    
+<div class="viewcode-block" id="TestErrorHandling.test_method_not_allowed">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestErrorHandling.test_method_not_allowed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_method_not_allowed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;許可されていないHTTPメソッドのテスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;クライアントが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># 存在しないエンドポイントにPOSTリクエストを送信（404を期待）</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/nonexistent-endpoint&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestApplicationStartup">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestApplicationStartup">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">integration</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestApplicationStartup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;アプリケーション起動テスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestApplicationStartup.test_app_creation">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestApplicationStartup.test_app_creation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_app_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;アプリケーションの作成テスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;アプリケーションが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># FastAPIアプリケーションのインスタンスが正常に作成されることを確認</span>
+        <span class="k">assert</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;router&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestApplicationStartup.test_app_routes">
+<a class="viewcode-back" href="../../tests.test_integration.html#tests.test_integration.TestApplicationStartup.test_app_routes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_app_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;アプリケーションルートの存在テスト&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;アプリケーションが利用できません&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># ルートが定義されていることを確認</span>
+        <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span><span class="n">route</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">routes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">routes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_main &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_main</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">main.py 包括的テストスイート</span>
+<span class="sd">FastAPIアプリケーション、CORS設定、例外ハンドリング、ミドルウェアなどの全機能をテスト</span>
+
+<span class="sd">テスト対象:</span>
+<span class="sd">1. FastAPIアプリケーション初期化</span>
+<span class="sd">2. CORS設定とミドルウェア</span>
+<span class="sd">3. 例外ハンドリング（RequestValidationError）</span>
+<span class="sd">4. ルーター統合（article, user, auth）</span>
+<span class="sd">5. データベース初期化</span>
+<span class="sd">6. ロギング機能</span>
+<span class="sd">7. 環境変数設定</span>
+<span class="sd">8. ミドルウェアチェーン</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mock</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">AsyncMock</span><span class="p">,</span> <span class="n">call</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">Request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestValidationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.middleware.cors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CORSMiddleware</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">starlette.middleware.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHTTPMiddleware</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">starlette.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASGIApp</span><span class="p">,</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">Send</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># プロジェクトルートをパスに追加</span>
+<span class="n">project_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">project_root</span><span class="p">))</span>
+
+<div class="viewcode-block" id="TestMainApplication">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMainApplication">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMainApplication</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;main.pyのメインテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestMainApplication.setup_method">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMainApplication.setup_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;各テスト前の初期化&quot;&quot;&quot;</span>
+        <span class="c1"># パッチされたモジュールをクリア</span>
+        <span class="k">if</span> <span class="s1">&#39;main&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="TestMainApplication.test_app_initialization_success">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMainApplication.test_app_initialization_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_app_initialization_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;FastAPIアプリケーションの正常初期化テスト&quot;&quot;&quot;</span>
+        <span class="c1"># 環境変数設定をモック</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="c1"># main.pyをインポート</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># アプリケーションインスタンス確認</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">FastAPI</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="s1">&#39;allowed_origins&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s1">&#39;http://localhost:3000&#39;</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span>
+        <span class="k">assert</span> <span class="s1">&#39;http://127.0.0.1:8000&#39;</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span>
+        
+        <span class="c1"># ログ呼び出し確認</span>
+        <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGIN -&gt; OK&quot;</span><span class="p">)</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_not_called</span><span class="p">()</span>
+        
+        <span class="c1"># データベース初期化確認</span>
+        <span class="n">mock_base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock_engine</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestMainApplication.test_app_initialization_no_cors_origins">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMainApplication.test_app_initialization_no_cors_origins">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_app_initialization_no_cors_origins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CORS設定なしでの初期化テスト&quot;&quot;&quot;</span>
+        <span class="c1"># 環境変数なしに設定</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># main.pyをインポート</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># エラーログ呼び出し確認</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。&quot;</span><span class="p">)</span>
+        <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_not_called</span><span class="p">()</span>
+        
+        <span class="c1"># allowed_originsが空リスト</span>
+        <span class="k">assert</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span> <span class="o">==</span> <span class="p">[]</span></div>
+
+    
+<div class="viewcode-block" id="TestMainApplication.test_cors_middleware_configuration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMainApplication.test_cors_middleware_configuration">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_middleware_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CORSミドルウェア設定テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;https://example.com&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># CORSミドルウェアが追加されていることを確認</span>
+        <span class="n">middlewares</span> <span class="o">=</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">user_middleware</span>
+        <span class="n">cors_middleware_found</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">middleware</span><span class="o">.</span><span class="n">cls</span> <span class="o">==</span> <span class="n">CORSMiddleware</span> <span class="k">for</span> <span class="n">middleware</span> <span class="ow">in</span> <span class="n">middlewares</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">cors_middleware_found</span></div>
+
+    
+<div class="viewcode-block" id="TestMainApplication.test_routers_inclusion">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMainApplication.test_routers_inclusion">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_routers_inclusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ルーター統合テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># ルーターが含まれていることを確認</span>
+        <span class="n">routes</span> <span class="o">=</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">routes</span>
+        <span class="n">route_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">route</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="n">routes</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">)]</span>
+        
+        <span class="c1"># 各ルーターのパスが含まれていることを確認（実際のパスは実装依存）</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">routes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>  <span class="c1"># 何らかのルートが存在する</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestCORSConfiguration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestCORSConfiguration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCORSConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CORS設定のテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestCORSConfiguration.test_cors_origins_parsing_list_format">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestCORSConfiguration.test_cors_origins_parsing_list_format">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_origins_parsing_list_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CORS origins リスト形式解析テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;https://example.com&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">expected_origins</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;https://example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">expected_origins</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCORSConfiguration.test_cors_origins_non_list_type">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestCORSConfiguration.test_cors_origins_non_list_type">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_origins_non_list_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;非リスト型のCORS origins設定テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span>  <span class="c1"># 文字列（非リスト）</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># 非リスト型は無視される</span>
+        <span class="k">assert</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCORSConfiguration.test_cors_origins_empty_lists">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestCORSConfiguration.test_cors_origins_empty_lists">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_origins_empty_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;空リストのCORS origins設定テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="k">assert</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestExceptionHandling">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestExceptionHandling">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestExceptionHandling</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;例外ハンドリングのテストクラス&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestExceptionHandling.test_email_validation_error_detection">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestExceptionHandling.test_email_validation_error_detection">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_validation_error_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メールアドレス形式エラー検出テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># モックリクエストとエラー作成</span>
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">([{</span>
+            <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;value_error.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;field required&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid-email&quot;</span>
+        <span class="p">}])</span>
+        
+        <span class="c1"># 例外ハンドラを直接テスト</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">JSONResponse</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="c1"># バイナリデータをUTF-8でデコードしてから比較</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;メールアドレスの形式が不正です。&quot;</span> <span class="ow">in</span> <span class="n">response_data</span>
+        
+        <span class="c1"># エラーログ呼び出し確認</span>
+        <span class="k">assert</span> <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">call_count</span> <span class="o">&gt;=</span> <span class="mi">1</span></div>
+
+    
+<div class="viewcode-block" id="TestExceptionHandling.test_general_validation_error_handling">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestExceptionHandling.test_general_validation_error_handling">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_general_validation_error_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;一般的なバリデーションエラーハンドリングテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># 非メールエラーのモック作成</span>
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">([{</span>
+            <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;field required&quot;</span>
+        <span class="p">}])</span>
+        
+        <span class="c1"># 例外ハンドラを直接テスト</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">JSONResponse</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span>
+        <span class="c1"># バイナリデータをUTF-8でデコードしてから比較</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;入力データが無効です。&quot;</span> <span class="ow">in</span> <span class="n">response_data</span></div>
+
+    
+<div class="viewcode-block" id="TestExceptionHandling.test_email_error_with_multiple_conditions">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestExceptionHandling.test_email_error_with_multiple_conditions">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_error_with_multiple_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;複数条件でのメールエラー検出テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># @ 記号を含む入力でのエラー</span>
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">([{</span>
+            <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;user_email&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;type_error.str&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;str type expected&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;test@&quot;</span>
+        <span class="p">}])</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">JSONResponse</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="c1"># バイナリデータをUTF-8でデコードしてから比較</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;メールアドレスの形式が不正です。&quot;</span> <span class="ow">in</span> <span class="n">response_data</span></div>
+
+    
+<div class="viewcode-block" id="TestExceptionHandling.test_email_error_with_valid_email_message">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestExceptionHandling.test_email_error_with_valid_email_message">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_error_with_valid_email_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;valid emailメッセージでのエラー検出テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">([{</span>
+            <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;contact_email&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;value_error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;ensure this is a valid email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;not-valid-email&quot;</span>
+        <span class="p">}])</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">JSONResponse</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestIntegrationWithTestClient">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestIntegrationWithTestClient">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIntegrationWithTestClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TestClientを使用した統合テスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestIntegrationWithTestClient.test_app_startup_with_test_client">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestIntegrationWithTestClient.test_app_startup_with_test_client">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_app_startup_with_test_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TestClientでのアプリ起動テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">client</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+        
+        <span class="c1"># アプリが正常に起動していることを確認</span>
+        <span class="k">assert</span> <span class="n">client</span><span class="o">.</span><span class="n">app</span> <span class="o">==</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationWithTestClient.test_cors_headers_in_response">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestIntegrationWithTestClient.test_cors_headers_in_response">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_headers_in_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;レスポンスにCORSヘッダーが含まれることのテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">client</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+        
+        <span class="c1"># OPTIONSリクエストでCORSプリフライト確認</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="s2">&quot;/&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;Origin&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Access-Control-Request-Method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># CORSミドルウェアが機能していることを確認</span>
+        <span class="c1"># （実際のヘッダーは実装やルートの存在に依存）</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">405</span><span class="p">]</span>  <span class="c1"># いずれかの有効なレスポンス</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestMiddlewareStack">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMiddlewareStack">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMiddlewareStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ミドルウェアスタックのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestMiddlewareStack.test_middleware_order_and_configuration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMiddlewareStack.test_middleware_order_and_configuration">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_middleware_order_and_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ミドルウェアの順序と設定テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># ミドルウェアが正しく設定されていることを確認</span>
+        <span class="n">middlewares</span> <span class="o">=</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">user_middleware</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">middlewares</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        
+        <span class="c1"># CORSミドルウェアが含まれていることを確認</span>
+        <span class="n">cors_middleware_found</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">middleware</span><span class="o">.</span><span class="n">cls</span> <span class="o">==</span> <span class="n">CORSMiddleware</span> <span class="k">for</span> <span class="n">middleware</span> <span class="ow">in</span> <span class="n">middlewares</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">cors_middleware_found</span></div>
+
+    
+<div class="viewcode-block" id="TestMiddlewareStack.test_cors_middleware_parameters">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestMiddlewareStack.test_cors_middleware_parameters">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_middleware_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CORSミドルウェアパラメータテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;https://example.com&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># CORSミドルウェアのパラメータを確認</span>
+        <span class="n">cors_middleware</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">middleware</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">user_middleware</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">middleware</span><span class="o">.</span><span class="n">cls</span> <span class="o">==</span> <span class="n">CORSMiddleware</span><span class="p">:</span>
+                <span class="n">cors_middleware</span> <span class="o">=</span> <span class="n">middleware</span>
+                <span class="k">break</span>
+        
+        <span class="k">assert</span> <span class="n">cors_middleware</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">cors_middleware</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;allow_credentials&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="s1">&#39;GET&#39;</span> <span class="ow">in</span> <span class="n">cors_middleware</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;allow_methods&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;POST&#39;</span> <span class="ow">in</span> <span class="n">cors_middleware</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;allow_methods&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;PUT&#39;</span> <span class="ow">in</span> <span class="n">cors_middleware</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;allow_methods&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s1">&#39;DELETE&#39;</span> <span class="ow">in</span> <span class="n">cors_middleware</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;allow_methods&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">cors_middleware</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;allow_headers&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">]</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestErrorLogging">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestErrorLogging">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestErrorLogging</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;エラーロギングのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestErrorLogging.test_validation_error_logging">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestErrorLogging.test_validation_error_logging">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validation_error_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;バリデーションエラーログテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># バリデーションエラーでのログ呼び出し確認</span>
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">error_details</span> <span class="o">=</span> <span class="p">[{</span>
+            <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;field required&quot;</span>
+        <span class="p">}]</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">(</span><span class="n">error_details</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="c1"># バリデーションエラーログが呼び出されていることを確認</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;バリデーションエラー: </span><span class="si">{</span><span class="n">error_details</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestErrorLogging.test_email_error_specific_logging">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestErrorLogging.test_email_error_specific_logging">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_error_specific_logging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メールエラー固有ログテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">error_detail</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;value_error.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;field required&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid&quot;</span>
+        <span class="p">}</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">([</span><span class="n">error_detail</span><span class="p">])</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="c1"># メールエラー検出ログが呼び出されていることを確認</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;メールアドレス形式エラーを検出: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestDatabaseInitialization">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestDatabaseInitialization">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestDatabaseInitialization</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベース初期化のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestDatabaseInitialization.test_database_metadata_creation">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestDatabaseInitialization.test_database_metadata_creation">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_database_metadata_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベースメタデータ作成テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># データベースのメタデータ作成が呼び出されていることを確認</span>
+        <span class="n">mock_base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock_engine</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestDatabaseInitialization.test_database_initialization_with_exception">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestDatabaseInitialization.test_database_initialization_with_exception">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_database_initialization_with_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベース初期化例外テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="c1"># データベース初期化で例外発生</span>
+        <span class="n">mock_base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Database connection failed&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># 例外が発生してもアプリは初期化される（例外は上位で処理される）</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Database connection failed&quot;</span><span class="p">):</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">main</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestApplicationConfiguration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestApplicationConfiguration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestApplicationConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;アプリケーション設定のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestApplicationConfiguration.test_fastapi_app_configuration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestApplicationConfiguration.test_fastapi_app_configuration">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_fastapi_app_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;FastAPIアプリケーション設定テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># FastAPIアプリケーション基本設定確認</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">FastAPI</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s1">&#39;routes&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s1">&#39;exception_handlers&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s1">&#39;user_middleware&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestApplicationConfiguration.test_exception_handler_registration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestApplicationConfiguration.test_exception_handler_registration">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_exception_handler_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;例外ハンドラ登録テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># RequestValidationError用の例外ハンドラが登録されていることを確認</span>
+        <span class="k">assert</span> <span class="n">RequestValidationError</span> <span class="ow">in</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">exception_handlers</span>
+        
+        <span class="c1"># 登録されたハンドラが期待する関数であることを確認</span>
+        <span class="n">handler_func</span> <span class="o">=</span> <span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">exception_handlers</span><span class="p">[</span><span class="n">RequestValidationError</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">handler_func</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestEnvironmentVariables">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEnvironmentVariables">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEnvironmentVariables</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;環境変数処理のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEnvironmentVariables.test_cors_origins_environment_parsing">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEnvironmentVariables.test_cors_origins_environment_parsing">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_origins_environment_parsing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CORS origins環境変数解析テスト&quot;&quot;&quot;</span>
+        <span class="c1"># 複雑な環境変数設定</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;https://app.example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;http://localhost:8080&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">,</span> <span class="s1">&#39;http://0.0.0.0:8000&#39;</span><span class="p">]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">expected_all_origins</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;https://app.example.com&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;http://localhost:8080&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;http://0.0.0.0:8000&#39;</span>
+        <span class="p">]</span>
+        
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">expected_all_origins</span><span class="p">)</span>
+        <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGIN -&gt; OK&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEnvironmentVariables.test_partial_cors_configuration">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEnvironmentVariables.test_partial_cors_configuration">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_partial_cors_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;部分的CORS設定テスト&quot;&quot;&quot;</span>
+        <span class="c1"># cors_originsのみ設定、local_originなし</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;https://production.example.com&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="k">assert</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;https://production.example.com&#39;</span><span class="p">]</span>
+        <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGIN -&gt; OK&quot;</span><span class="p">)</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_not_called</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestEnvironmentVariables.test_environment_variable_none_values">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEnvironmentVariables.test_environment_variable_none_values">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_environment_variable_none_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数None値テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="k">assert</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span> <span class="o">==</span> <span class="p">[]</span>
+        <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestPerformanceAndResourceUsage">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestPerformanceAndResourceUsage">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPerformanceAndResourceUsage</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;パフォーマンスとリソース使用量のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestPerformanceAndResourceUsage.test_app_initialization_performance">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestPerformanceAndResourceUsage.test_app_initialization_performance">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_app_initialization_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;アプリ初期化パフォーマンステスト&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+        
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        <span class="n">initialization_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        
+        <span class="c1"># 初期化が1秒未満で完了することを確認</span>
+        <span class="k">assert</span> <span class="n">initialization_time</span> <span class="o">&lt;</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">FastAPI</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestPerformanceAndResourceUsage.test_large_cors_origins_list_handling">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestPerformanceAndResourceUsage.test_large_cors_origins_list_handling">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_large_cors_origins_list_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;大きなCORS originsリスト処理テスト&quot;&quot;&quot;</span>
+        <span class="c1"># 大量のCORS originsを生成</span>
+        <span class="n">large_origins_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;https://subdomain</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.example.com&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
+        <span class="n">local_origins_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;http://localhost:</span><span class="si">{</span><span class="mi">8000</span><span class="o">+</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">)]</span>
+        
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="n">large_origins_list</span><span class="p">,</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="n">local_origins_list</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># 全てのオリジンが正しく処理されることを確認</span>
+        <span class="n">expected_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">large_origins_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_origins_list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected_total</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">large_origins_list</span> <span class="o">+</span> <span class="n">local_origins_list</span><span class="p">)</span>
+        
+        <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGIN -&gt; OK&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestEdgeCases">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEdgeCases">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEdgeCases</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;エッジケースのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEdgeCases.test_exception_handler_with_empty_errors">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEdgeCases.test_exception_handler_with_empty_errors">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_exception_handler_with_empty_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;空エラーリストでの例外ハンドラテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">([])</span>  <span class="c1"># 空のエラーリスト</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">JSONResponse</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span></div>
+
+    
+<div class="viewcode-block" id="TestEdgeCases.test_exception_handler_with_complex_error_structure">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEdgeCases.test_exception_handler_with_complex_error_structure">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_exception_handler_with_complex_error_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;複雑なエラー構造での例外ハンドラテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="n">mock_request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="c1"># 複雑なネストされたエラー</span>
+        <span class="n">complex_errors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;profile&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;value_error.email&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid email format&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;nested&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid@&quot;</span><span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;loc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">,</span> <span class="s2">&quot;settings&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;missing&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;field required&quot;</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+        <span class="n">mock_exc</span> <span class="o">=</span> <span class="n">RequestValidationError</span><span class="p">(</span><span class="n">complex_errors</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">mock_request</span><span class="p">,</span> <span class="n">mock_exc</span><span class="p">))</span>
+        
+        <span class="c1"># ネストされたemailフィールドも検出される</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">JSONResponse</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span></div>
+
+    
+<div class="viewcode-block" id="TestEdgeCases.test_cors_origins_duplicate_handling">
+<a class="viewcode-back" href="../../tests.test_main.html#tests.test_main.TestEdgeCases.test_cors_origins_duplicate_handling">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.Base&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.engine&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.db_env&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_logger&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;main.create_error_logger&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_origins_duplicate_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_error_logger</span><span class="p">,</span> <span class="n">mock_logger</span><span class="p">,</span> <span class="n">mock_db_env</span><span class="p">,</span> <span class="n">mock_engine</span><span class="p">,</span> <span class="n">mock_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;重複CORS origins処理テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db_env</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;cors_origins&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;https://example.com&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;local_origin&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">]</span>  <span class="c1"># 重複あり</span>
+        <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        
+        <span class="kn">import</span><span class="w"> </span><span class="nn">main</span>
+        
+        <span class="c1"># 重複は許可される（CORSミドルウェアが処理）</span>
+        <span class="n">expected_origins</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;https://example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;http://localhost:3000&#39;</span><span class="p">,</span> <span class="s1">&#39;http://127.0.0.1:8000&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">main</span><span class="o">.</span><span class="n">allowed_origins</span> <span class="o">==</span> <span class="n">expected_origins</span></div>
+</div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--tb=short&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

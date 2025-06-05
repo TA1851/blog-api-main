@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_auth_router &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_auth_router</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Auth Routerの包括的テストスイート</span>
+<span class="sd">カバレッジ100%を目指してAuth Router(routers/auth.py)をテストする</span>
+
+<span class="sd">修正内容:</span>
+<span class="sd">- FastAPIの依存性注入システムを正しく使用</span>
+<span class="sd">- app.dependency_overridesでget_dbをオーバーライド</span>
+<span class="sd">- 実際のトークン生成/検証ロジックをテスト</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mock</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">AsyncMock</span><span class="p">,</span> <span class="n">MagicMock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">jwt</span><span class="p">,</span> <span class="n">JWTError</span>
+
+<span class="c1"># プロジェクト内部のインポート</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">routers.auth</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">router</span><span class="p">,</span> <span class="n">get_db</span><span class="p">,</span> <span class="n">verify_token</span><span class="p">,</span> <span class="n">token_blacklist</span><span class="p">,</span> 
+    <span class="n">LoginResponse</span><span class="p">,</span> <span class="n">TokenResponse</span><span class="p">,</span> <span class="n">PasswordChangeResponse</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasswordChange</span><span class="p">,</span> <span class="n">ShowArticle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Article</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">custom_token</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_access_token</span>
+
+
+<div class="viewcode-block" id="TestAuthRouter">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestAuthRouter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Auth Routerの包括的テストスイート&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestAuthRouter.setup_and_teardown">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.setup_and_teardown">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_and_teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;各テスト前後でトークンブラックリストとdependency_overridesをクリア&quot;&quot;&quot;</span>
+        <span class="n">token_blacklist</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">yield</span>
+        <span class="n">token_blacklist</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.mock_db">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">mock_session</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">mock_session</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_client">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_client">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dependency_overridesを設定したテストクライアント&quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">override_get_db</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">mock_db</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">pass</span>
+        
+        <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_db</span><span class="p">]</span> <span class="o">=</span> <span class="n">override_get_db</span>
+        <span class="k">return</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.sample_user">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.sample_user">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;テスト用ユーザーデータ&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;testuser&quot;</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">Hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="p">(</span><span class="s2">&quot;password123&quot;</span><span class="p">)</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">temp_password</span> <span class="o">=</span> <span class="s2">&quot;password123&quot;</span>  <span class="c1"># temp_passwordを設定</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">user</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.sample_article">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.sample_article">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_article</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;テスト用記事データ&quot;&quot;&quot;</span>
+        <span class="n">article</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">article</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">article</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;テスト記事&quot;</span>
+        <span class="n">article</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;テスト本文&quot;</span>
+        <span class="k">return</span> <span class="n">article</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.valid_token">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.valid_token">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なJWTトークン&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># POST /api/v1/login エンドポイントのテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_success">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ログイン成功のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_first</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;access_token&quot;</span> <span class="ow">in</span> <span class="n">data</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;token_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bearer&quot;</span>
+        
+        <span class="c1"># 生成されたトークンが文字列であることを確認</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># JWT形式の確認</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_user_not_found">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_user_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_user_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;存在しないユーザーでのログイン失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;nonexistent@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なユーザー名です&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_invalid_password">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_invalid_password">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_invalid_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効なパスワードでのログイン失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;wrongpassword&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なパスワードです&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_null_password_user">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_null_password_user">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_null_password_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードがNullのユーザーでのログイン失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">user_with_null_password</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">user_with_null_password</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">user_with_null_password</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">user_with_null_password</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># パスワードがNull</span>
+        
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">user_with_null_password</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なパスワードです&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># POST /api/v1/logout エンドポイントのテスト  </span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_logout_success">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_logout_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logout_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">valid_token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ログアウト成功のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/logout&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">valid_token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ログアウトしました&quot;</span>
+        
+        <span class="c1"># トークンがブラックリストに追加されているか確認</span>
+        <span class="k">assert</span> <span class="n">valid_token</span> <span class="ow">in</span> <span class="n">token_blacklist</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_logout_missing_token">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_logout_missing_token">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logout_missing_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;トークンなしでのログアウト失敗テスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/v1/logout&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_logout_invalid_token">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_logout_invalid_token">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logout_invalid_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効なトークンでのログアウトテスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/logout&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer invalid_token&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>  <span class="c1"># ログアウトエンドポイントは無効トークンでも200を返す</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_logout_malformed_header">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_logout_malformed_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logout_malformed_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;不正な形式のAuthorizationヘッダーテスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/logout&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidFormat token&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># verify_token 関数のテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_verify_token_success">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_verify_token_success">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;your-secret-key&#39;</span><span class="p">})</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;トークン検証成功のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 環境変数を使用してトークンを再生成</span>
+        <span class="n">test_token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">verify_token</span><span class="p">(</span><span class="n">test_token</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;email&quot;</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_verify_token_blacklisted">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_verify_token_blacklisted">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_blacklisted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ブラックリストに登録されたトークンの検証テスト&quot;&quot;&quot;</span>
+        <span class="c1"># トークンをブラックリストに追加</span>
+        <span class="n">token_blacklist</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">valid_token</span><span class="p">)</span>
+        
+        <span class="c1"># 検証</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">valid_token</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span>
+        <span class="k">assert</span> <span class="s2">&quot;トークンが無効化されています&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_verify_token_invalid_signature">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_verify_token_invalid_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_invalid_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効な署名のトークン検証テスト&quot;&quot;&quot;</span>
+        <span class="n">invalid_token</span> <span class="o">=</span> <span class="s2">&quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.invalid.signature&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">invalid_token</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なトークンです&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_verify_token_missing_subject">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_verify_token_missing_subject">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_missing_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;subjectが欠けているトークンの検証テスト&quot;&quot;&quot;</span>
+        <span class="c1"># subjectなしのトークンを作成</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># subなし</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s2">&quot;your-secret-key&quot;</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なトークンです&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_verify_token_malformed">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_verify_token_malformed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_token_malformed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;不正な形式のトークン検証テスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="s2">&quot;not.a.jwt.token&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># POST /api/v1/change-password エンドポイントのテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_success">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.send_registration_complete_email&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_email</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワード変更成功のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;パスワードが正常に変更されました。&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">sample_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_user_not_found">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_user_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_user_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;存在しないユーザーでのパスワード変更失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;nonexistent@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;temp123&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なユーザー名です&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_invalid_temp_password">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_invalid_temp_password">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_invalid_temp_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効な仮パスワードでのパスワード変更失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;wrongtemp&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効な仮パスワードです&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_database_error">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_database_error">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.send_registration_complete_email&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_database_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_email</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベースエラーでのパスワード変更失敗テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Database error&quot;</span><span class="p">)</span>
+        <span class="n">mock_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">500</span>
+        <span class="k">assert</span> <span class="s2">&quot;パスワード変更中にエラーが発生しました&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;detail&quot;</span><span class="p">]</span>
+        <span class="c1"># ロールバックが呼ばれていることを確認</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_email_failure">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_email_failure">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.send_registration_complete_email&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_email_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_email</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール送信失敗でもパスワード変更は成功するテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_email</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Email sending failed&quot;</span><span class="p">)</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証 - メール失敗でもパスワード変更は成功</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;パスワードが正常に変更されました。&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_user_name_none">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_user_name_none">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.send_registration_complete_email&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_user_name_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_email</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザー名がNoneの場合のメール送信テスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">user_with_no_name</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">user_with_no_name</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">user_with_no_name</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">user_with_no_name</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># nameをNoneに設定</span>
+        <span class="n">user_with_no_name</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">Hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="p">(</span><span class="s2">&quot;password123&quot;</span><span class="p">)</span>
+        <span class="n">user_with_no_name</span><span class="o">.</span><span class="n">temp_password</span> <span class="o">=</span> <span class="s2">&quot;password123&quot;</span>
+        
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">user_with_no_name</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+        <span class="n">mock_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="c1"># メールアドレスのローカル部分が名前として使用されることを確認</span>
+        <span class="n">mock_email</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># GET /api/v1/article エンドポイントのテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_get_all_articles_success">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_get_all_articles_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_all_articles_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;全記事取得成功のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample_article</span><span class="p">]</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/v1/article&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sample_article</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sample_article</span><span class="o">.</span><span class="n">title</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;body&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sample_article</span><span class="o">.</span><span class="n">body</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_get_all_articles_empty">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_get_all_articles_empty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_all_articles_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;記事が存在しない場合のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/v1/article&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_get_all_articles_multiple">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_get_all_articles_multiple">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_all_articles_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;複数記事取得のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">article</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;記事</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;本文</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">articles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+        
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">articles</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># リクエスト実行</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/v1/article&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">article_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">article_data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">article_data</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;記事</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="n">article_data</span><span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;本文</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># get_db 関数のテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_get_db_success">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_get_db_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.session&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_db_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;get_db正常動作のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_db_instance</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_db_instance</span>
+
+        <span class="c1"># 実行</span>
+        <span class="n">db_generator</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">db_generator</span><span class="p">)</span>
+
+        <span class="c1"># 検証</span>
+        <span class="k">assert</span> <span class="n">db</span> <span class="o">==</span> <span class="n">mock_db_instance</span>
+        
+        <span class="c1"># ジェネレータの終了処理をテスト</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">next</span><span class="p">(</span><span class="n">db_generator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+        <span class="c1"># close()が呼ばれることを確認</span>
+        <span class="n">mock_db_instance</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_get_db_with_exception">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_get_db_with_exception">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.session&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_db_with_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;get_db例外発生時のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_db_instance</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_session</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_db_instance</span>
+
+        <span class="c1"># 実行</span>
+        <span class="n">db_generator</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">db_generator</span><span class="p">)</span>
+
+        <span class="c1"># ジェネレータ内で例外を発生させる</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+            <span class="n">db_generator</span><span class="o">.</span><span class="n">throw</span><span class="p">(</span><span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Test exception&quot;</span><span class="p">))</span>
+        
+        <span class="c1"># close()が呼ばれることを確認</span>
+        <span class="n">mock_db_instance</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># エラーハンドリングテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_missing_username">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_missing_username">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_missing_username</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザー名なしでのログイン失敗テスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_missing_password">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_missing_password">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_missing_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードなしでのログイン失敗テスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_invalid_format">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_invalid_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_invalid_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;不正なリクエスト形式でのパスワード変更失敗テスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>  <span class="c1"># 必須フィールドが欠けている</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_change_password_short_password">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_change_password_short_password">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_short_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;短すぎる新パスワードのテスト&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/change-password&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;temp_password&quot;</span><span class="p">:</span> <span class="s2">&quot;temp123&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;short&quot;</span>  <span class="c1"># 8文字未満</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># セキュリティテスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_password_hashing_security">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_password_hashing_security">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_password_hashing_security</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードハッシュ化のセキュリティテスト&quot;&quot;&quot;</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;testpassword123&quot;</span>
+        <span class="n">hashed</span> <span class="o">=</span> <span class="n">Hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+        
+        <span class="c1"># ハッシュが元のパスワードと異なることを確認</span>
+        <span class="k">assert</span> <span class="n">hashed</span> <span class="o">!=</span> <span class="n">password</span>
+        <span class="c1"># ハッシュが検証できることを確認</span>
+        <span class="k">assert</span> <span class="n">Hash</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">hashed</span><span class="p">)</span>
+        <span class="c1"># 間違ったパスワードが検証されないことを確認</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">Hash</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="s2">&quot;wrongpassword&quot;</span><span class="p">,</span> <span class="n">hashed</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_jwt_token_security">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_jwt_token_security">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;your-secret-key&#39;</span><span class="p">})</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_jwt_token_security</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;JWTトークンのセキュリティテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 環境変数を使用してトークンを生成</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># トークンが文字列であることを確認</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="c1"># トークンが適切な形式であることを確認（3つのピリオド区切り）</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">3</span>
+        
+        <span class="c1"># トークンから情報が復号化できることを確認</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;your-secret-key&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;sub&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># 統合テスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_full_auth_flow">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_full_auth_flow">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">:</span> <span class="s1">&#39;your-secret-key&#39;</span><span class="p">})</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_full_auth_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">sample_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証の完全フローテスト（ログイン→認証→ログアウト）&quot;&quot;&quot;</span>
+        <span class="c1"># セットアップ</span>
+        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+        
+        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_filter</span>
+        <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">sample_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+        <span class="c1"># 1. ログイン</span>
+        <span class="n">login_response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/login&quot;</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">login_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">login_response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span>
+
+        <span class="c1"># 2. トークン検証</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+
+        <span class="c1"># 3. ログアウト</span>
+        <span class="n">logout_response</span> <span class="o">=</span> <span class="n">test_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/api/v1/logout&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">logout_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+
+        <span class="c1"># 4. ログアウト後のトークン検証失敗</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">):</span>
+            <span class="n">verify_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># 型定義テスト</span>
+    <span class="c1"># ========================================</span>
+
+<div class="viewcode-block" id="TestAuthRouter.test_login_response_type">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_login_response_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_response_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">valid_token</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;LoginResponse型定義のテスト&quot;&quot;&quot;</span>
+        <span class="n">response_data</span><span class="p">:</span> <span class="n">LoginResponse</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;access_token&quot;</span><span class="p">:</span> <span class="n">valid_token</span><span class="p">,</span>
+            <span class="s2">&quot;token_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bearer&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">assert</span> <span class="s2">&quot;access_token&quot;</span> <span class="ow">in</span> <span class="n">response_data</span>
+        <span class="k">assert</span> <span class="s2">&quot;token_type&quot;</span> <span class="ow">in</span> <span class="n">response_data</span>
+        <span class="k">assert</span> <span class="n">response_data</span><span class="p">[</span><span class="s2">&quot;token_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bearer&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouter.test_password_change_response_type">
+<a class="viewcode-back" href="../../tests.test_auth_router.html#tests.test_auth_router.TestAuthRouter.test_password_change_response_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_password_change_response_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;PasswordChangeResponse型定義のテスト&quot;&quot;&quot;</span>
+        <span class="n">response_data</span><span class="p">:</span> <span class="n">PasswordChangeResponse</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パスワードが正常に変更されました。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">assert</span> <span class="s2">&quot;message&quot;</span> <span class="ow">in</span> <span class="n">response_data</span>
+        <span class="k">assert</span> <span class="s2">&quot;user_id&quot;</span> <span class="ow">in</span> <span class="n">response_data</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--cov=routers.auth&quot;</span><span class="p">,</span> <span class="s2">&quot;--cov-report=html&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

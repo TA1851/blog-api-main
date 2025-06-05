@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>generate_summary_report &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for generate_summary_report</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">継続的バグトラッキングレポート - サマリージェネレーター</span>
+<span class="sd">最新のテスト結果をまとめて、包括的なレポートを生成します。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+
+<div class="viewcode-block" id="generate_summary_report">
+<a class="viewcode-back" href="../generate_summary_report.html#generate_summary_report.generate_summary_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_summary_report</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;包括的なサマリーレポートを生成&quot;&quot;&quot;</span>
+    
+    <span class="c1"># バグトラッキング履歴を読み込み</span>
+    <span class="n">bug_history_file</span> <span class="o">=</span> <span class="s1">&#39;bug_history.json&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bug_history_file</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bug_history_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># カバレッジデータを読み込み</span>
+    <span class="n">coverage_file</span> <span class="o">=</span> <span class="s1">&#39;coverage.json&#39;</span>
+    <span class="n">coverage_data</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">coverage_file</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">coverage_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">coverage_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    
+    <span class="c1"># 最新の結果を取得</span>
+    <span class="n">latest_result</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">history</span> <span class="k">else</span> <span class="kc">None</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">latest_result</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ テスト履歴が見つかりません&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+    <span class="c1"># テストモジュールの詳細情報</span>
+    <span class="n">test_modules</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;test_oauth2.py&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;tests&#39;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+            <span class="s1">&#39;coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;100%&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;OAuth2認証システム&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;JWT認証&#39;</span><span class="p">,</span> <span class="s1">&#39;トークン検証&#39;</span><span class="p">,</span> <span class="s1">&#39;ユーザー認証&#39;</span><span class="p">,</span> <span class="s1">&#39;セキュリティヘッダー&#39;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;test_hashing.py&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;tests&#39;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span>
+            <span class="s1">&#39;coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;100%&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;パスワードハッシュシステム&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+            <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Bcryptハッシュ&#39;</span><span class="p">,</span> <span class="s1">&#39;パスワード検証&#39;</span><span class="p">,</span> <span class="s1">&#39;セキュリティテスト&#39;</span><span class="p">,</span> <span class="s1">&#39;パフォーマンステスト&#39;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;test_database.py&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;tests&#39;</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span>
+            <span class="s1">&#39;coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;98%&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;データベース接続・設定&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;環境設定&#39;</span><span class="p">,</span> <span class="s1">&#39;DB接続&#39;</span><span class="p">,</span> <span class="s1">&#39;セッション管理&#39;</span><span class="p">,</span> <span class="s1">&#39;エラーハンドリング&#39;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;test_models.py&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;tests&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+            <span class="s1">&#39;coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;100%&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;データモデル検証&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;モデル定義&#39;</span><span class="p">,</span> <span class="s1">&#39;リレーション&#39;</span><span class="p">,</span> <span class="s1">&#39;バリデーション&#39;</span><span class="p">,</span> <span class="s1">&#39;DB統合&#39;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;test_schemas.py&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;tests&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+            <span class="s1">&#39;coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;89%&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;APIスキーマ検証&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;入力検証&#39;</span><span class="p">,</span> <span class="s1">&#39;データ変換&#39;</span><span class="p">,</span> <span class="s1">&#39;エラーハンドリング&#39;</span><span class="p">,</span> <span class="s1">&#39;バリデーション&#39;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;test_integration.py&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;tests&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+            <span class="s1">&#39;coverage&#39;</span><span class="p">:</span> <span class="s1">&#39;N/A&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;API統合テスト&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classes&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;エンドポイント&#39;</span><span class="p">,</span> <span class="s1">&#39;CORS&#39;</span><span class="p">,</span> <span class="s1">&#39;ドキュメント&#39;</span><span class="p">,</span> <span class="s1">&#39;ヘルスチェック&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># HTMLレポート生成</span>
+    <span class="n">html_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;!DOCTYPE html&gt;</span>
+<span class="s2">&lt;html lang=&quot;ja&quot;&gt;</span>
+<span class="s2">&lt;head&gt;</span>
+<span class="s2">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span>
+<span class="s2">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</span>
+<span class="s2">    &lt;title&gt;🎯 Blog API - 包括的テストレポート&lt;/title&gt;</span>
+<span class="s2">    &lt;style&gt;</span>
+<span class="s2">        * </span><span class="se">{{</span><span class="s2"> margin: 0; padding: 0; box-sizing: border-box; </span><span class="se">}}</span>
+<span class="s2">        body </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            font-family: &#39;Segoe UI&#39;, Tahoma, Geneva, Verdana, sans-serif; </span>
+<span class="s2">            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);</span>
+<span class="s2">            min-height: 100vh;</span>
+<span class="s2">            padding: 20px;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .container </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            max-width: 1400px; </span>
+<span class="s2">            margin: 0 auto; </span>
+<span class="s2">            background: white; </span>
+<span class="s2">            border-radius: 20px; </span>
+<span class="s2">            box-shadow: 0 20px 40px rgba(0,0,0,0.1);</span>
+<span class="s2">            overflow: hidden;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .header </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);</span>
+<span class="s2">            color: white;</span>
+<span class="s2">            padding: 40px;</span>
+<span class="s2">            text-align: center;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .header h1 </span><span class="se">{{</span><span class="s2"> font-size: 2.5em; margin-bottom: 10px; </span><span class="se">}}</span>
+<span class="s2">        .header p </span><span class="se">{{</span><span class="s2"> font-size: 1.2em; opacity: 0.9; </span><span class="se">}}</span>
+<span class="s2">        .stats-grid </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            display: grid; </span>
+<span class="s2">            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); </span>
+<span class="s2">            gap: 20px; </span>
+<span class="s2">            padding: 40px;</span>
+<span class="s2">            background: #f8f9fa;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .stat-card </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: white;</span>
+<span class="s2">            padding: 30px;</span>
+<span class="s2">            border-radius: 15px;</span>
+<span class="s2">            text-align: center;</span>
+<span class="s2">            box-shadow: 0 10px 20px rgba(0,0,0,0.1);</span>
+<span class="s2">            transition: transform 0.3s;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .stat-card:hover </span><span class="se">{{</span><span class="s2"> transform: translateY(-5px); </span><span class="se">}}</span>
+<span class="s2">        .stat-number </span><span class="se">{{</span><span class="s2"> font-size: 3em; font-weight: bold; color: #667eea; </span><span class="se">}}</span>
+<span class="s2">        .stat-label </span><span class="se">{{</span><span class="s2"> font-size: 1.1em; color: #666; margin-top: 10px; </span><span class="se">}}</span>
+<span class="s2">        .modules-section </span><span class="se">{{</span><span class="s2"> padding: 40px; </span><span class="se">}}</span>
+<span class="s2">        .module-grid </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            display: grid; </span>
+<span class="s2">            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); </span>
+<span class="s2">            gap: 20px; </span>
+<span class="s2">            margin-top: 30px;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .module-card </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            border: 1px solid #e9ecef;</span>
+<span class="s2">            border-radius: 15px;</span>
+<span class="s2">            padding: 25px;</span>
+<span class="s2">            background: white;</span>
+<span class="s2">            box-shadow: 0 5px 15px rgba(0,0,0,0.08);</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .module-header </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            display: flex;</span>
+<span class="s2">            justify-content: space-between;</span>
+<span class="s2">            align-items: center;</span>
+<span class="s2">            margin-bottom: 15px;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .module-name </span><span class="se">{{</span><span class="s2"> font-size: 1.3em; font-weight: bold; color: #333; </span><span class="se">}}</span>
+<span class="s2">        .coverage-badge </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: #28a745;</span>
+<span class="s2">            color: white;</span>
+<span class="s2">            padding: 5px 10px;</span>
+<span class="s2">            border-radius: 20px;</span>
+<span class="s2">            font-size: 0.9em;</span>
+<span class="s2">            font-weight: bold;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .coverage-badge.partial </span><span class="se">{{</span><span class="s2"> background: #ffc107; color: #333; </span><span class="se">}}</span>
+<span class="s2">        .module-description </span><span class="se">{{</span><span class="s2"> color: #666; margin-bottom: 15px; </span><span class="se">}}</span>
+<span class="s2">        .module-stats </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            display: flex;</span>
+<span class="s2">            justify-content: space-between;</span>
+<span class="s2">            margin-bottom: 15px;</span>
+<span class="s2">            font-size: 0.9em;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .features </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            display: flex;</span>
+<span class="s2">            flex-wrap: wrap;</span>
+<span class="s2">            gap: 5px;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .feature-tag </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: #e9ecef;</span>
+<span class="s2">            padding: 3px 8px;</span>
+<span class="s2">            border-radius: 10px;</span>
+<span class="s2">            font-size: 0.8em;</span>
+<span class="s2">            color: #495057;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .timeline </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: #f8f9fa;</span>
+<span class="s2">            padding: 40px;</span>
+<span class="s2">            margin: 40px 0;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .timeline-item </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            display: flex;</span>
+<span class="s2">            align-items: center;</span>
+<span class="s2">            margin-bottom: 20px;</span>
+<span class="s2">            padding: 15px;</span>
+<span class="s2">            background: white;</span>
+<span class="s2">            border-radius: 10px;</span>
+<span class="s2">            box-shadow: 0 2px 5px rgba(0,0,0,0.1);</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .timeline-date </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: #667eea;</span>
+<span class="s2">            color: white;</span>
+<span class="s2">            padding: 5px 10px;</span>
+<span class="s2">            border-radius: 15px;</span>
+<span class="s2">            font-size: 0.9em;</span>
+<span class="s2">            min-width: 120px;</span>
+<span class="s2">            text-align: center;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .timeline-content </span><span class="se">{{</span><span class="s2"> margin-left: 20px; flex: 1; </span><span class="se">}}</span>
+<span class="s2">        .quality-score </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);</span>
+<span class="s2">            color: white;</span>
+<span class="s2">            padding: 40px;</span>
+<span class="s2">            text-align: center;</span>
+<span class="s2">            margin: 40px;</span>
+<span class="s2">            border-radius: 20px;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">        .quality-score h2 </span><span class="se">{{</span><span class="s2"> font-size: 2.5em; margin-bottom: 10px; </span><span class="se">}}</span>
+<span class="s2">        .quality-score p </span><span class="se">{{</span><span class="s2"> font-size: 1.2em; opacity: 0.9; </span><span class="se">}}</span>
+<span class="s2">        .footer </span><span class="se">{{</span><span class="s2"> </span>
+<span class="s2">            background: #343a40;</span>
+<span class="s2">            color: white;</span>
+<span class="s2">            padding: 30px;</span>
+<span class="s2">            text-align: center;</span>
+<span class="s2">        </span><span class="se">}}</span>
+<span class="s2">    &lt;/style&gt;</span>
+<span class="s2">&lt;/head&gt;</span>
+<span class="s2">&lt;body&gt;</span>
+<span class="s2">    &lt;div class=&quot;container&quot;&gt;</span>
+<span class="s2">        &lt;div class=&quot;header&quot;&gt;</span>
+<span class="s2">            &lt;h1&gt;🎯 Blog API テストレポート&lt;/h1&gt;</span>
+<span class="s2">            &lt;p&gt;包括的テストスイート完了報告書&lt;/p&gt;</span>
+<span class="s2">            &lt;p&gt;生成日時: </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y年%m月</span><span class="si">%d</span><span class="s1">日 %H:%M&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        </span>
+<span class="s2">        &lt;div class=&quot;stats-grid&quot;&gt;</span>
+<span class="s2">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-number&quot;&gt;</span><span class="si">{</span><span class="n">latest_result</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-label&quot;&gt;総テスト数&lt;/div&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-number&quot;&gt;</span><span class="si">{</span><span class="n">latest_result</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">][</span><span class="s1">&#39;success_rate&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">%&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-label&quot;&gt;成功率&lt;/div&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-number&quot;&gt;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_modules</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-label&quot;&gt;テストモジュール&lt;/div&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;stat-card&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-number&quot;&gt;</span><span class="si">{</span><span class="n">latest_result</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">][</span><span class="s1">&#39;execution_time&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;stat-label&quot;&gt;実行時間&lt;/div&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        </span>
+<span class="s2">        &lt;div class=&quot;modules-section&quot;&gt;</span>
+<span class="s2">            &lt;h2 style=&quot;text-align: center; margin-bottom: 20px; color: #333;&quot;&gt;📋 テストモジュール詳細&lt;/h2&gt;</span>
+<span class="s2">            &lt;div class=&quot;module-grid&quot;&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    
+    <span class="c1"># 各テストモジュールの詳細を追加</span>
+    <span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">module_info</span> <span class="ow">in</span> <span class="n">test_modules</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">coverage_class</span> <span class="o">=</span> <span class="s1">&#39;coverage-badge&#39;</span>
+        <span class="k">if</span> <span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;100%&#39;</span> <span class="ow">and</span> <span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;N/A&#39;</span><span class="p">:</span>
+            <span class="n">coverage_class</span> <span class="o">+=</span> <span class="s1">&#39; partial&#39;</span>
+        
+        <span class="n">html_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;div class=&quot;module-card&quot;&gt;</span>
+<span class="s2">                    &lt;div class=&quot;module-header&quot;&gt;</span>
+<span class="s2">                        &lt;div class=&quot;module-name&quot;&gt;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                        &lt;div class=&quot;</span><span class="si">{</span><span class="n">coverage_class</span><span class="si">}</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;module-description&quot;&gt;</span><span class="si">{</span><span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;module-stats&quot;&gt;</span>
+<span class="s2">                        &lt;span&gt;🧪 </span><span class="si">{</span><span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">テスト&lt;/span&gt;</span>
+<span class="s2">                        &lt;span&gt;📁 </span><span class="si">{</span><span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">クラス&lt;/span&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;features&quot;&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">module_info</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+            <span class="n">html_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;span class=&quot;feature-tag&quot;&gt;</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s1">&lt;/span&gt;&#39;</span>
+        
+        <span class="n">html_content</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                &lt;/div&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    
+    <span class="c1"># タイムラインとフッターを追加</span>
+    <span class="n">html_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        </span>
+<span class="s2">        &lt;div class=&quot;timeline&quot;&gt;</span>
+<span class="s2">            &lt;h2 style=&quot;text-align: center; margin-bottom: 30px; color: #333;&quot;&gt;📈 開発タイムライン&lt;/h2&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    
+    <span class="c1"># 履歴の最新5件を表示</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]:</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+        <span class="n">date_str</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">time_str</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M&#39;</span><span class="p">)</span>
+        
+        <span class="n">html_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;div class=&quot;timeline-item&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;timeline-date&quot;&gt;</span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">time_str</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;timeline-content&quot;&gt;</span>
+<span class="s2">                    &lt;strong&gt;</span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&lt;/strong&gt;&lt;br&gt;</span>
+<span class="s2">                    </span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">テスト実行 - 成功率</span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">][</span><span class="s1">&#39;success_rate&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&lt;br&gt;</span>
+<span class="s2">                    &lt;small&gt;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;notes&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/small&gt;</span>
+<span class="s2">                &lt;/div&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    
+    <span class="n">html_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        </span>
+<span class="s2">        &lt;div class=&quot;quality-score&quot;&gt;</span>
+<span class="s2">            &lt;h2&gt;🏆 品質スコア: A+&lt;/h2&gt;</span>
+<span class="s2">            &lt;p&gt;OAuth2とHashingモジュールで100%カバレッジを達成&lt;/p&gt;</span>
+<span class="s2">            &lt;p&gt;セキュリティ・パフォーマンス・エラーハンドリングテスト完了&lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        </span>
+<span class="s2">        &lt;div class=&quot;footer&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;© 2025 Blog API Project - 継続的品質管理システム&lt;/p&gt;</span>
+<span class="s2">            &lt;p&gt;次回更新: 新機能追加時&lt;/p&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">    &lt;/div&gt;</span>
+<span class="s2">&lt;/body&gt;</span>
+<span class="s2">&lt;/html&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    
+    <span class="c1"># HTMLファイルを保存</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="s1">&#39;COMPREHENSIVE_TEST_SUMMARY.html&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ 包括的テストサマリーレポートを生成しました: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_file</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">generate_summary_report</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

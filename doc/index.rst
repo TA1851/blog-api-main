@@ -1,10 +1,10 @@
-.. venv documentation master file, created by
-   sphinx-quickstart on Fri May  9 17:03:47 2025.
+.. blog-api-main documentation master file, created by
+   sphinx-quickstart on Thu Jun  5 15:24:25 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-venv documentation
-==================
+blog-api-main documentation
+===========================
 
 Add your content using ``reStructuredText`` syntax. See the
 `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
@@ -17,14 +17,16 @@ documentation for details.
 
    custom_token
    database
-   functions
+   exceptions
+   generate_summary_report
    hashing
    logger
    main
    models
    oauth2
    routers
+   run_continuous_tests
    schemas
-   sql_chack
-   sql_chack copy
    tests
+   update_main_bug_history
+   utils

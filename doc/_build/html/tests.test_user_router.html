@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_user_router module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="update_main_bug_history module" href="update_main_bug_history.html" />
+    <link rel="prev" title="tests.test_user_deletion_integration module" href="tests.test_user_deletion_integration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_user_router module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestCreateUserEndpoint"><code class="docutils literal notranslate"><span class="pre">TestCreateUserEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestDeleteUserAccountEndpoint"><code class="docutils literal notranslate"><span class="pre">TestDeleteUserAccountEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestDeleteUserAccountWithAuth"><code class="docutils literal notranslate"><span class="pre">TestDeleteUserAccountWithAuth</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestResendVerificationEmailEndpoint"><code class="docutils literal notranslate"><span class="pre">TestResendVerificationEmailEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestShowUserEndpoint"><code class="docutils literal notranslate"><span class="pre">TestShowUserEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestUserRouterEdgeCases"><code class="docutils literal notranslate"><span class="pre">TestUserRouterEdgeCases</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestUserRouterEnvironmentVariables"><code class="docutils literal notranslate"><span class="pre">TestUserRouterEnvironmentVariables</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestUserRouterExceptions"><code class="docutils literal notranslate"><span class="pre">TestUserRouterExceptions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestUserRouterIntegration"><code class="docutils literal notranslate"><span class="pre">TestUserRouterIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_router.TestVerifyEmailEndpoint"><code class="docutils literal notranslate"><span class="pre">TestVerifyEmailEndpoint</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_user_router module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_user_router.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_user_router">
+<span id="tests-test-user-router-module"></span><h1>tests.test_user_router module<a class="headerlink" href="#module-tests.test_user_router" title="Link to this heading"></a></h1>
+<p>ユーザールーターの包括的テストスイート</p>
+<p>このテストスイートは routers/user.py の全ての機能をテストします:
+- ユーザー作成（メール認証有無の両パターン）
+- メール認証機能
+- ユーザー情報取得
+- アカウント削除機能
+- 認証メール再送機能</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestCreateUserEndpoint</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>create_user エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_database_error">
+<span class="sig-name descname"><span class="pre">test_create_user_database_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_database_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_database_error" title="Link to this definition"></a></dt>
+<dd><p>データベースエラーの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_domain_restriction_enabled_invalid_domain">
+<span class="sig-name descname"><span class="pre">test_create_user_domain_restriction_enabled_invalid_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_domain_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_domain_restriction_enabled_invalid_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_domain_restriction_enabled_invalid_domain" title="Link to this definition"></a></dt>
+<dd><p>ドメイン制限が有効で無効なドメインの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_duplicate_email">
+<span class="sig-name descname"><span class="pre">test_create_user_duplicate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_duplicate_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_duplicate_email" title="Link to this definition"></a></dt>
+<dd><p>重複メールアドレスの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_disabled">
+<span class="sig-name descname"><span class="pre">test_create_user_email_verification_disabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_domain_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_email_verification_disabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_disabled" title="Link to this definition"></a></dt>
+<dd><p>メール認証無効で直接ユーザー作成の場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_unverified">
+<span class="sig-name descname"><span class="pre">test_create_user_email_verification_enabled_existing_unverified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_domain_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_unverified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_unverified" title="Link to this definition"></a></dt>
+<dd><p>メール認証有効で未認証レコードが既にある場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_verified">
+<span class="sig-name descname"><span class="pre">test_create_user_email_verification_enabled_existing_verified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_domain_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_verified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_verified" title="Link to this definition"></a></dt>
+<dd><p>メール認証有効で既に認証済みの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_new_user">
+<span class="sig-name descname"><span class="pre">test_create_user_email_verification_enabled_new_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_domain_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_user_schema</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_email_verification_enabled_new_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_new_user" title="Link to this definition"></a></dt>
+<dd><p>メール認証有効で新規ユーザーの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.test_create_user_missing_email">
+<span class="sig-name descname"><span class="pre">test_create_user_missing_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caplog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.test_create_user_missing_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.test_create_user_missing_email" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスが無い場合のエラーテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestCreateUserEndpoint.valid_user_schema">
+<span class="sig-name descname"><span class="pre">valid_user_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestCreateUserEndpoint.valid_user_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestCreateUserEndpoint.valid_user_schema" title="Link to this definition"></a></dt>
+<dd><p>有効なユーザースキーマ</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestDeleteUserAccountEndpoint</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>delete_user_account エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_database_error">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_database_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_database_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_database_error" title="Link to this definition"></a></dt>
+<dd><p>データベースエラーの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_no_email">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_no_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_no_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_no_email" title="Link to this definition"></a></dt>
+<dd><p>ユーザーのメールアドレスがない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_no_password_set">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_no_password_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_no_password_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_no_password_set" title="Link to this definition"></a></dt>
+<dd><p>パスワードが設定されていない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_password_mismatch">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_password_mismatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_password_mismatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_password_mismatch" title="Link to this definition"></a></dt>
+<dd><p>パスワード不一致の場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_success">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_success" title="Link to this definition"></a></dt>
+<dd><p>正常なアカウント削除のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_user_not_found">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_user_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_user_not_found" title="Link to this definition"></a></dt>
+<dd><p>ユーザーが見つからない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_wrong_password">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_wrong_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.test_delete_user_account_wrong_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_wrong_password" title="Link to this definition"></a></dt>
+<dd><p>パスワードが間違っている場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountEndpoint.valid_deletion_request">
+<span class="sig-name descname"><span class="pre">valid_deletion_request</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountEndpoint.valid_deletion_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountEndpoint.valid_deletion_request" title="Link to this definition"></a></dt>
+<dd><p>有効な削除リクエスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestDeleteUserAccountWithAuth</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>delete_user_account エンドポイント（認証機能あり）のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.mock_current_user">
+<span class="sig-name descname"><span class="pre">mock_current_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.mock_current_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.mock_current_user" title="Link to this definition"></a></dt>
+<dd><p>モック認証ユーザー</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_password_mismatch_with_auth">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_password_mismatch_with_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.test_delete_user_account_password_mismatch_with_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_password_mismatch_with_auth" title="Link to this definition"></a></dt>
+<dd><p>認証機能ありでパスワード不一致の場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_success_with_auth">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_success_with_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.test_delete_user_account_success_with_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_success_with_auth" title="Link to this definition"></a></dt>
+<dd><p>認証機能ありで正常なアカウント削除のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_unauthorized_different_email">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_unauthorized_different_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unauthorized_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.test_delete_user_account_unauthorized_different_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_unauthorized_different_email" title="Link to this definition"></a></dt>
+<dd><p>認証ユーザーと異なるメールアドレスでアカウント削除を試行する場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_wrong_password_with_auth">
+<span class="sig-name descname"><span class="pre">test_delete_user_account_wrong_password_with_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.test_delete_user_account_wrong_password_with_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_wrong_password_with_auth" title="Link to this definition"></a></dt>
+<dd><p>認証機能ありでパスワードが間違っている場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.unauthorized_deletion_request">
+<span class="sig-name descname"><span class="pre">unauthorized_deletion_request</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.unauthorized_deletion_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.unauthorized_deletion_request" title="Link to this definition"></a></dt>
+<dd><p>権限のない削除リクエスト（異なるメールアドレス）</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestDeleteUserAccountWithAuth.valid_deletion_request">
+<span class="sig-name descname"><span class="pre">valid_deletion_request</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestDeleteUserAccountWithAuth.valid_deletion_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestDeleteUserAccountWithAuth.valid_deletion_request" title="Link to this definition"></a></dt>
+<dd><p>有効な削除リクエスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestResendVerificationEmailEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestResendVerificationEmailEndpoint</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestResendVerificationEmailEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestResendVerificationEmailEndpoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>resend_verification_email エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestResendVerificationEmailEndpoint.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestResendVerificationEmailEndpoint.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestResendVerificationEmailEndpoint.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestResendVerificationEmailEndpoint.test_resend_verification_email_not_found">
+<span class="sig-name descname"><span class="pre">test_resend_verification_email_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestResendVerificationEmailEndpoint.test_resend_verification_email_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestResendVerificationEmailEndpoint.test_resend_verification_email_not_found" title="Link to this definition"></a></dt>
+<dd><p>確認待ちのメールアドレスが見つからない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestResendVerificationEmailEndpoint.test_resend_verification_email_success">
+<span class="sig-name descname"><span class="pre">test_resend_verification_email_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestResendVerificationEmailEndpoint.test_resend_verification_email_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestResendVerificationEmailEndpoint.test_resend_verification_email_success" title="Link to this definition"></a></dt>
+<dd><p>認証メール再送成功のテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestShowUserEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestShowUserEndpoint</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestShowUserEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestShowUserEndpoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>show_user エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestShowUserEndpoint.mock_current_user">
+<span class="sig-name descname"><span class="pre">mock_current_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestShowUserEndpoint.mock_current_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestShowUserEndpoint.mock_current_user" title="Link to this definition"></a></dt>
+<dd><p>モック現在ユーザー</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestShowUserEndpoint.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestShowUserEndpoint.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestShowUserEndpoint.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestShowUserEndpoint.test_show_user_access_other_user">
+<span class="sig-name descname"><span class="pre">test_show_user_access_other_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestShowUserEndpoint.test_show_user_access_other_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestShowUserEndpoint.test_show_user_access_other_user" title="Link to this definition"></a></dt>
+<dd><p>他のユーザーの情報にアクセスしようとした場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestShowUserEndpoint.test_show_user_not_found">
+<span class="sig-name descname"><span class="pre">test_show_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestShowUserEndpoint.test_show_user_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestShowUserEndpoint.test_show_user_not_found" title="Link to this definition"></a></dt>
+<dd><p>ユーザーが見つからない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestShowUserEndpoint.test_show_user_success">
+<span class="sig-name descname"><span class="pre">test_show_user_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestShowUserEndpoint.test_show_user_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestShowUserEndpoint.test_show_user_success" title="Link to this definition"></a></dt>
+<dd><p>正常なユーザー情報取得のテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEdgeCases">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestUserRouterEdgeCases</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEdgeCases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEdgeCases" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>エッジケースのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEdgeCases.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEdgeCases.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEdgeCases.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEdgeCases.test_create_user_with_name_field">
+<span class="sig-name descname"><span class="pre">test_create_user_with_name_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEdgeCases.test_create_user_with_name_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEdgeCases.test_create_user_with_name_field" title="Link to this definition"></a></dt>
+<dd><p>name フィールドがある場合のユーザー作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEdgeCases.test_verify_email_empty_token">
+<span class="sig-name descname"><span class="pre">test_verify_email_empty_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEdgeCases.test_verify_email_empty_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEdgeCases.test_verify_email_empty_token" title="Link to this definition"></a></dt>
+<dd><p>空のトークンの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEdgeCases.test_verify_email_none_expires_at">
+<span class="sig-name descname"><span class="pre">test_verify_email_none_expires_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEdgeCases.test_verify_email_none_expires_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEdgeCases.test_verify_email_none_expires_at" title="Link to this definition"></a></dt>
+<dd><p>expires_at が None の場合のテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEnvironmentVariables">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestUserRouterEnvironmentVariables</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEnvironmentVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEnvironmentVariables" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>環境変数関連のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEnvironmentVariables.test_allowed_email_domains_configuration">
+<span class="sig-name descname"><span class="pre">test_allowed_email_domains_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEnvironmentVariables.test_allowed_email_domains_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEnvironmentVariables.test_allowed_email_domains_configuration" title="Link to this definition"></a></dt>
+<dd><p>許可メールドメインの設定を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEnvironmentVariables.test_enable_domain_restriction_configuration">
+<span class="sig-name descname"><span class="pre">test_enable_domain_restriction_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEnvironmentVariables.test_enable_domain_restriction_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEnvironmentVariables.test_enable_domain_restriction_configuration" title="Link to this definition"></a></dt>
+<dd><p>ドメイン制限有効フラグの設定を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterEnvironmentVariables.test_enable_email_verification_configuration">
+<span class="sig-name descname"><span class="pre">test_enable_email_verification_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterEnvironmentVariables.test_enable_email_verification_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterEnvironmentVariables.test_enable_email_verification_configuration" title="Link to this definition"></a></dt>
+<dd><p>メール認証有効フラグの設定を確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterExceptions">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestUserRouterExceptions</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterExceptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterExceptions" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>カスタム例外クラスのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterExceptions.test_database_error">
+<span class="sig-name descname"><span class="pre">test_database_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterExceptions.test_database_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterExceptions.test_database_error" title="Link to this definition"></a></dt>
+<dd><p>DatabaseErrorのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterExceptions.test_email_verification_error">
+<span class="sig-name descname"><span class="pre">test_email_verification_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterExceptions.test_email_verification_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterExceptions.test_email_verification_error" title="Link to this definition"></a></dt>
+<dd><p>EmailVerificationErrorのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_default">
+<span class="sig-name descname"><span class="pre">test_user_not_found_error_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterExceptions.test_user_not_found_error_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_default" title="Link to this definition"></a></dt>
+<dd><p>デフォルトのUserNotFoundErrorのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_with_email">
+<span class="sig-name descname"><span class="pre">test_user_not_found_error_with_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterExceptions.test_user_not_found_error_with_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_with_email" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスを指定したUserNotFoundErrorのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_with_id">
+<span class="sig-name descname"><span class="pre">test_user_not_found_error_with_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterExceptions.test_user_not_found_error_with_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_with_id" title="Link to this definition"></a></dt>
+<dd><p>ユーザーIDを指定したUserNotFoundErrorのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestUserRouterIntegration</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ユーザールーターの統合テスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterIntegration.client">
+<span class="sig-name descname"><span class="pre">client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterIntegration.client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterIntegration.client" title="Link to this definition"></a></dt>
+<dd><p>テストクライアント</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterIntegration.test_router_configuration">
+<span class="sig-name descname"><span class="pre">test_router_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterIntegration.test_router_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterIntegration.test_router_configuration" title="Link to this definition"></a></dt>
+<dd><p>ルーター設定のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestUserRouterIntegration.test_router_endpoints_exist">
+<span class="sig-name descname"><span class="pre">test_router_endpoints_exist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestUserRouterIntegration.test_router_endpoints_exist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestUserRouterIntegration.test_router_endpoints_exist" title="Link to this definition"></a></dt>
+<dd><p>エンドポイントが存在することを確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_router.</span></span><span class="sig-name descname"><span class="pre">TestVerifyEmailEndpoint</span></span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>verify_email エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.mock_db">
+<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.mock_db" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_already_verified">
+<span class="sig-name descname"><span class="pre">test_verify_email_already_verified</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_already_verified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_already_verified" title="Link to this definition"></a></dt>
+<dd><p>既に認証済みの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_expired_token">
+<span class="sig-name descname"><span class="pre">test_verify_email_expired_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_expired_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_expired_token" title="Link to this definition"></a></dt>
+<dd><p>期限切れトークンの場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_invalid_token_format">
+<span class="sig-name descname"><span class="pre">test_verify_email_invalid_token_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_invalid_token_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_invalid_token_format" title="Link to this definition"></a></dt>
+<dd><p>無効なトークン形式の場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_success">
+<span class="sig-name descname"><span class="pre">test_verify_email_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_success" title="Link to this definition"></a></dt>
+<dd><p>メール認証成功の場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_success_with_custom_password">
+<span class="sig-name descname"><span class="pre">test_verify_email_success_with_custom_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_success_with_custom_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_success_with_custom_password" title="Link to this definition"></a></dt>
+<dd><p>カスタムパスワードありでの認証成功テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_token_not_found">
+<span class="sig-name descname"><span class="pre">test_verify_email_token_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_token_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_token_not_found" title="Link to this definition"></a></dt>
+<dd><p>トークンが見つからない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_url_decoding">
+<span class="sig-name descname"><span class="pre">test_verify_email_url_decoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_router.html#TestVerifyEmailEndpoint.test_verify_email_url_decoding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_url_decoding" title="Link to this definition"></a></dt>
+<dd><p>URLエンコードされたトークンのデコードテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_user_deletion_integration.html" class="btn btn-neutral float-left" title="tests.test_user_deletion_integration module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="update_main_bug_history.html" class="btn btn-neutral float-right" title="update_main_bug_history module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

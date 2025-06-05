@@ -1,0 +1,229 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_user_deletion_integration module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_user_router module" href="tests.test_user_router.html" />
+    <link rel="prev" title="tests.test_schemas module" href="tests.test_schemas.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_user_deletion_integration module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration"><code class="docutils literal notranslate"><span class="pre">TestDeleteUserAccountIntegration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_user_deletion_integration module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_user_deletion_integration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_user_deletion_integration">
+<span id="tests-test-user-deletion-integration-module"></span><h1>tests.test_user_deletion_integration module<a class="headerlink" href="#module-tests.test_user_deletion_integration" title="Link to this heading"></a></h1>
+<p>認証機能付きユーザー削除エンドポイントの統合テスト</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_user_deletion_integration.</span></span><span class="sig-name descname"><span class="pre">TestDeleteUserAccountIntegration</span></span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ユーザー削除エンドポイントの統合テスト（認証機能含む）</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.auth_headers">
+<span class="sig-name descname"><span class="pre">auth_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.auth_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.auth_headers" title="Link to this definition"></a></dt>
+<dd><p>認証ヘッダー</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.client">
+<span class="sig-name descname"><span class="pre">client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.client" title="Link to this definition"></a></dt>
+<dd><p>テストクライアント</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.mock_user">
+<span class="sig-name descname"><span class="pre">mock_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.mock_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.mock_user" title="Link to this definition"></a></dt>
+<dd><p>モックユーザー</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_expired_token">
+<span class="sig-name descname"><span class="pre">test_delete_account_expired_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_expired_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_expired_token" title="Link to this definition"></a></dt>
+<dd><p>期限切れトークンでアクセスするテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_invalid_token">
+<span class="sig-name descname"><span class="pre">test_delete_account_invalid_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_invalid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_invalid_token" title="Link to this definition"></a></dt>
+<dd><p>無効なトークンでアクセスするテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_password_mismatch">
+<span class="sig-name descname"><span class="pre">test_delete_account_password_mismatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_headers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_password_mismatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_password_mismatch" title="Link to this definition"></a></dt>
+<dd><p>パスワードと確認用パスワードが一致しない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_success_with_auth">
+<span class="sig-name descname"><span class="pre">test_delete_account_success_with_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_oauth2_get_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_success_with_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_success_with_auth" title="Link to this definition"></a></dt>
+<dd><p>認証ありで正常なアカウント削除のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_unauthorized_different_email">
+<span class="sig-name descname"><span class="pre">test_delete_account_unauthorized_different_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_headers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_unauthorized_different_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_unauthorized_different_email" title="Link to this definition"></a></dt>
+<dd><p>認証ユーザーと異なるメールアドレスでアカウント削除を試行するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_without_auth_header">
+<span class="sig-name descname"><span class="pre">test_delete_account_without_auth_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_without_auth_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_without_auth_header" title="Link to this definition"></a></dt>
+<dd><p>認証ヘッダーなしでアカウント削除を試行するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_wrong_password">
+<span class="sig-name descname"><span class="pre">test_delete_account_wrong_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_current_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_hash_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_headers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_deletion_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.test_delete_account_wrong_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.test_delete_account_wrong_password" title="Link to this definition"></a></dt>
+<dd><p>間違ったパスワードでアカウント削除を試行するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.valid_deletion_data">
+<span class="sig-name descname"><span class="pre">valid_deletion_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.valid_deletion_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.valid_deletion_data" title="Link to this definition"></a></dt>
+<dd><p>有効な削除リクエストデータ</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.valid_token">
+<span class="sig-name descname"><span class="pre">valid_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_user_deletion_integration.html#TestDeleteUserAccountIntegration.valid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_user_deletion_integration.TestDeleteUserAccountIntegration.valid_token" title="Link to this definition"></a></dt>
+<dd><p>有効なJWTトークン</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_schemas.html" class="btn btn-neutral float-left" title="tests.test_schemas module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_user_router.html" class="btn btn-neutral float-right" title="tests.test_user_router module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

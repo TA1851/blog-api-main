@@ -1,42 +1,36 @@
 <!DOCTYPE html>
 
-<html lang="ja" data-content_root="../">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>custom_token &#8212; Blog API  ドキュメント</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
-    
-    <script src="../_static/documentation_options.js?v=c033477b"></script>
+    <title>custom_token &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/translations.js?v=4755f45a"></script>
-    
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" /> 
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
   </head><body>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>ナビゲーション</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="総合索引"
-             accesskey="I">索引</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Pythonモジュール索引"
-             >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">custom_token</a></li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <h1>custom_token のソースコード</h1><div class="highlight"><pre>
+  <h1>Source code for custom_token</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;カスタムトークンの作成&quot;&quot;&quot;</span>
 <span class="c1"># import pprint</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -67,7 +61,7 @@
 
 
 <div class="viewcode-block" id="TokenType">
-<a class="viewcode-back" href="../custom_token.html#custom_token.TokenType">[ドキュメント]</a>
+<a class="viewcode-back" href="../custom_token.html#custom_token.TokenType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TokenType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンタイプの定義&quot;&quot;&quot;</span>
     <span class="n">ACCESS</span> <span class="o">=</span> <span class="s2">&quot;access&quot;</span>
@@ -77,7 +71,7 @@
 
 
 <div class="viewcode-block" id="TokenConfig">
-<a class="viewcode-back" href="../custom_token.html#custom_token.TokenConfig">[ドキュメント]</a>
+<a class="viewcode-back" href="../custom_token.html#custom_token.TokenConfig">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TokenConfig</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;トークン設定の一元管理</span>
 
@@ -95,7 +89,7 @@
 
 
 <div class="viewcode-block" id="create_access_token">
-<a class="viewcode-back" href="../custom_token.html#custom_token.create_access_token">[ドキュメント]</a>
+<a class="viewcode-back" href="../custom_token.html#custom_token.create_access_token">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_access_token</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">JWTPayload</span><span class="p">,</span>
     <span class="n">expires_delta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">timedelta</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -166,7 +160,7 @@
 
 
 <div class="viewcode-block" id="verify_token_with_type">
-<a class="viewcode-back" href="../custom_token.html#custom_token.verify_token_with_type">[ドキュメント]</a>
+<a class="viewcode-back" href="../custom_token.html#custom_token.verify_token_with_type">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">verify_token_with_type</span><span class="p">(</span>
     <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">expected_type</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span>
@@ -209,7 +203,7 @@
 
 
 <div class="viewcode-block" id="verify_token">
-<a class="viewcode-back" href="../custom_token.html#custom_token.verify_token">[ドキュメント]</a>
+<a class="viewcode-back" href="../custom_token.html#custom_token.verify_token">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">verify_token</span><span class="p">(</span>
     <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">credentials_exception</span><span class="p">:</span> <span class="n">HTTPException</span><span class="p">,</span>
@@ -260,7 +254,7 @@
 
 
 <div class="viewcode-block" id="get_user_by_id">
-<a class="viewcode-back" href="../custom_token.html#custom_token.get_user_by_id">[ドキュメント]</a>
+<a class="viewcode-back" href="../custom_token.html#custom_token.get_user_by_id">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_user_by_id</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
@@ -283,43 +277,81 @@
 
 </pre></div>
 
-            <div class="clearer"></div>
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
 <search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="検索" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
     </form>
     </div>
 </search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>ナビゲーション</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="総合索引"
-             >索引</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Pythonモジュール索引"
-             >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">custom_token</a></li> 
-      </ul>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
     </div>
-    <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, TA1851.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
-    </div>
+
+    
+
+    
   </body>
 </html>

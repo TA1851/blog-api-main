@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_oauth2 module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_routers_corrected module" href="tests.test_routers_corrected.html" />
+    <link rel="prev" title="tests.test_models module" href="tests.test_models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_oauth2 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestAlgorithmConfiguration"><code class="docutils literal notranslate"><span class="pre">TestAlgorithmConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestDatabaseIntegration"><code class="docutils literal notranslate"><span class="pre">TestDatabaseIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestDependencyInjection"><code class="docutils literal notranslate"><span class="pre">TestDependencyInjection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestEdgeCases"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestErrorLogging"><code class="docutils literal notranslate"><span class="pre">TestErrorLogging</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestGetCurrentUser"><code class="docutils literal notranslate"><span class="pre">TestGetCurrentUser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestOAuth2Scheme"><code class="docutils literal notranslate"><span class="pre">TestOAuth2Scheme</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestSecurityHeaders"><code class="docutils literal notranslate"><span class="pre">TestSecurityHeaders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestTokenDataIntegration"><code class="docutils literal notranslate"><span class="pre">TestTokenDataIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_oauth2.TestTypeConversion"><code class="docutils literal notranslate"><span class="pre">TestTypeConversion</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_oauth2 module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_oauth2.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_oauth2">
+<span id="tests-test-oauth2-module"></span><h1>tests.test_oauth2 module<a class="headerlink" href="#module-tests.test_oauth2" title="Link to this heading"></a></h1>
+<p>OAuth2モジュールのテストスイート</p>
+<p>このテストスイートは以下をカバーします：
+- JWTトークンの検証機能
+- get_current_user関数のテスト
+- 認証エラーハンドリング
+- データベース統合テスト
+- トークンの各種エラーケース</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestAlgorithmConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestAlgorithmConfiguration</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestAlgorithmConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestAlgorithmConfiguration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>アルゴリズム設定のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestAlgorithmConfiguration.test_algorithm_default_value">
+<span class="sig-name descname"><span class="pre">test_algorithm_default_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestAlgorithmConfiguration.test_algorithm_default_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestAlgorithmConfiguration.test_algorithm_default_value" title="Link to this definition"></a></dt>
+<dd><p>デフォルトアルゴリズムの確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestAlgorithmConfiguration.test_algorithm_from_environment">
+<span class="sig-name descname"><span class="pre">test_algorithm_from_environment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestAlgorithmConfiguration.test_algorithm_from_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestAlgorithmConfiguration.test_algorithm_from_environment" title="Link to this definition"></a></dt>
+<dd><p>環境変数からのアルゴリズム設定テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestDatabaseIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestDatabaseIntegration</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestDatabaseIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestDatabaseIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>データベース統合テスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestDatabaseIntegration.real_db_session">
+<span class="sig-name descname"><span class="pre">real_db_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestDatabaseIntegration.real_db_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestDatabaseIntegration.real_db_session" title="Link to this definition"></a></dt>
+<dd><p>実際のデータベースセッションテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestDatabaseIntegration.test_database_transaction_handling">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_database_transaction_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestDatabaseIntegration.test_database_transaction_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestDatabaseIntegration.test_database_transaction_handling" title="Link to this definition"></a></dt>
+<dd><p>データベーストランザクション処理のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestDatabaseIntegration.test_user_query_performance">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_user_query_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestDatabaseIntegration.test_user_query_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestDatabaseIntegration.test_user_query_performance" title="Link to this definition"></a></dt>
+<dd><p>ユーザークエリのパフォーマンステスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestDependencyInjection">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestDependencyInjection</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestDependencyInjection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestDependencyInjection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>依存性注入のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestDependencyInjection.test_oauth2_scheme_dependency">
+<span class="sig-name descname"><span class="pre">test_oauth2_scheme_dependency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestDependencyInjection.test_oauth2_scheme_dependency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestDependencyInjection.test_oauth2_scheme_dependency" title="Link to this definition"></a></dt>
+<dd><p>OAuth2スキームの依存性注入テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestEdgeCases">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestEdgeCases</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestEdgeCases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestEdgeCases" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>エッジケースのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestEdgeCases.test_empty_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_empty_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestEdgeCases.test_empty_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestEdgeCases.test_empty_token" title="Link to this definition"></a></dt>
+<dd><p>空文字トークンのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestEdgeCases.test_large_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_large_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestEdgeCases.test_large_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestEdgeCases.test_large_token" title="Link to this definition"></a></dt>
+<dd><p>異常に大きなトークンのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestEdgeCases.test_malformed_base64_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_malformed_base64_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestEdgeCases.test_malformed_base64_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestEdgeCases.test_malformed_base64_token" title="Link to this definition"></a></dt>
+<dd><p>不正なBase64エンコードトークンのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestEdgeCases.test_none_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_none_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestEdgeCases.test_none_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestEdgeCases.test_none_token" title="Link to this definition"></a></dt>
+<dd><p>Noneトークンのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestErrorLogging">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestErrorLogging</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestErrorLogging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestErrorLogging" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>エラーログのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestErrorLogging.test_jwt_error_logging">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_jwt_error_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_print</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestErrorLogging.test_jwt_error_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestErrorLogging.test_jwt_error_logging" title="Link to this definition"></a></dt>
+<dd><p>JWTエラーのログ出力テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestGetCurrentUser</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get_current_user関数のテストクラス</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.expired_token">
+<span class="sig-name descname"><span class="pre">expired_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.expired_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.expired_token" title="Link to this definition"></a></dt>
+<dd><p>期限切れのJWTトークンを作成</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.invalid_signature_token">
+<span class="sig-name descname"><span class="pre">invalid_signature_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.invalid_signature_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.invalid_signature_token" title="Link to this definition"></a></dt>
+<dd><p>不正な署名のJWTトークンを作成</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.mock_db_session">
+<span class="sig-name descname"><span class="pre">mock_db_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.mock_db_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.mock_db_session" title="Link to this definition"></a></dt>
+<dd><p>モックデータベースセッションを作成</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.sample_user">
+<span class="sig-name descname"><span class="pre">sample_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.sample_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.sample_user" title="Link to this definition"></a></dt>
+<dd><p>テスト用のサンプルユーザーを作成</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_expired_token">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_expired_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expired_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_expired_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_expired_token" title="Link to this definition"></a></dt>
+<dd><p>期限切れトークンでエラーが発生するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_invalid_signature">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_invalid_signature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invalid_signature_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_invalid_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_invalid_signature" title="Link to this definition"></a></dt>
+<dd><p>不正な署名のトークンでエラーが発生するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_invalid_token_format">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_invalid_token_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_invalid_token_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_invalid_token_format" title="Link to this definition"></a></dt>
+<dd><p>不正な形式のトークンでエラーが発生するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_jwt_error_handling">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_jwt_error_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_jwt_error_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_jwt_error_handling" title="Link to this definition"></a></dt>
+<dd><p>JWTエラーの適切な処理テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_missing_id_claim">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_missing_id_claim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_missing_id_claim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_missing_id_claim" title="Link to this definition"></a></dt>
+<dd><p>idクレームが欠けているトークンのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_missing_sub_claim">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_missing_sub_claim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_missing_sub_claim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_missing_sub_claim" title="Link to this definition"></a></dt>
+<dd><p>subクレームが欠けているトークンのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_no_secret_key">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_no_secret_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_no_secret_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_no_secret_key" title="Link to this definition"></a></dt>
+<dd><p>SECRET_KEYが設定されていない場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_success">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_success" title="Link to this definition"></a></dt>
+<dd><p>有効なトークンで現在ユーザーを取得するテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_user_not_found">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_user_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_user_not_found" title="Link to this definition"></a></dt>
+<dd><p>存在しないユーザーIDのトークンのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.test_get_current_user_with_inactive_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_get_current_user_with_inactive_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.test_get_current_user_with_inactive_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.test_get_current_user_with_inactive_user" title="Link to this definition"></a></dt>
+<dd><p>非アクティブユーザーでも認証が通ることを確認（仕様による）</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestGetCurrentUser.valid_token">
+<span class="sig-name descname"><span class="pre">valid_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestGetCurrentUser.valid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestGetCurrentUser.valid_token" title="Link to this definition"></a></dt>
+<dd><p>有効なJWTトークンを作成</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestOAuth2Scheme">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestOAuth2Scheme</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestOAuth2Scheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestOAuth2Scheme" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>OAuth2PasswordBearerスキームのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestOAuth2Scheme.test_oauth2_scheme_attributes">
+<span class="sig-name descname"><span class="pre">test_oauth2_scheme_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestOAuth2Scheme.test_oauth2_scheme_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestOAuth2Scheme.test_oauth2_scheme_attributes" title="Link to this definition"></a></dt>
+<dd><p>OAuth2スキームの属性テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestOAuth2Scheme.test_oauth2_scheme_creation">
+<span class="sig-name descname"><span class="pre">test_oauth2_scheme_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestOAuth2Scheme.test_oauth2_scheme_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestOAuth2Scheme.test_oauth2_scheme_creation" title="Link to this definition"></a></dt>
+<dd><p>OAuth2スキームの作成テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestSecurityHeaders">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestSecurityHeaders</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestSecurityHeaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestSecurityHeaders" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>セキュリティヘッダーのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestSecurityHeaders.test_credentials_exception_headers">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_credentials_exception_headers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestSecurityHeaders.test_credentials_exception_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestSecurityHeaders.test_credentials_exception_headers" title="Link to this definition"></a></dt>
+<dd><p>認証例外のヘッダー設定テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestTokenDataIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestTokenDataIntegration</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestTokenDataIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestTokenDataIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TokenDataスキーマとの統合テスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestTokenDataIntegration.test_token_data_creation_from_payload">
+<span class="sig-name descname"><span class="pre">test_token_data_creation_from_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestTokenDataIntegration.test_token_data_creation_from_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestTokenDataIntegration.test_token_data_creation_from_payload" title="Link to this definition"></a></dt>
+<dd><p>ペイロードからTokenDataの作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestTokenDataIntegration.test_token_data_optional_email">
+<span class="sig-name descname"><span class="pre">test_token_data_optional_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestTokenDataIntegration.test_token_data_optional_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestTokenDataIntegration.test_token_data_optional_email" title="Link to this definition"></a></dt>
+<dd><p>TokenDataのオプショナルなemailフィールドのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestTypeConversion">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_oauth2.</span></span><span class="sig-name descname"><span class="pre">TestTypeConversion</span></span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestTypeConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestTypeConversion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>型変換のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestTypeConversion.test_non_numeric_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_non_numeric_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestTypeConversion.test_non_numeric_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestTypeConversion.test_non_numeric_id" title="Link to this definition"></a></dt>
+<dd><p>非数値IDのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_oauth2.TestTypeConversion.test_string_id_conversion">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_string_id_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_oauth2.html#TestTypeConversion.test_string_id_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_oauth2.TestTypeConversion.test_string_id_conversion" title="Link to this definition"></a></dt>
+<dd><p>文字列IDの整数変換テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_models.html" class="btn btn-neutral float-left" title="tests.test_models module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_routers_corrected.html" class="btn btn-neutral float-right" title="tests.test_routers_corrected module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

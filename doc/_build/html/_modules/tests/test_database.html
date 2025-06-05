@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_database &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_database</h1><div class="highlight"><pre>
+<span></span><span class="c1"># filepath: /Users/tatu/Documents/GitHub/blog-api-main/tests/test_database.py</span>
+<span class="sd">&quot;&quot;&quot;database.pyのテストモジュール&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span><span class="p">,</span> <span class="n">MagicMock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">sessionmaker</span><span class="p">,</span> <span class="n">Session</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_env_file</span><span class="p">,</span>
+    <span class="n">read_env_var</span><span class="p">,</span>
+    <span class="n">create_database_engine</span><span class="p">,</span>
+    <span class="n">create_session</span><span class="p">,</span>
+    <span class="n">get_db</span><span class="p">,</span>
+    <span class="n">DatabaseConnectionError</span><span class="p">,</span>
+    <span class="n">EnvironmentConfig</span><span class="p">,</span>
+    <span class="n">Base</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="TestCheckEnvFile">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCheckEnvFile">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCheckEnvFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;check_env_file関数のテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestCheckEnvFile.test_check_env_file_default_path">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCheckEnvFile.test_check_env_file_default_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_check_env_file_default_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;デフォルトパスでの.envファイル検出テスト&quot;&quot;&quot;</span>
+        <span class="c1"># デフォルトパスは__file__の親ディレクトリ/.env</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">check_env_file</span><span class="p">()</span>
+        <span class="n">expected_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;.env&#39;</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">expected_path</span></div>
+
+
+<div class="viewcode-block" id="TestCheckEnvFile.test_check_env_file_custom_str_path">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCheckEnvFile.test_check_env_file_custom_str_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_check_env_file_custom_str_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;カスタム文字列パスでの.envファイル検出テスト&quot;&quot;&quot;</span>
+        <span class="n">custom_path</span> <span class="o">=</span> <span class="s2">&quot;/tmp/test.env&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">check_env_file</span><span class="p">(</span><span class="n">custom_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">Path</span><span class="p">(</span><span class="n">custom_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestCheckEnvFile.test_check_env_file_custom_path_object">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCheckEnvFile.test_check_env_file_custom_path_object">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_check_env_file_custom_path_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;カスタムPathオブジェクトでの.envファイル検出テスト&quot;&quot;&quot;</span>
+        <span class="n">custom_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/tmp/test.env&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">check_env_file</span><span class="p">(</span><span class="n">custom_path</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">custom_path</span></div>
+
+
+<div class="viewcode-block" id="TestCheckEnvFile.test_check_env_file_existing_file">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCheckEnvFile.test_check_env_file_existing_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_check_env_file_existing_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;存在する.envファイルのテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;.env&quot;</span>
+        <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;TEST_VAR=test_value&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_print</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">check_env_file</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;処理を開始します。&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">env_file</span></div>
+
+
+<div class="viewcode-block" id="TestCheckEnvFile.test_check_env_file_non_existing_file">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCheckEnvFile.test_check_env_file_non_existing_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_check_env_file_non_existing_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;存在しない.envファイルのテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;nonexistent.env&quot;</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_print</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">check_env_file</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;スキップ処理&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">env_file</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestReadEnvVar">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestReadEnvVar">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestReadEnvVar</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;read_env_var関数のテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestReadEnvVar.test_read_env_var_all_variables_set">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestReadEnvVar.test_read_env_var_all_variables_set">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_env_var_all_variables_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;全ての環境変数が設定されている場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;.env&quot;</span>
+        <span class="n">env_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ENVIRONMENT=production</span>
+<span class="s2">DATABASE_URL=postgresql://user:pass@localhost:5432/testdb</span>
+<span class="s2">SECRET_KEY=test_secret_key</span>
+<span class="s2">ALGORITHM=HS256</span>
+<span class="s2">CORS_ORIGINS=http://localhost:3000,https://example.com&quot;&quot;&quot;</span>
+        <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">env_content</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">read_env_var</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;production&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;posgre_url&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;postgresql://user:pass@localhost:5432/testdb&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;secret_key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test_secret_key&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;algo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HS256&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;cors_origins&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span> <span class="s2">&quot;https://example.com&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestReadEnvVar.test_read_env_var_single_cors_origin">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestReadEnvVar.test_read_env_var_single_cors_origin">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_env_var_single_cors_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;単一のCORS_ORIGINのテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;.env&quot;</span>
+        <span class="n">env_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ENVIRONMENT=development</span>
+<span class="s2">DATABASE_URL=sqlite:///./test.db</span>
+<span class="s2">SECRET_KEY=test_key</span>
+<span class="s2">ALGORITHM=HS256</span>
+<span class="s2">CORS_ORIGINS=http://localhost:3000&quot;&quot;&quot;</span>
+        <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">env_content</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">read_env_var</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;cors_origins&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestReadEnvVar.test_read_env_var_posgre_url_fallback">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestReadEnvVar.test_read_env_var_posgre_url_fallback">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_env_var_posgre_url_fallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;POSGRE_URLが設定されていない場合のDATABASE_URLフォールバックテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;.env&quot;</span>
+        <span class="n">env_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ENVIRONMENT=production</span>
+<span class="s2">DATABASE_URL=postgresql://user:pass@localhost:5432/testdb</span>
+<span class="s2">SECRET_KEY=test_secret_key</span>
+<span class="s2">ALGORITHM=HS256&quot;&quot;&quot;</span>
+        <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">env_content</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">read_env_var</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;posgre_url&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;postgresql://user:pass@localhost:5432/testdb&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestReadEnvVar.test_read_env_var_missing_variables">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestReadEnvVar.test_read_env_var_missing_variables">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_env_var_missing_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;一部の環境変数が未設定の場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;.env&quot;</span>
+        <span class="n">env_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ENVIRONMENT=development</span>
+<span class="s2">SECRET_KEY=test_key&quot;&quot;&quot;</span>
+        <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">env_content</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_print</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">read_env_var</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+            
+            <span class="c1"># 各種エラーメッセージが出力されることを確認</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;DB_URLが取得できませんでした。&quot;</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;ALGORITHMが取得できませんでした。&quot;</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSが取得できませんでした。&quot;</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;development&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;secret_key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test_key&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;posgre_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="k">assert</span> <span class="s2">&quot;algo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="k">assert</span> <span class="s2">&quot;cors_origins&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="TestReadEnvVar.test_read_env_var_empty_file">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestReadEnvVar.test_read_env_var_empty_file">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_env_var_empty_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;空の.envファイルのテスト&quot;&quot;&quot;</span>
+        <span class="n">env_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;.env&quot;</span>
+        <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_print</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">read_env_var</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+            
+            <span class="c1"># 全ての環境変数取得失敗メッセージが出力されることを確認</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;DB_URLが取得できませんでした。&quot;</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;SECRET_KEYが取得できませんでした。&quot;</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;ALGORITHMが取得できませんでした。&quot;</span><span class="p">)</span>
+            <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_any_call</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSが取得できませんでした。&quot;</span><span class="p">)</span>
+            <span class="c1"># &quot;環境変数の取得に失敗しました。&quot;は出力されない（environmentがNoneでも辞書に追加されるため）</span>
+        
+        <span class="c1"># environmentにNoneが設定された辞書が返されることを確認</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="s2">&quot;posgre_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="k">assert</span> <span class="s2">&quot;secret_key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="k">assert</span> <span class="s2">&quot;algo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="k">assert</span> <span class="s2">&quot;cors_origins&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCreateDatabaseEngine</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create_database_engine関数のテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine.test_create_database_engine_production">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine.test_create_database_engine_production">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.db_env&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;production&quot;</span><span class="p">,</span> <span class="s2">&quot;posgre_url&quot;</span><span class="p">:</span> <span class="s2">&quot;postgresql://user:pass@localhost:5432/testdb&quot;</span><span class="p">})</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.create_engine&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_database_engine_production</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_create_engine</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;本番環境でのデータベースエンジン作成テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_engine</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_engine</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">create_database_engine</span><span class="p">()</span>
+        
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span>
+            <span class="s2">&quot;postgresql://user:pass@localhost:5432/testdb&quot;</span><span class="p">,</span>
+            <span class="n">pool_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">max_overflow</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">pool_timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+            <span class="n">pool_recycle</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span>
+            <span class="n">echo</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">mock_engine</span></div>
+
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine.test_create_database_engine_development">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine.test_create_database_engine_development">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.db_env&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;development&quot;</span><span class="p">})</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.create_engine&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_database_engine_development</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_create_engine</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;開発環境でのデータベースエンジン作成テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_engine</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_engine</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">create_database_engine</span><span class="p">()</span>
+        
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span>
+            <span class="s2">&quot;sqlite:///./blog.db&quot;</span><span class="p">,</span>
+            <span class="n">connect_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">echo</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">mock_engine</span></div>
+
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine.test_create_database_engine_no_environment">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine.test_create_database_engine_no_environment">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.db_env&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.create_engine&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_database_engine_no_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_create_engine</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;環境変数未設定でのデータベースエンジン作成テスト（デフォルトで開発環境）&quot;&quot;&quot;</span>
+        <span class="n">mock_engine</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_engine</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">create_database_engine</span><span class="p">()</span>
+        
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span>
+            <span class="s2">&quot;sqlite:///./blog.db&quot;</span><span class="p">,</span>
+            <span class="n">connect_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;check_same_thread&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">echo</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">mock_engine</span></div>
+
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine.test_create_database_engine_production_no_url">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine.test_create_database_engine_production_no_url">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.db_env&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;production&quot;</span><span class="p">})</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_database_engine_production_no_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_print</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;本番環境でURLが未設定の場合のテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">DatabaseConnectionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;本番環境DBのURLが設定されていません。&quot;</span><span class="p">):</span>
+            <span class="n">create_database_engine</span><span class="p">()</span>
+        
+        <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;DBのURLが設定されていません。&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine.test_create_database_engine_production_invalid_url">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine.test_create_database_engine_production_invalid_url">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.db_env&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;production&quot;</span><span class="p">,</span> <span class="s2">&quot;posgre_url&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid_url&quot;</span><span class="p">})</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_database_engine_production_invalid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_print</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;本番環境で不正なURLの場合のテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">DatabaseConnectionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;DBのURLが不正です。&quot;</span><span class="p">):</span>
+            <span class="n">create_database_engine</span><span class="p">()</span>
+        
+        <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;DBのURLが不正です。&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestCreateDatabaseEngine.test_create_database_engine_exception_handling">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateDatabaseEngine.test_create_database_engine_exception_handling">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.db_env&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;development&quot;</span><span class="p">})</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.create_engine&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_database_engine_exception_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_create_engine</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベースエンジン作成時の例外処理テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_create_engine</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Connection failed&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">DatabaseConnectionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;データベース接続に失敗しました。: Connection failed&quot;</span><span class="p">):</span>
+            <span class="n">create_database_engine</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestCreateSession">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateSession">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCreateSession</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create_session関数のテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestCreateSession.test_create_session_success">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateSession.test_create_session_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_session_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正常なセッション作成テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_engine</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Engine</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">create_session</span><span class="p">(</span><span class="n">mock_engine</span><span class="p">)</span>
+        
+        <span class="c1"># sessionmakerのインスタンスが返されることを確認</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># セッションメーカーの設定を確認</span>
+        <span class="n">session_instance</span> <span class="o">=</span> <span class="n">result</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">session_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TestCreateSession.test_create_session_exception">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestCreateSession.test_create_session_exception">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.sessionmaker&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_session_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_print</span><span class="p">,</span> <span class="n">mock_sessionmaker</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;セッション作成時の例外処理テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_engine</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Engine</span><span class="p">)</span>
+        <span class="n">mock_sessionmaker</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Session creation failed&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Session creation failed&quot;</span><span class="p">):</span>
+            <span class="n">create_session</span><span class="p">(</span><span class="n">mock_engine</span><span class="p">)</span>
+        
+        <span class="n">mock_print</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestGetDb">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestGetDb">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestGetDb</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;get_db関数のテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestGetDb.test_get_db_success">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestGetDb.test_get_db_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.session&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_db_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_session_factory</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正常なデータベースセッション取得テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">mock_session_factory</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+        
+        <span class="c1"># ジェネレータをテストするためにlist()で実行</span>
+        <span class="n">db_sessions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">get_db</span><span class="p">())</span>
+        
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">db_sessions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">db_sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">mock_session_instance</span>
+        <span class="n">mock_session_instance</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestGetDb.test_get_db_exception_handling">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestGetDb.test_get_db_exception_handling">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;database.session&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;builtins.print&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_db_exception_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_print</span><span class="p">,</span> <span class="n">mock_session_factory</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベースセッション取得時の例外処理テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_session_instance</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">mock_session_factory</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_session_instance</span>
+        
+        <span class="c1"># ジェネレータ内で例外を発生させる</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">generator_with_exception</span><span class="p">():</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+            <span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>  <span class="c1"># セッションを取得</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Database operation failed&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;Database operation failed&quot;</span><span class="p">):</span>
+            <span class="n">generator_with_exception</span><span class="p">()</span>
+        
+        <span class="c1"># セッションがクローズされることを確認</span>
+        <span class="n">mock_session_instance</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestDatabaseConnectionError">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestDatabaseConnectionError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestDatabaseConnectionError</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DatabaseConnectionErrorカスタム例外のテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestDatabaseConnectionError.test_database_connection_error">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestDatabaseConnectionError.test_database_connection_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_database_connection_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;DatabaseConnectionErrorカスタム例外のテスト&quot;&quot;&quot;</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;データベースに接続できません&quot;</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">DatabaseConnectionError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">error_message</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEnvironmentConfig">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestEnvironmentConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEnvironmentConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;EnvironmentConfig TypedDictのテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestEnvironmentConfig.test_environment_config_type_structure">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestEnvironmentConfig.test_environment_config_type_structure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_environment_config_type_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;EnvironmentConfig型の構造テスト&quot;&quot;&quot;</span>
+        <span class="c1"># 正常な設定</span>
+        <span class="n">valid_config</span><span class="p">:</span> <span class="n">EnvironmentConfig</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;production&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;posgre_url&quot;</span><span class="p">:</span> <span class="s2">&quot;postgresql://localhost:5432/db&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;secret_key&quot;</span><span class="p">:</span> <span class="s2">&quot;secret&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;algo&quot;</span><span class="p">:</span> <span class="s2">&quot;HS256&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cors_origins&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+        
+        <span class="k">assert</span> <span class="n">valid_config</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;production&quot;</span>
+        <span class="k">assert</span> <span class="n">valid_config</span><span class="p">[</span><span class="s2">&quot;posgre_url&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;postgresql://localhost:5432/db&quot;</span>
+        <span class="k">assert</span> <span class="n">valid_config</span><span class="p">[</span><span class="s2">&quot;secret_key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;secret&quot;</span>
+        <span class="k">assert</span> <span class="n">valid_config</span><span class="p">[</span><span class="s2">&quot;algo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HS256&quot;</span>
+        <span class="k">assert</span> <span class="n">valid_config</span><span class="p">[</span><span class="s2">&quot;cors_origins&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestEnvironmentConfig.test_environment_config_optional_fields">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestEnvironmentConfig.test_environment_config_optional_fields">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_environment_config_optional_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;EnvironmentConfig型のオプションフィールドテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 一部のフィールドのみを持つ設定</span>
+        <span class="n">partial_config</span><span class="p">:</span> <span class="n">EnvironmentConfig</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;development&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">assert</span> <span class="n">partial_config</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;development&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;posgre_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">partial_config</span>
+        <span class="k">assert</span> <span class="s2">&quot;secret_key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">partial_config</span></div>
+
+
+<div class="viewcode-block" id="TestEnvironmentConfig.test_environment_config_empty">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestEnvironmentConfig.test_environment_config_empty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_environment_config_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;EnvironmentConfig型の空設定テスト&quot;&quot;&quot;</span>
+        <span class="n">empty_config</span><span class="p">:</span> <span class="n">EnvironmentConfig</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">empty_config</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestBase">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SQLAlchemyベースクラスのテスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestBase.test_base_class_inheritance">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestBase.test_base_class_inheritance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_base_class_inheritance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Baseクラスの継承テスト&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
+        
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">DeclarativeBase</span><span class="p">)</span>
+        
+        <span class="c1"># テスト用のモデルクラスを作成してベースクラスの動作を確認（プライマリキーを追加）</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">TestModel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+            <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;test_table&#39;</span>
+            <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">TestModel</span><span class="p">,</span> <span class="s1">&#39;__tablename__&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TestModel</span><span class="o">.</span><span class="n">__tablename__</span> <span class="o">==</span> <span class="s1">&#39;test_table&#39;</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">TestModel</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestIntegration">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestIntegration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIntegration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;統合テスト&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestIntegration.test_full_database_setup_development">
+<a class="viewcode-back" href="../../tests.test_database.html#tests.test_database.TestIntegration.test_full_database_setup_development">[docs]</a>
+    <span class="nd">@patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_full_database_setup_development</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;開発環境での完全なデータベースセットアップテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 実際の環境変数を使用してテスト</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp_dir</span><span class="p">:</span>
+            <span class="n">env_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;.env&#39;</span>
+            <span class="n">env_content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;ENVIRONMENT=development</span>
+<span class="s2">DATABASE_URL=sqlite:///./test.db</span>
+<span class="s2">SECRET_KEY=test_key</span>
+<span class="s2">ALGORITHM=HS256</span>
+<span class="s2">CORS_ORIGINS=http://localhost:3000&quot;&quot;&quot;</span>
+            <span class="n">env_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">env_content</span><span class="p">)</span>
+            
+            <span class="c1"># 環境変数読み込み</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">read_env_var</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;environment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;development&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;posgre_url&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sqlite:///./test.db&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;secret_key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test_key&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;algo&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HS256&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;cors_origins&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

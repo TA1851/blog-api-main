@@ -4,13 +4,10 @@ logger package
 Submodules
 ----------
 
-logger.custom\_logger module
-----------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: logger.custom_logger
-   :members:
-   :show-inheritance:
-   :undoc-members:
+   logger.custom_logger
 
 Module contents
 ---------------

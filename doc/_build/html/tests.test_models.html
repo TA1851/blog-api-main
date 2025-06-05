@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_models module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_oauth2 module" href="tests.test_oauth2.html" />
+    <link rel="prev" title="tests.test_main module" href="tests.test_main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_models.TestArticleModel"><code class="docutils literal notranslate"><span class="pre">TestArticleModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_models.TestEmailVerificationModel"><code class="docutils literal notranslate"><span class="pre">TestEmailVerificationModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_models.TestModelRelationships"><code class="docutils literal notranslate"><span class="pre">TestModelRelationships</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_models.TestModelTableStructure"><code class="docutils literal notranslate"><span class="pre">TestModelTableStructure</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_models.TestModelsIntegration"><code class="docutils literal notranslate"><span class="pre">TestModelsIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_models.TestUserModel"><code class="docutils literal notranslate"><span class="pre">TestUserModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_models module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_models">
+<span id="tests-test-models-module"></span><h1>tests.test_models module<a class="headerlink" href="#module-tests.test_models" title="Link to this heading"></a></h1>
+<p>models.py用の包括的テストスイート
+SQLAlchemyモデルの構造、リレーションシップ、メソッドをテストします。</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_models.</span></span><span class="sig-name descname"><span class="pre">TestArticleModel</span></span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Articleモデルのテストクラス</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel.test_article_columns_definition">
+<span class="sig-name descname"><span class="pre">test_article_columns_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel.test_article_columns_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel.test_article_columns_definition" title="Link to this definition"></a></dt>
+<dd><p>Articleモデルのカラム定義を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel.test_article_creation">
+<span class="sig-name descname"><span class="pre">test_article_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel.test_article_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel.test_article_creation" title="Link to this definition"></a></dt>
+<dd><p>Articleインスタンスの作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel.test_article_post_init">
+<span class="sig-name descname"><span class="pre">test_article_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel.test_article_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel.test_article_post_init" title="Link to this definition"></a></dt>
+<dd><p>__post_init__メソッドのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel.test_article_relationship_definition">
+<span class="sig-name descname"><span class="pre">test_article_relationship_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel.test_article_relationship_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel.test_article_relationship_definition" title="Link to this definition"></a></dt>
+<dd><p>Articleモデルのリレーションシップ定義を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel.test_article_table_name">
+<span class="sig-name descname"><span class="pre">test_article_table_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel.test_article_table_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel.test_article_table_name" title="Link to this definition"></a></dt>
+<dd><p>テーブル名が正しく設定されていることを確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestArticleModel.test_article_with_user_id">
+<span class="sig-name descname"><span class="pre">test_article_with_user_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestArticleModel.test_article_with_user_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestArticleModel.test_article_with_user_id" title="Link to this definition"></a></dt>
+<dd><p>ユーザーIDを含むArticleインスタンスの作成テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_models.</span></span><span class="sig-name descname"><span class="pre">TestEmailVerificationModel</span></span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>EmailVerificationモデルのテストクラス</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel.test_create_verification_class_method">
+<span class="sig-name descname"><span class="pre">test_create_verification_class_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_uuid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel.test_create_verification_class_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel.test_create_verification_class_method" title="Link to this definition"></a></dt>
+<dd><p>create_verificationクラスメソッドのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel.test_create_verification_returns_instance">
+<span class="sig-name descname"><span class="pre">test_create_verification_returns_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel.test_create_verification_returns_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel.test_create_verification_returns_instance" title="Link to this definition"></a></dt>
+<dd><p>create_verificationが正しいインスタンスを返すことを確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel.test_email_verification_columns_definition">
+<span class="sig-name descname"><span class="pre">test_email_verification_columns_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel.test_email_verification_columns_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel.test_email_verification_columns_definition" title="Link to this definition"></a></dt>
+<dd><p>EmailVerificationモデルのカラム定義を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel.test_email_verification_creation">
+<span class="sig-name descname"><span class="pre">test_email_verification_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel.test_email_verification_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel.test_email_verification_creation" title="Link to this definition"></a></dt>
+<dd><p>EmailVerificationインスタンスの作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel.test_email_verification_table_name">
+<span class="sig-name descname"><span class="pre">test_email_verification_table_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel.test_email_verification_table_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel.test_email_verification_table_name" title="Link to this definition"></a></dt>
+<dd><p>テーブル名が正しく設定されていることを確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestEmailVerificationModel.test_email_verification_with_datetime">
+<span class="sig-name descname"><span class="pre">test_email_verification_with_datetime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestEmailVerificationModel.test_email_verification_with_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestEmailVerificationModel.test_email_verification_with_datetime" title="Link to this definition"></a></dt>
+<dd><p>日時フィールドを含むEmailVerificationのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_models.TestModelRelationships">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_models.</span></span><span class="sig-name descname"><span class="pre">TestModelRelationships</span></span><a class="reference internal" href="_modules/tests/test_models.html#TestModelRelationships"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelRelationships" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>モデル間のリレーションシップのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelRelationships.test_article_user_relationship_consistency">
+<span class="sig-name descname"><span class="pre">test_article_user_relationship_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelRelationships.test_article_user_relationship_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelRelationships.test_article_user_relationship_consistency" title="Link to this definition"></a></dt>
+<dd><p>ArticleとUserのリレーションシップの整合性テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelRelationships.test_foreign_key_consistency">
+<span class="sig-name descname"><span class="pre">test_foreign_key_consistency</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelRelationships.test_foreign_key_consistency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelRelationships.test_foreign_key_consistency" title="Link to this definition"></a></dt>
+<dd><p>外部キーの整合性テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_models.TestModelTableStructure">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_models.</span></span><span class="sig-name descname"><span class="pre">TestModelTableStructure</span></span><a class="reference internal" href="_modules/tests/test_models.html#TestModelTableStructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelTableStructure" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>モデルのテーブル構造テスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelTableStructure.test_all_models_inherit_from_base">
+<span class="sig-name descname"><span class="pre">test_all_models_inherit_from_base</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelTableStructure.test_all_models_inherit_from_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelTableStructure.test_all_models_inherit_from_base" title="Link to this definition"></a></dt>
+<dd><p>すべてのモデルがBaseクラスを継承していることを確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelTableStructure.test_model_docstrings_exist">
+<span class="sig-name descname"><span class="pre">test_model_docstrings_exist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelTableStructure.test_model_docstrings_exist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelTableStructure.test_model_docstrings_exist" title="Link to this definition"></a></dt>
+<dd><p>各モデルにドキュメントが存在することを確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelTableStructure.test_table_names_are_unique">
+<span class="sig-name descname"><span class="pre">test_table_names_are_unique</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelTableStructure.test_table_names_are_unique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelTableStructure.test_table_names_are_unique" title="Link to this definition"></a></dt>
+<dd><p>テーブル名がユニークであることを確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_models.</span></span><span class="sig-name descname"><span class="pre">TestModelsIntegration</span></span><a class="reference internal" href="_modules/tests/test_models.html#TestModelsIntegration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelsIntegration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>モデルの統合テスト（データベース操作を含む）</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration.pytestmark">
+<span class="sig-name descname"><span class="pre">pytestmark</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[Mark(name='integration',</span> <span class="pre">args=(),</span> <span class="pre">kwargs={})]</span></em><a class="headerlink" href="#tests.test_models.TestModelsIntegration.pytestmark" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration.test_email_verification_in_db">
+<span class="sig-name descname"><span class="pre">test_email_verification_in_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelsIntegration.test_email_verification_in_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelsIntegration.test_email_verification_in_db" title="Link to this definition"></a></dt>
+<dd><p>データベースでのEmailVerificationテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration.test_engine">
+<span class="sig-name descname"><span class="pre">test_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelsIntegration.test_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelsIntegration.test_engine" title="Link to this definition"></a></dt>
+<dd><p>テスト用のインメモリデータベースエンジン</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration.test_session">
+<span class="sig-name descname"><span class="pre">test_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_engine</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelsIntegration.test_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelsIntegration.test_session" title="Link to this definition"></a></dt>
+<dd><p>テスト用のデータベースセッション</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration.test_unique_constraints">
+<span class="sig-name descname"><span class="pre">test_unique_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelsIntegration.test_unique_constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelsIntegration.test_unique_constraints" title="Link to this definition"></a></dt>
+<dd><p>ユニーク制約のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestModelsIntegration.test_user_article_relationship_in_db">
+<span class="sig-name descname"><span class="pre">test_user_article_relationship_in_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestModelsIntegration.test_user_article_relationship_in_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestModelsIntegration.test_user_article_relationship_in_db" title="Link to this definition"></a></dt>
+<dd><p>データベースでのUser-Articleリレーションシップテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_models.</span></span><span class="sig-name descname"><span class="pre">TestUserModel</span></span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Userモデルのテストクラス</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel.test_user_columns_definition">
+<span class="sig-name descname"><span class="pre">test_user_columns_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel.test_user_columns_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel.test_user_columns_definition" title="Link to this definition"></a></dt>
+<dd><p>Userモデルのカラム定義を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel.test_user_creation">
+<span class="sig-name descname"><span class="pre">test_user_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel.test_user_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel.test_user_creation" title="Link to this definition"></a></dt>
+<dd><p>Userインスタンスの作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel.test_user_is_active_custom_value">
+<span class="sig-name descname"><span class="pre">test_user_is_active_custom_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel.test_user_is_active_custom_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel.test_user_is_active_custom_value" title="Link to this definition"></a></dt>
+<dd><p>is_activeフィールドのカスタム値テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel.test_user_optional_fields">
+<span class="sig-name descname"><span class="pre">test_user_optional_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel.test_user_optional_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel.test_user_optional_fields" title="Link to this definition"></a></dt>
+<dd><p>Userのオプショナルフィールドのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel.test_user_relationship_definition">
+<span class="sig-name descname"><span class="pre">test_user_relationship_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel.test_user_relationship_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel.test_user_relationship_definition" title="Link to this definition"></a></dt>
+<dd><p>Userモデルのリレーションシップ定義を確認</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_models.TestUserModel.test_user_table_name">
+<span class="sig-name descname"><span class="pre">test_user_table_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_models.html#TestUserModel.test_user_table_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_models.TestUserModel.test_user_table_name" title="Link to this definition"></a></dt>
+<dd><p>テーブル名が正しく設定されていることを確認</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_main.html" class="btn btn-neutral float-left" title="tests.test_main module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_oauth2.html" class="btn btn-neutral float-right" title="tests.test_oauth2 module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

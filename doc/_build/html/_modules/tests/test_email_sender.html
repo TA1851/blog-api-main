@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_email_sender &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_email_sender</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Email Sender Module Test Suite</span>
+
+<span class="sd">Comprehensive test coverage for utils/email_sender.py module including:</span>
+<span class="sd">- Configuration validation</span>
+<span class="sd">- Email sending functionality</span>
+<span class="sd">- Error handling scenarios</span>
+<span class="sd">- Environment variable handling</span>
+<span class="sd">- Development mode testing</span>
+<span class="sd">- Production mode simulation</span>
+<span class="sd">- URL encoding and formatting</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mock</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">AsyncMock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="c1"># Import the module under test</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/Users/tatu/Documents/GitHub/blog-api-main&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.email_sender</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_mail_config</span><span class="p">,</span>
+    <span class="n">send_verification_email</span><span class="p">,</span>
+    <span class="n">send_registration_complete_email</span><span class="p">,</span>
+    <span class="n">send_account_deletion_email</span><span class="p">,</span>
+    <span class="n">_print_dev_mode_email</span><span class="p">,</span>
+    <span class="n">_is_email_enabled</span><span class="p">,</span>
+    <span class="n">_validate_mail_config</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_mail</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConnectionConfig</span><span class="p">,</span> <span class="n">MessageSchema</span><span class="p">,</span> <span class="n">MessageType</span>
+
+
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailSenderHelperFunctions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test helper functions for email configuration and validation&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_get_mail_config_with_default_values">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_with_default_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_mail_config_with_default_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test get_mail_config with default environment values&quot;&quot;&quot;</span>
+        <span class="c1"># MAIL_FROM must be a valid email for ConnectionConfig validation</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;default@example.com&quot;</span>  <span class="c1"># Valid email required</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">get_mail_config</span><span class="p">()</span>
+            
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ConnectionConfig</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_USERNAME</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_PASSWORD</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_FROM</span> <span class="o">==</span> <span class="s2">&quot;default@example.com&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_PORT</span> <span class="o">==</span> <span class="mi">587</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_SERVER</span> <span class="o">==</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_STARTTLS</span> <span class="ow">is</span> <span class="kc">True</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_SSL_TLS</span> <span class="ow">is</span> <span class="kc">False</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">USE_CREDENTIALS</span> <span class="ow">is</span> <span class="kc">True</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">VALIDATE_CERTS</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_get_mail_config_with_custom_values">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_with_custom_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_mail_config_with_custom_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test get_mail_config with custom environment values&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;noreply@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;465&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_SERVER&quot;</span><span class="p">:</span> <span class="s2">&quot;smtp.example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_STARTTLS&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_SSL_TLS&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">get_mail_config</span><span class="p">()</span>
+            
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_USERNAME</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_PASSWORD</span> <span class="o">==</span> <span class="s2">&quot;password123&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_FROM</span> <span class="o">==</span> <span class="s2">&quot;noreply@example.com&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_PORT</span> <span class="o">==</span> <span class="mi">465</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_SERVER</span> <span class="o">==</span> <span class="s2">&quot;smtp.example.com&quot;</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_STARTTLS</span> <span class="ow">is</span> <span class="kc">False</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_SSL_TLS</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_get_mail_config_port_conversion">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_port_conversion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_mail_config_port_conversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test port number conversion from string to integer&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;993&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span>  <span class="c1"># Valid email required</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">get_mail_config</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_PORT</span> <span class="o">==</span> <span class="mi">993</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">MAIL_PORT</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_get_mail_config_boolean_conversion">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_get_mail_config_boolean_conversion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_mail_config_boolean_conversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test boolean conversion for STARTTLS and SSL_TLS&quot;&quot;&quot;</span>
+        <span class="n">test_cases</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;False&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;FALSE&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;invalid&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">:</span>
+            <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;MAIL_STARTTLS&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span>  <span class="c1"># Valid email required</span>
+            <span class="p">}</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">get_mail_config</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">MAIL_STARTTLS</span> <span class="ow">is</span> <span class="n">expected</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_is_email_enabled_true">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_true">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_is_email_enabled_true</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _is_email_enabled returns True when enabled&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">}):</span>
+            <span class="k">assert</span> <span class="n">_is_email_enabled</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_is_email_enabled_false">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_false">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_is_email_enabled_false</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _is_email_enabled returns False when disabled&quot;&quot;&quot;</span>
+        <span class="n">test_cases</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">,</span> <span class="s2">&quot;FALSE&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}):</span>
+                <span class="k">assert</span> <span class="n">_is_email_enabled</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_is_email_enabled_default">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_is_email_enabled_default">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_is_email_enabled_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _is_email_enabled default behavior when env var not set&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_is_email_enabled</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_validate_mail_config_valid">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_valid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validate_mail_config_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _validate_mail_config with valid configuration&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_validate_mail_config</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_validate_mail_config_missing_username">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_username">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validate_mail_config_missing_username</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _validate_mail_config with missing username&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_validate_mail_config</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_validate_mail_config_missing_password">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_password">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validate_mail_config_missing_password</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _validate_mail_config with missing password&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_validate_mail_config</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_validate_mail_config_missing_from">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_missing_from">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validate_mail_config_missing_from</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _validate_mail_config with missing from address&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_validate_mail_config</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_validate_mail_config_empty_values">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_empty_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validate_mail_config_empty_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _validate_mail_config with empty string values&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_validate_mail_config</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailSenderHelperFunctions.test_validate_mail_config_all_empty">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailSenderHelperFunctions.test_validate_mail_config_all_empty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_validate_mail_config_all_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test _validate_mail_config with all empty values&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">_validate_mail_config</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestPrintDevModeEmail">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPrintDevModeEmail">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPrintDevModeEmail</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the development mode email printing function&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestPrintDevModeEmail.test_print_dev_mode_email_basic">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_basic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_print_dev_mode_email_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test basic dev mode email printing&quot;&quot;&quot;</span>
+        <span class="n">_print_dev_mode_email</span><span class="p">(</span>
+            <span class="s2">&quot;Test Title&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Test Subject&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Test content&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;📧 Test Title&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="s2">&quot;宛先: test@example.com&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="s2">&quot;件名: Test Subject&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="s2">&quot;メール内容:&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="s2">&quot;Test content&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestPrintDevModeEmail.test_print_dev_mode_email_with_verification_url">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_with_verification_url">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_print_dev_mode_email_with_verification_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test dev mode email printing with verification URL&quot;&quot;&quot;</span>
+        <span class="n">verification_url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8080/verify?token=abc123&quot;</span>
+        
+        <span class="n">_print_dev_mode_email</span><span class="p">(</span>
+            <span class="s2">&quot;Verification Email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Verify Your Email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Please verify your email&quot;</span><span class="p">,</span>
+            <span class="n">verification_url</span>
+        <span class="p">)</span>
+        
+        <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;📧 Verification Email&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+        <span class="k">assert</span> <span class="sa">f</span><span class="s2">&quot;確認URL: </span><span class="si">{</span><span class="n">verification_url</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestPrintDevModeEmail.test_print_dev_mode_email_without_verification_url">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPrintDevModeEmail.test_print_dev_mode_email_without_verification_url">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_print_dev_mode_email_without_verification_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test dev mode email printing without verification URL&quot;&quot;&quot;</span>
+        <span class="n">_print_dev_mode_email</span><span class="p">(</span>
+            <span class="s2">&quot;Regular Email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Regular Subject&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Regular content&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;確認URL:&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestSendVerificationEmail">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestSendVerificationEmail</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the send_verification_email function&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.setup_env_vars">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.setup_env_vars">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_env_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup common environment variables for tests&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;CORS_ORIGINS&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LOCAL_CORS_ORIGINS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SERVER_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;8080&quot;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">env_vars</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_dev_mode_disabled">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_dev_mode_disabled">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_dev_mode_disabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test verification email in development mode (email disabled)&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                
+                <span class="c1"># Check that logger was called</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
+                
+                <span class="c1"># Check console output</span>
+                <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="s2">&quot;📧 メール送信（開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;test@example.com&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;token123&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_invalid_config">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_invalid_config">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_invalid_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test verification email with invalid mail configuration&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># Invalid config</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                
+                <span class="c1"># Check that error logger was called</span>
+                <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;メール設定が不完全です。開発モードでコンソール出力します。&quot;</span><span class="p">)</span>
+                
+                <span class="c1"># Check console output for dev mode fallback</span>
+                <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="s2">&quot;📧 メール送信（開発モード - 設定不完全）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_url_generation_local">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_url_generation_local">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_url_generation_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test verification URL generation for local environment&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span>  <span class="c1"># To avoid actual sending</span>
+            <span class="s2">&quot;LOCAL_CORS_ORIGINS&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SERVER_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;8080&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token with spaces&quot;</span><span class="p">)</span>
+                
+                <span class="c1"># Check that URL generation log was called</span>
+                <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">mock_logger</span><span class="o">.</span><span class="n">call_args_list</span><span class="p">]</span>
+                <span class="n">url_log</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">call</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">calls</span> <span class="k">if</span> <span class="s2">&quot;生成された確認URL&quot;</span> <span class="ow">in</span> <span class="n">call</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">url_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="s2">&quot;127.0.0.1:8080&quot;</span> <span class="ow">in</span> <span class="n">url_log</span>
+                <span class="k">assert</span> <span class="s2">&quot;token%20with</span><span class="si">%20s</span><span class="s2">paces&quot;</span> <span class="ow">in</span> <span class="n">url_log</span>  <span class="c1"># URL encoded</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_url_generation_production">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_url_generation_production">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_url_generation_production</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test verification URL generation for production environment&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span>  <span class="c1"># To avoid actual sending</span>
+            <span class="s2">&quot;CORS_ORIGINS&quot;</span><span class="p">:</span> <span class="s2">&quot;https://production.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SERVER_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;8080&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="c1"># Need to patch the module-level variables since they&#39;re imported at module load</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.LOCAL_CORS_ORIGINS&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.CORS_ORIGINS&#39;</span><span class="p">,</span> <span class="s2">&quot;https://production.com&quot;</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                        <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                        
+                        <span class="c1"># Check that URL generation log was called</span>
+                        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">mock_logger</span><span class="o">.</span><span class="n">call_args_list</span><span class="p">]</span>
+                        <span class="n">url_log</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">call</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">calls</span> <span class="k">if</span> <span class="s2">&quot;生成された確認URL&quot;</span> <span class="ow">in</span> <span class="n">call</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">assert</span> <span class="n">url_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                        <span class="c1"># When LOCAL_CORS_ORIGINS is None, should use CORS_ORIGINS</span>
+                        <span class="k">assert</span> <span class="s2">&quot;https://production.com&quot;</span> <span class="ow">in</span> <span class="n">url_log</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_successful_sending">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_successful_sending">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_successful_sending</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test successful email sending in production mode&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PREFER_PLAIN_TEXT_EMAIL&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.FastMail&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_fastmail</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                        <span class="c1"># Setup mocks</span>
+                        <span class="n">mock_config</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">ConnectionConfig</span><span class="p">)</span>
+                        <span class="n">mock_mail_instance</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+                        <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_mail_instance</span>
+                        
+                        <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                        
+                        <span class="c1"># Verify FastMail was called</span>
+                        <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                        <span class="n">mock_mail_instance</span><span class="o">.</span><span class="n">send_message</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                        
+                        <span class="c1"># Verify success log</span>
+                        <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
+                        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">mock_logger</span><span class="o">.</span><span class="n">call_args_list</span><span class="p">]</span>
+                        <span class="n">success_log</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">call</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">calls</span> <span class="k">if</span> <span class="s2">&quot;確認メールを送信しました&quot;</span> <span class="ow">in</span> <span class="n">call</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">assert</span> <span class="n">success_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_plain_text_mode">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_plain_text_mode">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_plain_text_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email sending in plain text mode&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PREFER_PLAIN_TEXT_EMAIL&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.FastMail&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_fastmail</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.MessageSchema&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_message_schema</span><span class="p">:</span>
+                        <span class="c1"># Setup mocks</span>
+                        <span class="n">mock_config</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">ConnectionConfig</span><span class="p">)</span>
+                        <span class="n">mock_mail_instance</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+                        <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_mail_instance</span>
+                        
+                        <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                        
+                        <span class="c1"># Verify MessageSchema was called with plain text subtype</span>
+                        <span class="n">mock_message_schema</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                        <span class="n">call_kwargs</span> <span class="o">=</span> <span class="n">mock_message_schema</span><span class="o">.</span><span class="n">call_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">assert</span> <span class="n">call_kwargs</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">MessageType</span><span class="o">.</span><span class="n">plain</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_html_mode">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_html_mode">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_html_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email sending in HTML mode&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PREFER_PLAIN_TEXT_EMAIL&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.FastMail&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_fastmail</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.MessageSchema&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_message_schema</span><span class="p">:</span>
+                        <span class="c1"># Setup mocks</span>
+                        <span class="n">mock_config</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">ConnectionConfig</span><span class="p">)</span>
+                        <span class="n">mock_mail_instance</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+                        <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_mail_instance</span>
+                        
+                        <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                        
+                        <span class="c1"># Verify MessageSchema was called with HTML subtype</span>
+                        <span class="n">mock_message_schema</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                        <span class="n">call_kwargs</span> <span class="o">=</span> <span class="n">mock_message_schema</span><span class="o">.</span><span class="n">call_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">assert</span> <span class="n">call_kwargs</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">MessageType</span><span class="o">.</span><span class="n">html</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_exception_handling">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_exception_handling">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_exception_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test exception handling during email sending&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                    <span class="c1"># Setup mock to raise exception</span>
+                    <span class="n">mock_config</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Connection failed&quot;</span><span class="p">)</span>
+                    
+                    <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                    
+                    <span class="c1"># Verify error was logged</span>
+                    <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;メール送信エラー: Connection failed&quot;</span><span class="p">)</span>
+                    
+                    <span class="c1"># Verify fallback to dev mode</span>
+                    <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                    <span class="k">assert</span> <span class="s2">&quot;📧 メール送信（エラー発生 - 開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendVerificationEmail.test_send_verification_email_config_none_exception">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendVerificationEmail.test_send_verification_email_config_none_exception">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_verification_email_config_none_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test handling when mail config returns None&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                    <span class="c1"># Setup mock to return None</span>
+                    <span class="n">mock_config</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+                    
+                    <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+                    
+                    <span class="c1"># Verify error was logged</span>
+                    <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;メール送信エラー: メール設定が正しく設定されていません&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestSendRegistrationCompleteEmail">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendRegistrationCompleteEmail">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestSendRegistrationCompleteEmail</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the send_registration_complete_email function&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestSendRegistrationCompleteEmail.test_send_registration_complete_email_dev_mode">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_dev_mode">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_registration_complete_email_dev_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test registration complete email in development mode&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                
+                <span class="c1"># Check console output</span>
+                <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="s2">&quot;📧 登録完了メール送信（開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;test@example.com&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;testuser&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;【Blog API】登録完了のお知らせ&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendRegistrationCompleteEmail.test_send_registration_complete_email_invalid_config">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_invalid_config">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_registration_complete_email_invalid_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test registration complete email with invalid configuration&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;メール設定が不完全です。開発モードでコンソール出力します。&quot;</span><span class="p">)</span>
+                
+                <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="s2">&quot;📧 登録完了メール送信（開発モード - 設定不完全）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendRegistrationCompleteEmail.test_send_registration_complete_email_successful">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_successful">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_registration_complete_email_successful</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test successful registration complete email sending&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PREFER_PLAIN_TEXT_EMAIL&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.FastMail&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_fastmail</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                        <span class="n">mock_config</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">ConnectionConfig</span><span class="p">)</span>
+                        <span class="n">mock_mail_instance</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+                        <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_mail_instance</span>
+                        
+                        <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                        
+                        <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                        <span class="n">mock_mail_instance</span><span class="o">.</span><span class="n">send_message</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                        
+                        <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">mock_logger</span><span class="o">.</span><span class="n">call_args_list</span><span class="p">]</span>
+                        <span class="n">success_log</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">call</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">calls</span> <span class="k">if</span> <span class="s2">&quot;登録完了メールを送信しました&quot;</span> <span class="ow">in</span> <span class="n">call</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">assert</span> <span class="n">success_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="TestSendRegistrationCompleteEmail.test_send_registration_complete_email_exception">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendRegistrationCompleteEmail.test_send_registration_complete_email_exception">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_registration_complete_email_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test exception handling in registration complete email&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                    <span class="n">mock_config</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;SMTP error&quot;</span><span class="p">)</span>
+                    
+                    <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                    
+                    <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;登録完了メール送信エラー: SMTP error&quot;</span><span class="p">)</span>
+                    
+                    <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                    <span class="k">assert</span> <span class="s2">&quot;📧 登録完了メール送信（エラー発生 - 開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestSendAccountDeletionEmail">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendAccountDeletionEmail">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestSendAccountDeletionEmail</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test the send_account_deletion_email function&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestSendAccountDeletionEmail.test_send_account_deletion_email_dev_mode">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_dev_mode">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_account_deletion_email_dev_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test account deletion email in development mode&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_account_deletion_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                
+                <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="s2">&quot;📧 退会完了メール送信（開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;test@example.com&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;testuser&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+                <span class="k">assert</span> <span class="s2">&quot;【Blog API】退会完了のお知らせ&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendAccountDeletionEmail.test_send_account_deletion_email_invalid_config">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_invalid_config">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_account_deletion_email_invalid_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test account deletion email with invalid configuration&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">send_account_deletion_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;メール設定が不完全です。開発モードでコンソール出力します。&quot;</span><span class="p">)</span>
+                
+                <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                <span class="k">assert</span> <span class="s2">&quot;📧 退会完了メール送信（開発モード - 設定不完全）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestSendAccountDeletionEmail.test_send_account_deletion_email_successful">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_successful">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_account_deletion_email_successful</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test successful account deletion email sending&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PREFER_PLAIN_TEXT_EMAIL&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.FastMail&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_fastmail</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.MessageSchema&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_message_schema</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                            <span class="n">mock_config</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">ConnectionConfig</span><span class="p">)</span>
+                            <span class="n">mock_mail_instance</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+                            <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_mail_instance</span>
+                            
+                            <span class="k">await</span> <span class="n">send_account_deletion_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                            
+                            <span class="n">mock_fastmail</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                            <span class="n">mock_mail_instance</span><span class="o">.</span><span class="n">send_message</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                            
+                            <span class="c1"># Verify plain text mode</span>
+                            <span class="n">call_kwargs</span> <span class="o">=</span> <span class="n">mock_message_schema</span><span class="o">.</span><span class="n">call_args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="k">assert</span> <span class="n">call_kwargs</span><span class="p">[</span><span class="s1">&#39;subtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">MessageType</span><span class="o">.</span><span class="n">plain</span>
+                            
+                            <span class="n">calls</span> <span class="o">=</span> <span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">mock_logger</span><span class="o">.</span><span class="n">call_args_list</span><span class="p">]</span>
+                            <span class="n">success_log</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">call</span> <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">calls</span> <span class="k">if</span> <span class="s2">&quot;退会完了メールを送信しました&quot;</span> <span class="ow">in</span> <span class="n">call</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                            <span class="k">assert</span> <span class="n">success_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="TestSendAccountDeletionEmail.test_send_account_deletion_email_exception">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestSendAccountDeletionEmail.test_send_account_deletion_email_exception">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_send_account_deletion_email_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test exception handling in account deletion email&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;from@example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.get_mail_config&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_config</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_sender.create_error_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_error_logger</span><span class="p">:</span>
+                    <span class="n">mock_config</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Network timeout&quot;</span><span class="p">)</span>
+                    
+                    <span class="k">await</span> <span class="n">send_account_deletion_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+                    
+                    <span class="n">mock_error_logger</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="s2">&quot;退会完了メール送信エラー: Network timeout&quot;</span><span class="p">)</span>
+                    
+                    <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+                    <span class="k">assert</span> <span class="s2">&quot;📧 退会完了メール送信（エラー発生 - 開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailContentAndFormatting">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailContentAndFormatting">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailContentAndFormatting</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test email content generation and formatting&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailContentAndFormatting.test_verification_email_content_includes_required_elements">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailContentAndFormatting.test_verification_email_content_includes_required_elements">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_verification_email_content_includes_required_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test that verification email includes all required content elements&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;token123&quot;</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            
+            <span class="c1"># Check for required content elements</span>
+            <span class="k">assert</span> <span class="s2">&quot;メールアドレスの確認をお願いします&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;初期パスワード：temp_password_123&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;このリンクの有効時間は24時間です&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;Blog API チーム&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailContentAndFormatting.test_registration_complete_email_content">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailContentAndFormatting.test_registration_complete_email_content">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_registration_complete_email_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test registration complete email content elements&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;こんにちは、testuser&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;Blog APIへのご登録が完了しました&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;ブログ記事の作成・編集・削除&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;コメントの投稿・管理&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;プロフィールの管理&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailContentAndFormatting.test_account_deletion_email_content">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEmailContentAndFormatting.test_account_deletion_email_content">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_account_deletion_email_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test account deletion email content elements&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_account_deletion_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;testuser&quot;</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;こんにちは、testuser&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;退会手続きが完了いたしました&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;ユーザーアカウントの削除&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;投稿された記事の削除&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;個人情報の削除&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;新規登録はいつでも可能です&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEnvironmentVariableHandling">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEnvironmentVariableHandling">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEnvironmentVariableHandling</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test environment variable handling and edge cases&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEnvironmentVariableHandling.test_cors_origins_handling">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEnvironmentVariableHandling.test_cors_origins_handling">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_cors_origins_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test CORS origins environment variable handling&quot;&quot;&quot;</span>
+        <span class="c1"># Test with CORS_ORIGINS set</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;CORS_ORIGINS&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com&quot;</span><span class="p">}):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">email_sender</span>
+            <span class="c1"># This would be used in URL generation</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;https://example.com&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEnvironmentVariableHandling.test_server_port_default">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEnvironmentVariableHandling.test_server_port_default">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_server_port_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test SERVER_PORT default value&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">email_sender</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SERVER_PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8080&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;8080&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEnvironmentVariableHandling.test_server_port_custom">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEnvironmentVariableHandling.test_server_port_custom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_server_port_custom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test SERVER_PORT custom value&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;SERVER_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;3000&quot;</span><span class="p">}):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">email_sender</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SERVER_PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8080&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;3000&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEdgeCasesAndErrorScenarios">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEdgeCasesAndErrorScenarios">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEdgeCasesAndErrorScenarios</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test edge cases and error scenarios&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEdgeCasesAndErrorScenarios.test_email_with_special_characters">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_email_with_special_characters">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_email_with_special_characters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email sending with special characters in email and token&quot;&quot;&quot;</span>
+        <span class="n">special_email</span> <span class="o">=</span> <span class="s2">&quot;test+user@example.com&quot;</span>
+        <span class="n">special_token</span> <span class="o">=</span> <span class="s2">&quot;token/with+special=chars&amp;more&quot;</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="n">special_email</span><span class="p">,</span> <span class="n">special_token</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">special_email</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="c1"># Token should be URL encoded in the URL</span>
+            <span class="k">assert</span> <span class="s2">&quot;token</span><span class="si">%2F</span><span class="s2">with%2Bspecial%3Dchars%26more&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestEdgeCasesAndErrorScenarios.test_empty_string_parameters">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_empty_string_parameters">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_empty_string_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test functions with empty string parameters&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="s2">&quot;宛先: &quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>  <span class="c1"># Empty email</span></div>
+
+    
+<div class="viewcode-block" id="TestEdgeCasesAndErrorScenarios.test_unicode_characters_in_username">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_unicode_characters_in_username">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_unicode_characters_in_username</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email functions with unicode characters in username&quot;&quot;&quot;</span>
+        <span class="n">unicode_username</span> <span class="o">=</span> <span class="s2">&quot;テストユーザー&quot;</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="n">unicode_username</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">unicode_username</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_port">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_port">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_mail_config_with_invalid_port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test mail config with non-numeric port&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_PORT&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+                <span class="n">get_mail_config</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_email_format">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestEdgeCasesAndErrorScenarios.test_mail_config_with_invalid_email_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_mail_config_with_invalid_email_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test mail config with invalid email format&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAIL_FROM&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid-email-format&quot;</span>
+        <span class="p">}</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>  <span class="c1"># Pydantic validation error</span>
+                <span class="n">get_mail_config</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestIntegrationScenarios">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestIntegrationScenarios">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestIntegrationScenarios</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test integration scenarios and realistic use cases&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.test_complete_user_registration_flow">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestIntegrationScenarios.test_complete_user_registration_flow">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_complete_user_registration_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test complete user registration email flow&quot;&quot;&quot;</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;newuser@example.com&quot;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;verification_token_123&quot;</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;newuser&quot;</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="c1"># Step 1: Send verification email</span>
+            <span class="k">await</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+            
+            <span class="c1"># Step 2: Send registration complete email</span>
+            <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            
+            <span class="c1"># Verify both emails were processed</span>
+            <span class="k">assert</span> <span class="s2">&quot;メール送信（開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="s2">&quot;登録完了メール送信（開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">username</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+
+    
+<div class="viewcode-block" id="TestIntegrationScenarios.test_user_deletion_flow">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestIntegrationScenarios.test_user_deletion_flow">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_user_deletion_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capsys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test user account deletion email flow&quot;&quot;&quot;</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;deleteme@example.com&quot;</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;deleteme&quot;</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">await</span> <span class="n">send_account_deletion_email</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span>
+            
+            <span class="n">captured</span> <span class="o">=</span> <span class="n">capsys</span><span class="o">.</span><span class="n">readouterr</span><span class="p">()</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;退会完了メール送信（開発モード）&quot;</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span>
+            <span class="k">assert</span> <span class="n">username</span> <span class="ow">in</span> <span class="n">captured</span><span class="o">.</span><span class="n">out</span></div>
+</div>
+
+
+
+<span class="c1"># Performance and Load Testing Helpers</span>
+<div class="viewcode-block" id="TestPerformanceConsiderations">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPerformanceConsiderations">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestPerformanceConsiderations</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test performance-related aspects&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestPerformanceConsiderations.test_multiple_concurrent_emails">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPerformanceConsiderations.test_multiple_concurrent_emails">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_multiple_concurrent_emails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test handling multiple concurrent email requests&quot;&quot;&quot;</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">send_verification_email</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;user</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">@example.com&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;token</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_EMAIL_SENDING&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="c1"># All should complete without errors</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestPerformanceConsiderations.test_config_creation_efficiency">
+<a class="viewcode-back" href="../../tests.test_email_sender.html#tests.test_email_sender.TestPerformanceConsiderations.test_config_creation_efficiency">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_config_creation_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test that config creation is efficient for repeated calls&quot;&quot;&quot;</span>
+        <span class="c1"># Multiple calls should not cause issues</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">get_mail_config</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ConnectionConfig</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Run specific test groups</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--tb=short&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

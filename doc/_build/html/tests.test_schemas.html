@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_schemas module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_user_deletion_integration module" href="tests.test_user_deletion_integration.html" />
+    <link rel="prev" title="tests.test_routers_corrected module" href="tests.test_routers_corrected.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_schemas module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestAccountDeletionRequest"><code class="docutils literal notranslate"><span class="pre">TestAccountDeletionRequest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestArticle"><code class="docutils literal notranslate"><span class="pre">TestArticle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestArticleBase"><code class="docutils literal notranslate"><span class="pre">TestArticleBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestLengthMismatchError"><code class="docutils literal notranslate"><span class="pre">TestLengthMismatchError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestLogin"><code class="docutils literal notranslate"><span class="pre">TestLogin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestPasswordChange"><code class="docutils literal notranslate"><span class="pre">TestPasswordChange</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestPublicArticle"><code class="docutils literal notranslate"><span class="pre">TestPublicArticle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestShowArticle"><code class="docutils literal notranslate"><span class="pre">TestShowArticle</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestShowUser"><code class="docutils literal notranslate"><span class="pre">TestShowUser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestToken"><code class="docutils literal notranslate"><span class="pre">TestToken</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestTokenData"><code class="docutils literal notranslate"><span class="pre">TestTokenData</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_schemas.TestUser"><code class="docutils literal notranslate"><span class="pre">TestUser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_schemas module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_schemas.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_schemas">
+<span id="tests-test-schemas-module"></span><h1>tests.test_schemas module<a class="headerlink" href="#module-tests.test_schemas" title="Link to this heading"></a></h1>
+<p>schemasモジュールのテストコード</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestAccountDeletionRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestAccountDeletionRequest</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestAccountDeletionRequest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestAccountDeletionRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AccountDeletionRequestモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestAccountDeletionRequest.test_email_validation_for_deletion">
+<span class="sig-name descname"><span class="pre">test_email_validation_for_deletion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestAccountDeletionRequest.test_email_validation_for_deletion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestAccountDeletionRequest.test_email_validation_for_deletion" title="Link to this definition"></a></dt>
+<dd><p>退会リクエストのメールアドレス形式チェックのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestAccountDeletionRequest.test_password_min_length">
+<span class="sig-name descname"><span class="pre">test_password_min_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestAccountDeletionRequest.test_password_min_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestAccountDeletionRequest.test_password_min_length" title="Link to this definition"></a></dt>
+<dd><p>パスワードの最小文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestAccountDeletionRequest.test_valid_deletion_request">
+<span class="sig-name descname"><span class="pre">test_valid_deletion_request</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestAccountDeletionRequest.test_valid_deletion_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestAccountDeletionRequest.test_valid_deletion_request" title="Link to this definition"></a></dt>
+<dd><p>有効な退会リクエストのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestAccountDeletionRequest.test_validate_passwords_match_failure">
+<span class="sig-name descname"><span class="pre">test_validate_passwords_match_failure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestAccountDeletionRequest.test_validate_passwords_match_failure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestAccountDeletionRequest.test_validate_passwords_match_failure" title="Link to this definition"></a></dt>
+<dd><p>パスワード一致検証の失敗テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestAccountDeletionRequest.test_validate_passwords_match_success">
+<span class="sig-name descname"><span class="pre">test_validate_passwords_match_success</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestAccountDeletionRequest.test_validate_passwords_match_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestAccountDeletionRequest.test_validate_passwords_match_success" title="Link to this definition"></a></dt>
+<dd><p>パスワード一致検証の成功テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestArticle</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Articleモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticle.test_article_inheritance">
+<span class="sig-name descname"><span class="pre">test_article_inheritance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticle.test_article_inheritance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticle.test_article_inheritance" title="Link to this definition"></a></dt>
+<dd><p>ArticleBaseを継承していることをテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestArticleBase</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ArticleBaseモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase.test_body_html_conversion">
+<span class="sig-name descname"><span class="pre">test_body_html_conversion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase.test_body_html_conversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase.test_body_html_conversion" title="Link to this definition"></a></dt>
+<dd><p>Markdown→HTML変換のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase.test_body_max_length_validation">
+<span class="sig-name descname"><span class="pre">test_body_max_length_validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase.test_body_max_length_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase.test_body_max_length_validation" title="Link to this definition"></a></dt>
+<dd><p>本文の最大文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase.test_optional_fields">
+<span class="sig-name descname"><span class="pre">test_optional_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase.test_optional_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase.test_optional_fields" title="Link to this definition"></a></dt>
+<dd><p>オプションフィールドのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase.test_required_fields">
+<span class="sig-name descname"><span class="pre">test_required_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase.test_required_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase.test_required_fields" title="Link to this definition"></a></dt>
+<dd><p>必須フィールドが不足した場合のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase.test_title_max_length_validation">
+<span class="sig-name descname"><span class="pre">test_title_max_length_validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase.test_title_max_length_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase.test_title_max_length_validation" title="Link to this definition"></a></dt>
+<dd><p>タイトルの最大文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestArticleBase.test_valid_article_creation">
+<span class="sig-name descname"><span class="pre">test_valid_article_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestArticleBase.test_valid_article_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestArticleBase.test_valid_article_creation" title="Link to this definition"></a></dt>
+<dd><p>有効な記事データでモデルが作成できることをテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestLengthMismatchError">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestLengthMismatchError</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestLengthMismatchError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestLengthMismatchError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>LengthMismatchErrorのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestLengthMismatchError.test_custom_exception">
+<span class="sig-name descname"><span class="pre">test_custom_exception</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestLengthMismatchError.test_custom_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestLengthMismatchError.test_custom_exception" title="Link to this definition"></a></dt>
+<dd><p>カスタム例外が正しく動作することをテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestLogin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestLogin</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestLogin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestLogin" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Loginモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestLogin.test_login_email_validation">
+<span class="sig-name descname"><span class="pre">test_login_email_validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestLogin.test_login_email_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestLogin.test_login_email_validation" title="Link to this definition"></a></dt>
+<dd><p>Loginのメールアドレス形式チェックのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestLogin.test_password_max_length">
+<span class="sig-name descname"><span class="pre">test_password_max_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestLogin.test_password_max_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestLogin.test_password_max_length" title="Link to this definition"></a></dt>
+<dd><p>パスワードの最大文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestLogin.test_valid_login">
+<span class="sig-name descname"><span class="pre">test_valid_login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestLogin.test_valid_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestLogin.test_valid_login" title="Link to this definition"></a></dt>
+<dd><p>有効なログインデータのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPasswordChange">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestPasswordChange</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPasswordChange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPasswordChange" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PasswordChangeモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPasswordChange.test_new_password_min_length">
+<span class="sig-name descname"><span class="pre">test_new_password_min_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPasswordChange.test_new_password_min_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPasswordChange.test_new_password_min_length" title="Link to this definition"></a></dt>
+<dd><p>新しいパスワードの最小文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPasswordChange.test_required_fields">
+<span class="sig-name descname"><span class="pre">test_required_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPasswordChange.test_required_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPasswordChange.test_required_fields" title="Link to this definition"></a></dt>
+<dd><p>必須フィールドのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPasswordChange.test_username_email_validation">
+<span class="sig-name descname"><span class="pre">test_username_email_validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPasswordChange.test_username_email_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPasswordChange.test_username_email_validation" title="Link to this definition"></a></dt>
+<dd><p>ユーザー名（メールアドレス）の形式チェックのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPasswordChange.test_valid_password_change">
+<span class="sig-name descname"><span class="pre">test_valid_password_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPasswordChange.test_valid_password_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPasswordChange.test_valid_password_change" title="Link to this definition"></a></dt>
+<dd><p>有効なパスワード変更データのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPublicArticle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestPublicArticle</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPublicArticle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPublicArticle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PublicArticleモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPublicArticle.test_public_article_creation">
+<span class="sig-name descname"><span class="pre">test_public_article_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPublicArticle.test_public_article_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPublicArticle.test_public_article_creation" title="Link to this definition"></a></dt>
+<dd><p>パブリック記事モデルの作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestPublicArticle.test_required_fields">
+<span class="sig-name descname"><span class="pre">test_required_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestPublicArticle.test_required_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestPublicArticle.test_required_fields" title="Link to this definition"></a></dt>
+<dd><p>必須フィールドのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestShowArticle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestShowArticle</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestShowArticle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestShowArticle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ShowArticleモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestShowArticle.test_body_html_with_none_body">
+<span class="sig-name descname"><span class="pre">test_body_html_with_none_body</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestShowArticle.test_body_html_with_none_body"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestShowArticle.test_body_html_with_none_body" title="Link to this definition"></a></dt>
+<dd><p>bodyがNoneの場合のHTML変換のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestShowArticle.test_show_article_with_body_html">
+<span class="sig-name descname"><span class="pre">test_show_article_with_body_html</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestShowArticle.test_show_article_with_body_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestShowArticle.test_show_article_with_body_html" title="Link to this definition"></a></dt>
+<dd><p>HTML変換を含む記事表示モデルのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestShowUser">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestShowUser</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestShowUser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestShowUser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ShowUserモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestShowUser.test_show_user_with_blogs">
+<span class="sig-name descname"><span class="pre">test_show_user_with_blogs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestShowUser.test_show_user_with_blogs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestShowUser.test_show_user_with_blogs" title="Link to this definition"></a></dt>
+<dd><p>ブログ記事を含むユーザー表示モデルのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestToken">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestToken</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestToken"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestToken" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Tokenモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestToken.test_token_creation">
+<span class="sig-name descname"><span class="pre">test_token_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestToken.test_token_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestToken.test_token_creation" title="Link to this definition"></a></dt>
+<dd><p>トークンモデルの作成テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestTokenData">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestTokenData</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestTokenData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestTokenData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TokenDataモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestTokenData.test_token_data_with_email">
+<span class="sig-name descname"><span class="pre">test_token_data_with_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestTokenData.test_token_data_with_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestTokenData.test_token_data_with_email" title="Link to this definition"></a></dt>
+<dd><p>メールアドレス付きトークンデータのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestTokenData.test_token_data_without_email">
+<span class="sig-name descname"><span class="pre">test_token_data_without_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestTokenData.test_token_data_without_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestTokenData.test_token_data_without_email" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスなしトークンデータのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_schemas.TestUser">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_schemas.</span></span><span class="sig-name descname"><span class="pre">TestUser</span></span><a class="reference internal" href="_modules/tests/test_schemas.html#TestUser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestUser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Userモデルのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestUser.test_email_max_length">
+<span class="sig-name descname"><span class="pre">test_email_max_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestUser.test_email_max_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestUser.test_email_max_length" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスの最大文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestUser.test_email_validation">
+<span class="sig-name descname"><span class="pre">test_email_validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestUser.test_email_validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestUser.test_email_validation" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスの形式チェックのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestUser.test_optional_fields">
+<span class="sig-name descname"><span class="pre">test_optional_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestUser.test_optional_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestUser.test_optional_fields" title="Link to this definition"></a></dt>
+<dd><p>全フィールドがオプションであることをテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestUser.test_password_max_length">
+<span class="sig-name descname"><span class="pre">test_password_max_length</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestUser.test_password_max_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestUser.test_password_max_length" title="Link to this definition"></a></dt>
+<dd><p>パスワードの最大文字数制限のテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_schemas.TestUser.test_valid_user_creation">
+<span class="sig-name descname"><span class="pre">test_valid_user_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_schemas.html#TestUser.test_valid_user_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_schemas.TestUser.test_valid_user_creation" title="Link to this definition"></a></dt>
+<dd><p>有効なユーザーデータでモデルが作成できることをテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_routers_corrected.html" class="btn btn-neutral float-left" title="tests.test_routers_corrected module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_user_deletion_integration.html" class="btn btn-neutral float-right" title="tests.test_user_deletion_integration module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

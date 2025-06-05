@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_routers_corrected &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_routers_corrected</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Corrected Router Test Suite for Blog API</span>
+<span class="sd">修正されたBlog APIルーターの包括的テストスイート</span>
+
+<span class="sd">This module contains comprehensive tests for all router modules:</span>
+<span class="sd">- Article Router (/api/v1/articles)</span>
+<span class="sd">- Auth Router (/api/v1/login, /api/v1/logout, /api/v1/change-password)</span>
+<span class="sd">- User Router (/api/v1/user)</span>
+
+<span class="sd">Test Coverage:</span>
+<span class="sd">- CRUD operations</span>
+<span class="sd">- Authentication flows  </span>
+<span class="sd">- Error handling</span>
+<span class="sd">- Input validation</span>
+<span class="sd">- Security features</span>
+<span class="sd">- Performance metrics</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mock</span><span class="p">,</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+
+<span class="c1"># FastAPI testing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="c1"># Import the main FastAPI app</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Article</span><span class="p">,</span> <span class="n">EmailVerification</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserSchema</span><span class="p">,</span> <span class="n">ArticleBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">oauth2</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_current_user</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hash</span>
+
+
+<span class="c1"># Test Configuration</span>
+<div class="viewcode-block" id="TestConfig">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test configuration constants&quot;&quot;&quot;</span>
+    <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">API_V1_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;/api/v1&quot;</span>
+    <span class="n">TEST_USER_EMAIL</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+    <span class="n">TEST_USER_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;testpass123&quot;</span>
+    <span class="n">TEST_ARTICLE_TITLE</span> <span class="o">=</span> <span class="s2">&quot;Test Article&quot;</span>
+    <span class="n">TEST_ARTICLE_CONTENT</span> <span class="o">=</span> <span class="s2">&quot;This is test content&quot;</span>
+    <span class="n">RATE_LIMIT_CALLS</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">PERFORMANCE_THRESHOLD_MS</span> <span class="o">=</span> <span class="mi">1000</span></div>
+
+
+
+<span class="c1"># Test Client Setup</span>
+<div class="viewcode-block" id="client">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.client">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create test client&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mock_db">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.mock_db">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create mock database session&quot;&quot;&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">refresh</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">delete</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">db</span></div>
+
+
+
+<div class="viewcode-block" id="mock_user">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.mock_user">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mock_user</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create mock user for testing&quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">User</span><span class="p">)</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">verification_attempts</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">Hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="p">(</span><span class="s2">&quot;testpass123&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span></div>
+
+
+
+<div class="viewcode-block" id="mock_article">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.mock_article">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mock_article</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create mock article for testing&quot;&quot;&quot;</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Article</span><span class="p">)</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_ARTICLE_TITLE</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_ARTICLE_CONTENT</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">is_published</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">created_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">updated_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">article</span></div>
+
+
+
+<div class="viewcode-block" id="auth_headers">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.auth_headers">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">auth_headers</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create authentication headers&quot;&quot;&quot;</span>
+    <span class="c1"># Mock JWT token</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNjk5OTk5OTk5fQ.test_signature&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span></div>
+
+
+
+<span class="c1"># Article Router Tests</span>
+<div class="viewcode-block" id="TestArticleRouterCorrected">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestArticleRouterCorrected</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Corrected tests for Article Router endpoints&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_get_all_articles_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_all_articles_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_all_articles_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/articles - successful retrieval&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">order_by</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">limit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">offset</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_article</span><span class="p">]</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_get_article_by_id_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_article_by_id_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_article_by_id_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/articles/{id} - successful retrieval&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_article</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles/1&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_create_article_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_create_article_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_article_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/articles - successful creation&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="n">article_data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Article&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Article content&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;is_published&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="p">}</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">json</span><span class="o">=</span><span class="n">article_data</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_update_article_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_update_article_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_update_article_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test PUT /api/v1/articles - successful update&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_article</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">update_data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated Article&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated content&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;is_published&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="p">}</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">json</span><span class="o">=</span><span class="n">update_data</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_202_ACCEPTED</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_delete_article_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_delete_article_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_article_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test DELETE /api/v1/articles - successful deletion&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_article</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">delete_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">json</span><span class="o">=</span><span class="n">delete_data</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_204_NO_CONTENT</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_get_public_articles">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_public_articles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_public_articles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/public/articles - public access&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock database query</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">order_by</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">limit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">offset</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_article</span><span class="p">]</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/public/articles&quot;</span><span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_search_public_articles">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_search_public_articles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_search_public_articles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/public/articles/search - search functionality&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock database query</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">order_by</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">limit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">offset</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_article</span><span class="p">]</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/public/articles/search&quot;</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
+            <span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestArticleRouterCorrected.test_get_public_article_by_id">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestArticleRouterCorrected.test_get_public_article_by_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_public_article_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/public/articles/{article_id} - public article access&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock database query</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_article</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/public/articles/1&quot;</span><span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+</div>
+
+
+
+<span class="c1"># Auth Router Tests</span>
+<div class="viewcode-block" id="TestAuthRouterCorrected">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestAuthRouterCorrected">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestAuthRouterCorrected</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Corrected tests for Auth Router endpoints&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestAuthRouterCorrected.test_login_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestAuthRouterCorrected.test_login_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/login - successful login&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.Hash.verify&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.create_access_token&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;test_token&quot;</span><span class="p">):</span>
+                    <span class="c1"># Mock database query</span>
+                    <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                    <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                    <span class="n">login_data</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                        <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_PASSWORD</span>
+                    <span class="p">}</span>
+
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/login&quot;</span><span class="p">,</span>
+                        <span class="n">data</span><span class="o">=</span><span class="n">login_data</span>
+                    <span class="p">)</span>
+                    
+                    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="k">assert</span> <span class="s2">&quot;access_token&quot;</span> <span class="ow">in</span> <span class="n">data</span>
+                    <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;token_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bearer&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouterCorrected.test_login_invalid_credentials">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestAuthRouterCorrected.test_login_invalid_credentials">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_login_invalid_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/login - invalid credentials&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock database query returning None (user not found)</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">login_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid@example.com&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;wrongpassword&quot;</span>
+            <span class="p">}</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/login&quot;</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">login_data</span>
+            <span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouterCorrected.test_logout_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestAuthRouterCorrected.test_logout_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logout_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/logout - successful logout&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/logout&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouterCorrected.test_change_password_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestAuthRouterCorrected.test_change_password_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_change_password_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/change-password - successful password change&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.Hash.verify&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.Hash.bcrypt&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;new_hashed_password&quot;</span><span class="p">):</span>
+                    <span class="c1"># Mock database query</span>
+                    <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                    <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                    <span class="n">password_data</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                        <span class="s2">&quot;current_password&quot;</span><span class="p">:</span> <span class="s2">&quot;oldpassword&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;new_password&quot;</span><span class="p">:</span> <span class="s2">&quot;newpassword123&quot;</span>
+                    <span class="p">}</span>
+
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/change-password&quot;</span><span class="p">,</span>
+                        <span class="n">json</span><span class="o">=</span><span class="n">password_data</span>
+                    <span class="p">)</span>
+                    
+                    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestAuthRouterCorrected.test_get_article_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestAuthRouterCorrected.test_get_article_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_article_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/article - get article endpoint&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_article</span><span class="p">]</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/article&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+</div>
+
+
+
+<span class="c1"># User Router Tests</span>
+<div class="viewcode-block" id="TestUserRouterCorrected">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestUserRouterCorrected">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUserRouterCorrected</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Corrected tests for User Router endpoints&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestUserRouterCorrected.test_create_user_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestUserRouterCorrected.test_create_user_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/user - successful user creation&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.bcrypt&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;hashed_password&quot;</span><span class="p">):</span>
+                        <span class="c1"># Mock database queries</span>
+                        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                        <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># User doesn&#39;t exist</span>
+                        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;newuser@example.com&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+                        <span class="p">}</span>
+
+                        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user&quot;</span><span class="p">,</span>
+                            <span class="n">json</span><span class="o">=</span><span class="n">user_data</span>
+                        <span class="p">)</span>
+                        
+                        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span></div>
+
+
+<div class="viewcode-block" id="TestUserRouterCorrected.test_verify_email_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestUserRouterCorrected.test_verify_email_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/verify-email - successful email verification&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock email verification record</span>
+            <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EmailVerification</span><span class="p">)</span>
+            <span class="n">mock_verification</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Mock database queries</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_verification</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">]</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/verify-email&quot;</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="s2">&quot;test_verification_token&quot;</span><span class="p">}</span>
+            <span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestUserRouterCorrected.test_get_user_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestUserRouterCorrected.test_get_user_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_get_user_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test GET /api/v1/user/{user_id} - successful user retrieval&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user/1&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestUserRouterCorrected.test_resend_verification_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestUserRouterCorrected.test_resend_verification_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_resend_verification_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test POST /api/v1/resend-verification - successful verification resend&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">verification_data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span>
+                <span class="p">}</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/resend-verification&quot;</span><span class="p">,</span>
+                    <span class="n">json</span><span class="o">=</span><span class="n">verification_data</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestUserRouterCorrected.test_delete_user_account_success">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestUserRouterCorrected.test_delete_user_account_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test DELETE /api/v1/user/delete-account - successful account deletion&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.verify&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_account_deletion_email&#39;</span><span class="p">):</span>
+                        <span class="c1"># Mock database queries</span>
+                        <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                        <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                        <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                        <span class="n">mock_query</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># No articles</span>
+                        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                        <span class="n">deletion_data</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_PASSWORD</span><span class="p">,</span>
+                            <span class="s2">&quot;confirmation&quot;</span><span class="p">:</span> <span class="s2">&quot;DELETE&quot;</span>
+                        <span class="p">}</span>
+
+                        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user/delete-account&quot;</span><span class="p">,</span>
+                            <span class="n">json</span><span class="o">=</span><span class="n">deletion_data</span><span class="p">,</span>
+                            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                        <span class="p">)</span>
+                        
+                        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+</div>
+
+
+
+<span class="c1"># Error Handling Tests</span>
+<div class="viewcode-block" id="TestRoutersErrorHandling">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersErrorHandling">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestRoutersErrorHandling</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test error handling scenarios across all routers&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestRoutersErrorHandling.test_unauthorized_access">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersErrorHandling.test_unauthorized_access">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unauthorized_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test unauthorized access to protected endpoints&quot;&quot;&quot;</span>
+        <span class="c1"># Test protected article endpoint without auth</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span>
+
+        <span class="c1"># Test protected user endpoint without auth</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user/1&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersErrorHandling.test_invalid_article_id">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersErrorHandling.test_invalid_article_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_article_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test accessing non-existent article&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query returning None</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles/999&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersErrorHandling.test_invalid_user_id">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersErrorHandling.test_invalid_user_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_user_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test accessing non-existent user&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query returning None</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user/999&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersErrorHandling.test_duplicate_user_creation">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersErrorHandling.test_duplicate_user_creation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_duplicate_user_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test creating user with existing email&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock database query returning existing user</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+            <span class="p">}</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">user_data</span>
+            <span class="p">)</span>
+            
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span></div>
+</div>
+
+
+
+<span class="c1"># Input Validation Tests</span>
+<div class="viewcode-block" id="TestRoutersValidation">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersValidation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestRoutersValidation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test input validation across all routers&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestRoutersValidation.test_invalid_email_format">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersValidation.test_invalid_email_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_email_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test user creation with invalid email format&quot;&quot;&quot;</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid-email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">user_data</span>
+        <span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersValidation.test_weak_password">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersValidation.test_weak_password">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_weak_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test user creation with weak password&quot;&quot;&quot;</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span>  <span class="c1"># Too short</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">user_data</span>
+        <span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersValidation.test_empty_article_title">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersValidation.test_empty_article_title">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_empty_article_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test article creation with empty title&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="n">article_data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># Empty title</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Some content&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;is_published&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="p">}</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">json</span><span class="o">=</span><span class="n">article_data</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersValidation.test_missing_required_fields">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersValidation.test_missing_required_fields">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_missing_required_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test requests with missing required fields&quot;&quot;&quot;</span>
+        <span class="c1"># Test login without password</span>
+        <span class="n">login_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/login&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">login_data</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span>
+
+        <span class="c1"># Test user creation without email</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password123&quot;</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">user_data</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span></div>
+</div>
+
+
+
+<span class="c1"># Performance Tests</span>
+<div class="viewcode-block" id="TestRoutersPerformance">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersPerformance">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestRoutersPerformance</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test performance characteristics of router endpoints&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestRoutersPerformance.test_article_list_performance">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersPerformance.test_article_list_performance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_article_list_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test performance of article listing endpoint&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Mock database query</span>
+                <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">order_by</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">limit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                <span class="n">mock_query</span><span class="o">.</span><span class="n">offset</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+                <span class="n">response_time_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+                <span class="k">assert</span> <span class="n">response_time_ms</span> <span class="o">&lt;</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">PERFORMANCE_THRESHOLD_MS</span>
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersPerformance.test_concurrent_login_requests">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersPerformance.test_concurrent_login_requests">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_concurrent_login_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test handling of concurrent login requests&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.Hash.verify&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.create_access_token&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;test_token&quot;</span><span class="p">):</span>
+                    <span class="c1"># Mock database query</span>
+                    <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                    <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                    <span class="k">def</span><span class="w"> </span><span class="nf">make_login_request</span><span class="p">():</span>
+                        <span class="n">login_data</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_PASSWORD</span>
+                        <span class="p">}</span>
+                        <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/login&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">login_data</span><span class="p">)</span>
+
+                    <span class="c1"># Execute concurrent requests</span>
+                    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                        <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">make_login_request</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+                        <span class="n">responses</span> <span class="o">=</span> <span class="p">[</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">]</span>
+
+                    <span class="c1"># All requests should succeed</span>
+                    <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+</div>
+
+
+
+<span class="c1"># Security Tests</span>
+<div class="viewcode-block" id="TestRoutersSecurity">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersSecurity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestRoutersSecurity</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test security aspects of router endpoints&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestRoutersSecurity.test_sql_injection_protection">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersSecurity.test_sql_injection_protection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_sql_injection_protection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test protection against SQL injection attacks&quot;&quot;&quot;</span>
+        <span class="c1"># Test SQL injection in search endpoint</span>
+        <span class="n">malicious_query</span> <span class="o">=</span> <span class="s2">&quot;&#39;; DROP TABLE users; --&quot;</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="c1"># Mock database query</span>
+            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">order_by</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">limit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+            <span class="n">mock_query</span><span class="o">.</span><span class="n">offset</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/public/articles/search&quot;</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">malicious_query</span><span class="p">}</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># Should not cause server error</span>
+            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersSecurity.test_xss_protection">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersSecurity.test_xss_protection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_xss_protection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test protection against XSS attacks&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                <span class="c1"># Test XSS in article content</span>
+                <span class="n">malicious_content</span> <span class="o">=</span> <span class="s2">&quot;&lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;&quot;</span>
+                <span class="n">article_data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Test Article&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">malicious_content</span><span class="p">,</span>
+                    <span class="s2">&quot;is_published&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="p">}</span>
+
+                <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                    <span class="n">json</span><span class="o">=</span><span class="n">article_data</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                <span class="p">)</span>
+                
+                <span class="c1"># Should either succeed (content will be sanitized) or reject</span>
+                <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">,</span> 
+                    <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">,</span>
+                    <span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span>
+                <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersSecurity.test_rate_limiting_simulation">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersSecurity.test_rate_limiting_simulation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_rate_limiting_simulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test rate limiting behavior simulation&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.Hash.verify&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.create_access_token&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;test_token&quot;</span><span class="p">):</span>
+                    <span class="c1"># Mock database query</span>
+                    <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                    <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+                    <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                    <span class="c1"># Simulate rapid requests</span>
+                    <span class="n">responses</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># Reduced from 100 for faster testing</span>
+                        <span class="n">login_data</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_PASSWORD</span>
+                        <span class="p">}</span>
+                        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/login&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">login_data</span><span class="p">)</span>
+                        <span class="n">responses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+                    <span class="c1"># Most requests should succeed (in real scenario, some might be rate limited)</span>
+                    <span class="n">success_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">responses</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">success_count</span> <span class="o">&gt;=</span> <span class="mi">5</span>  <span class="c1"># At least half should succeed</span></div>
+
+
+<div class="viewcode-block" id="TestRoutersSecurity.test_authentication_token_validation">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersSecurity.test_authentication_token_validation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_authentication_token_validation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test authentication token validation&quot;&quot;&quot;</span>
+        <span class="c1"># Test with invalid token</span>
+        <span class="n">invalid_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer invalid_token&quot;</span><span class="p">}</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">invalid_headers</span>
+        <span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span>
+
+        <span class="c1"># Test with malformed authorization header</span>
+        <span class="n">malformed_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidFormat token&quot;</span><span class="p">}</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">malformed_headers</span>
+        <span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span></div>
+</div>
+
+
+
+<span class="c1"># Integration Tests</span>
+<div class="viewcode-block" id="TestRoutersIntegration">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersIntegration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestRoutersIntegration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Integration tests spanning multiple router functionalities&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestRoutersIntegration.test_complete_user_article_workflow">
+<a class="viewcode-back" href="../../tests.test_routers_corrected.html#tests.test_routers_corrected.TestRoutersIntegration.test_complete_user_article_workflow">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_complete_user_article_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test complete workflow: user creation -&gt; login -&gt; article creation -&gt; retrieval&quot;&quot;&quot;</span>
+        <span class="c1"># Mock user and article objects</span>
+        <span class="n">mock_user</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">User</span><span class="p">)</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">verification_attempts</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">mock_article</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Article</span><span class="p">)</span>
+        <span class="n">mock_article</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">mock_article</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_ARTICLE_TITLE</span>
+        <span class="n">mock_article</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_ARTICLE_CONTENT</span>
+        <span class="n">mock_article</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_db&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_db</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">):</span>
+                            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.bcrypt&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;hashed_password&quot;</span><span class="p">):</span>
+                                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.Hash.verify&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.auth.create_access_token&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;test_token&quot;</span><span class="p">):</span>
+                                        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.article.get_current_user&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="n">mock_user</span><span class="p">):</span>
+                                            
+                                            <span class="c1"># Setup mock database responses</span>
+                                            <span class="n">mock_query</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+                                            <span class="n">mock_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                                            <span class="n">mock_query</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">mock_user</span><span class="p">,</span> <span class="n">mock_article</span><span class="p">]</span>  <span class="c1"># User creation, login, article retrieval</span>
+                                            <span class="n">mock_query</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_article</span><span class="p">]</span>
+                                            <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+
+                                            <span class="c1"># 1. Create user</span>
+                                            <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+                                                <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                                                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_PASSWORD</span>
+                                            <span class="p">}</span>
+                                            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/user&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">user_data</span><span class="p">)</span>
+                                            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span>
+
+                                            <span class="c1"># 2. Login</span>
+                                            <span class="n">login_data</span> <span class="o">=</span> <span class="p">{</span>
+                                                <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_EMAIL</span><span class="p">,</span>
+                                                <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_USER_PASSWORD</span>
+                                            <span class="p">}</span>
+                                            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/login&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">login_data</span><span class="p">)</span>
+                                            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span>
+                                            
+                                            <span class="c1"># 3. Create article</span>
+                                            <span class="n">article_data</span> <span class="o">=</span> <span class="p">{</span>
+                                                <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_ARTICLE_TITLE</span><span class="p">,</span>
+                                                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">TestConfig</span><span class="o">.</span><span class="n">TEST_ARTICLE_CONTENT</span><span class="p">,</span>
+                                                <span class="s2">&quot;is_published&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                                            <span class="p">}</span>
+                                            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                                                <span class="n">json</span><span class="o">=</span><span class="n">article_data</span><span class="p">,</span>
+                                                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                                            <span class="p">)</span>
+                                            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span>
+
+                                            <span class="c1"># 4. Retrieve articles</span>
+                                            <span class="n">mock_query</span><span class="o">.</span><span class="n">limit</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                                            <span class="n">mock_query</span><span class="o">.</span><span class="n">order_by</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_query</span>
+                                            <span class="n">mock_query</span><span class="o">.</span><span class="n">offset</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">mock_article</span><span class="p">]</span>
+                                            
+                                            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TestConfig</span><span class="o">.</span><span class="n">API_V1_PREFIX</span><span class="si">}</span><span class="s2">/articles&quot;</span><span class="p">,</span>
+                                                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer test_token&quot;</span><span class="p">}</span>
+                                            <span class="p">)</span>
+                                            <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--tb=short&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

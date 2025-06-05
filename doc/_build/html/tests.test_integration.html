@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_integration module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_main module" href="tests.test_main.html" />
+    <link rel="prev" title="tests.test_hashing module" href="tests.test_hashing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_validator.html">tests.test_email_validator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_integration module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestAPIDocumentation"><code class="docutils literal notranslate"><span class="pre">TestAPIDocumentation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestApplicationStartup"><code class="docutils literal notranslate"><span class="pre">TestApplicationStartup</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestArticleAPI"><code class="docutils literal notranslate"><span class="pre">TestArticleAPI</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestAuthAPI"><code class="docutils literal notranslate"><span class="pre">TestAuthAPI</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestCORSConfiguration"><code class="docutils literal notranslate"><span class="pre">TestCORSConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestErrorHandling"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestHealthCheck"><code class="docutils literal notranslate"><span class="pre">TestHealthCheck</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.TestUserAPI"><code class="docutils literal notranslate"><span class="pre">TestUserAPI</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.async_client"><code class="docutils literal notranslate"><span class="pre">async_client()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_integration.client"><code class="docutils literal notranslate"><span class="pre">client()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_integration module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_integration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_integration">
+<span id="tests-test-integration-module"></span><h1>tests.test_integration module<a class="headerlink" href="#module-tests.test_integration" title="Link to this heading"></a></h1>
+<p>FastAPI Blog API 統合テストスイート
+実際のAPIエンドポイントをテストして、全体的な機能を検証します。</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestAPIDocumentation">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestAPIDocumentation</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestAPIDocumentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestAPIDocumentation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>API ドキュメントエンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestAPIDocumentation.test_docs_endpoint">
+<span class="sig-name descname"><span class="pre">test_docs_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestAPIDocumentation.test_docs_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestAPIDocumentation.test_docs_endpoint" title="Link to this definition"></a></dt>
+<dd><p>OpenAPI ドキュメントエンドポイントのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestAPIDocumentation.test_openapi_json">
+<span class="sig-name descname"><span class="pre">test_openapi_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestAPIDocumentation.test_openapi_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestAPIDocumentation.test_openapi_json" title="Link to this definition"></a></dt>
+<dd><p>OpenAPI仕様JSONのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestAPIDocumentation.test_redoc_endpoint">
+<span class="sig-name descname"><span class="pre">test_redoc_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestAPIDocumentation.test_redoc_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestAPIDocumentation.test_redoc_endpoint" title="Link to this definition"></a></dt>
+<dd><p>ReDoc ドキュメントエンドポイントのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestApplicationStartup">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestApplicationStartup</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestApplicationStartup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestApplicationStartup" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>アプリケーション起動テスト</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_integration.TestApplicationStartup.pytestmark">
+<span class="sig-name descname"><span class="pre">pytestmark</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[Mark(name='integration',</span> <span class="pre">args=(),</span> <span class="pre">kwargs={})]</span></em><a class="headerlink" href="#tests.test_integration.TestApplicationStartup.pytestmark" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestApplicationStartup.test_app_creation">
+<span class="sig-name descname"><span class="pre">test_app_creation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestApplicationStartup.test_app_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestApplicationStartup.test_app_creation" title="Link to this definition"></a></dt>
+<dd><p>アプリケーションの作成テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestApplicationStartup.test_app_routes">
+<span class="sig-name descname"><span class="pre">test_app_routes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestApplicationStartup.test_app_routes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestApplicationStartup.test_app_routes" title="Link to this definition"></a></dt>
+<dd><p>アプリケーションルートの存在テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestArticleAPI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestArticleAPI</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestArticleAPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestArticleAPI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>記事APIのテスト（利用可能な場合）</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestArticleAPI.test_articles_async">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_articles_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">async_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestArticleAPI.test_articles_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestArticleAPI.test_articles_async" title="Link to this definition"></a></dt>
+<dd><p>非同期記事一覧エンドポイントのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestArticleAPI.test_articles_endpoint_exists">
+<span class="sig-name descname"><span class="pre">test_articles_endpoint_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestArticleAPI.test_articles_endpoint_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestArticleAPI.test_articles_endpoint_exists" title="Link to this definition"></a></dt>
+<dd><p>記事一覧エンドポイントの存在確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestAuthAPI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestAuthAPI</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestAuthAPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestAuthAPI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>認証APIのテスト（利用可能な場合）</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestAuthAPI.test_login_endpoint">
+<span class="sig-name descname"><span class="pre">test_login_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestAuthAPI.test_login_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestAuthAPI.test_login_endpoint" title="Link to this definition"></a></dt>
+<dd><p>ログインエンドポイントの存在確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestCORSConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestCORSConfiguration</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestCORSConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestCORSConfiguration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>CORS設定のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestCORSConfiguration.test_cors_preflight">
+<span class="sig-name descname"><span class="pre">test_cors_preflight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestCORSConfiguration.test_cors_preflight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestCORSConfiguration.test_cors_preflight" title="Link to this definition"></a></dt>
+<dd><p>CORS プリフライトリクエストのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestErrorHandling">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestErrorHandling</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestErrorHandling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestErrorHandling" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>エラーハンドリングのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestErrorHandling.test_method_not_allowed">
+<span class="sig-name descname"><span class="pre">test_method_not_allowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestErrorHandling.test_method_not_allowed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestErrorHandling.test_method_not_allowed" title="Link to this definition"></a></dt>
+<dd><p>許可されていないHTTPメソッドのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestErrorHandling.test_nonexistent_endpoint">
+<span class="sig-name descname"><span class="pre">test_nonexistent_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestErrorHandling.test_nonexistent_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestErrorHandling.test_nonexistent_endpoint" title="Link to this definition"></a></dt>
+<dd><p>存在しないエンドポイントのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestHealthCheck">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestHealthCheck</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestHealthCheck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestHealthCheck" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ヘルスチェックエンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestHealthCheck.test_async_root_endpoint">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_async_root_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">async_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestHealthCheck.test_async_root_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestHealthCheck.test_async_root_endpoint" title="Link to this definition"></a></dt>
+<dd><p>非同期ルートエンドポイントのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestHealthCheck.test_root_endpoint">
+<span class="sig-name descname"><span class="pre">test_root_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestHealthCheck.test_root_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestHealthCheck.test_root_endpoint" title="Link to this definition"></a></dt>
+<dd><p>ルートエンドポイントのテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_integration.TestUserAPI">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">TestUserAPI</span></span><a class="reference internal" href="_modules/tests/test_integration.html#TestUserAPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestUserAPI" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ユーザーAPIのテスト（利用可能な場合）</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_integration.TestUserAPI.test_user_registration_endpoint">
+<span class="sig-name descname"><span class="pre">test_user_registration_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#TestUserAPI.test_user_registration_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.TestUserAPI.test_user_registration_endpoint" title="Link to this definition"></a></dt>
+<dd><p>ユーザー登録エンドポイントの存在確認</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_integration.async_client">
+<span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">async_client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#async_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.async_client" title="Link to this definition"></a></dt>
+<dd><p>非同期テストクライアントのフィクスチャ</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_integration.client">
+<span class="sig-prename descclassname"><span class="pre">tests.test_integration.</span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_integration.html#client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_integration.client" title="Link to this definition"></a></dt>
+<dd><p>テストクライアントのフィクスチャ</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_hashing.html" class="btn btn-neutral float-left" title="tests.test_hashing module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_main.html" class="btn btn-neutral float-right" title="tests.test_main module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

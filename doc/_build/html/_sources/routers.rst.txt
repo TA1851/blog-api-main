@@ -4,29 +4,12 @@ routers package
 Submodules
 ----------
 
-routers.article module
-----------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: routers.article
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-routers.auth module
--------------------
-
-.. automodule:: routers.auth
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-routers.user module
--------------------
-
-.. automodule:: routers.user
-   :members:
-   :show-inheritance:
-   :undoc-members:
+   routers.article
+   routers.auth
+   routers.user
 
 Module contents
 ---------------

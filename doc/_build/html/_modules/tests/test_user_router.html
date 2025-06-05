@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_user_router &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_user_router</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ユーザールーターの包括的テストスイート</span>
+
+<span class="sd">このテストスイートは routers/user.py の全ての機能をテストします:</span>
+<span class="sd">- ユーザー作成（メール認証有無の両パターン）</span>
+<span class="sd">- メール認証機能</span>
+<span class="sd">- ユーザー情報取得</span>
+<span class="sd">- アカウント削除機能</span>
+<span class="sd">- 認証メール再送機能</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncMock</span><span class="p">,</span> <span class="n">MagicMock</span><span class="p">,</span> <span class="n">patch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">routers.user</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">router</span><span class="p">,</span>
+    <span class="n">create_user</span><span class="p">,</span>
+    <span class="n">verify_email</span><span class="p">,</span>
+    <span class="n">show_user</span><span class="p">,</span>
+    <span class="n">delete_user_account</span><span class="p">,</span>
+    <span class="n">resend_verification_email</span><span class="p">,</span>
+    <span class="n">UserNotFoundError</span><span class="p">,</span>
+    <span class="n">EmailVerificationError</span><span class="p">,</span>
+    <span class="n">DatabaseError</span><span class="p">,</span>
+    <span class="n">ALLOWED_EMAIL_DOMAINS</span><span class="p">,</span>
+    <span class="n">ENABLE_DOMAIN_RESTRICTION</span><span class="p">,</span>
+    <span class="n">ENABLE_EMAIL_VERIFICATION</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserSchema</span><span class="p">,</span> <span class="n">AccountDeletionRequest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span> <span class="k">as</span> <span class="n">UserModel</span><span class="p">,</span> <span class="n">EmailVerification</span><span class="p">,</span> <span class="n">Article</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+
+
+<div class="viewcode-block" id="TestUserRouterEnvironmentVariables">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEnvironmentVariables">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUserRouterEnvironmentVariables</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;環境変数関連のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestUserRouterEnvironmentVariables.test_allowed_email_domains_configuration">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEnvironmentVariables.test_allowed_email_domains_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_allowed_email_domains_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;許可メールドメインの設定を確認&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ALLOWED_EMAIL_DOMAINS</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span></div>
+
+        <span class="c1"># 環境変数が設定されている場合のテスト</span>
+        
+<div class="viewcode-block" id="TestUserRouterEnvironmentVariables.test_enable_domain_restriction_configuration">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEnvironmentVariables.test_enable_domain_restriction_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_enable_domain_restriction_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ドメイン制限有効フラグの設定を確認&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ENABLE_DOMAIN_RESTRICTION</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="TestUserRouterEnvironmentVariables.test_enable_email_verification_configuration">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEnvironmentVariables.test_enable_email_verification_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_enable_email_verification_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール認証有効フラグの設定を確認&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ENABLE_EMAIL_VERIFICATION</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestUserRouterExceptions">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterExceptions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUserRouterExceptions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;カスタム例外クラスのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestUserRouterExceptions.test_user_not_found_error_with_id">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_with_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_user_not_found_error_with_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザーIDを指定したUserNotFoundErrorのテスト&quot;&quot;&quot;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">UserNotFoundError</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;User with id 123 not found&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="TestUserRouterExceptions.test_user_not_found_error_with_email">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_with_email">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_user_not_found_error_with_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メールアドレスを指定したUserNotFoundErrorのテスト&quot;&quot;&quot;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">UserNotFoundError</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;User with email test@example.com not found&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="TestUserRouterExceptions.test_user_not_found_error_default">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterExceptions.test_user_not_found_error_default">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_user_not_found_error_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;デフォルトのUserNotFoundErrorのテスト&quot;&quot;&quot;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">UserNotFoundError</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;User not found&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="TestUserRouterExceptions.test_email_verification_error">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterExceptions.test_email_verification_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_verification_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;EmailVerificationErrorのテスト&quot;&quot;&quot;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">EmailVerificationError</span><span class="p">(</span><span class="s2">&quot;Verification failed&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;Verification failed&quot;</span></div>
+
+        
+<div class="viewcode-block" id="TestUserRouterExceptions.test_database_error">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterExceptions.test_database_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_database_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;DatabaseErrorのテスト&quot;&quot;&quot;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">DatabaseError</span><span class="p">(</span><span class="s2">&quot;Database connection failed&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;Database connection failed&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestCreateUserEndpoint">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestCreateUserEndpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;create_user エンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">rollback</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">refresh</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.valid_user_schema">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.valid_user_schema">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_user_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なユーザースキーマ&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">UserSchema</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_missing_email">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_missing_email">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_missing_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">caplog</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メールアドレスが無い場合のエラーテスト&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">UserSchema</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="k">assert</span> <span class="s2">&quot;メールアドレスが必要です&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_domain_restriction_enabled_invalid_domain">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_domain_restriction_enabled_invalid_domain">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_domain_restriction_enabled_invalid_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_domain_check</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ドメイン制限が有効で無効なドメインの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_domain_check</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.ENABLE_DOMAIN_RESTRICTION&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+                <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+            <span class="k">assert</span> <span class="s2">&quot;このメールアドレスのドメインは許可されていません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_duplicate_email">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_duplicate_email">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_duplicate_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;重複メールアドレスの場合のテスト&quot;&quot;&quot;</span>
+        <span class="c1"># 既存ユーザーをシミュレート</span>
+        <span class="n">existing_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">existing_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">existing_user</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_409_CONFLICT</span>
+        <span class="k">assert</span> <span class="s2">&quot;このメールアドレスは既に使用されています&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_email_verification_enabled_new_user">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_new_user">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_email_verification_enabled_new_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_domain_check</span><span class="p">,</span> <span class="n">mock_send_email</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール認証有効で新規ユーザーの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_domain_check</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_send_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+        
+        <span class="c1"># 既存ユーザーなし、既存認証レコードなし</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.ENABLE_EMAIL_VERIFICATION&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.EmailVerification.create_verification&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_create_verification</span><span class="p">:</span>
+                <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+                <span class="n">mock_verification</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;test-token&quot;</span>
+                <span class="n">mock_create_verification</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+                
+                <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+                
+                <span class="k">assert</span> <span class="s2">&quot;ユーザー登録を受け付けました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_verified">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_verified">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_email_verification_enabled_existing_verified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_domain_check</span><span class="p">,</span> <span class="n">mock_send_email</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール認証有効で既に認証済みの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_domain_check</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="c1"># 既存ユーザーなし</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MagicMock</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="kc">None</span><span class="p">)))),</span>  <span class="c1"># 既存ユーザーなし</span>
+            <span class="n">MagicMock</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">is_verified</span><span class="o">=</span><span class="kc">True</span><span class="p">)))))</span>  <span class="c1"># 認証済み</span>
+        <span class="p">]</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.ENABLE_EMAIL_VERIFICATION&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+                <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_409_CONFLICT</span>
+            <span class="k">assert</span> <span class="s2">&quot;このメールアドレスは既に確認済みです&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_unverified">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_enabled_existing_unverified">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_email_verification_enabled_existing_unverified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_domain_check</span><span class="p">,</span> <span class="n">mock_send_email</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール認証有効で未認証レコードが既にある場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_domain_check</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_send_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+        
+        <span class="c1"># 既存ユーザーなし、未認証レコードあり</span>
+        <span class="n">existing_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">existing_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">existing_verification</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MagicMock</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="kc">None</span><span class="p">)))),</span>  <span class="c1"># 既存ユーザーなし</span>
+            <span class="n">MagicMock</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="n">MagicMock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">existing_verification</span><span class="p">))))</span>  <span class="c1"># 未認証レコードあり</span>
+        <span class="p">]</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.ENABLE_EMAIL_VERIFICATION&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;ユーザー登録を受け付けました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+            <span class="c1"># 既存レコードを更新</span>
+            <span class="k">assert</span> <span class="n">existing_verification</span><span class="o">.</span><span class="n">token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_email_verification_disabled">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_email_verification_disabled">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.bcrypt&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_email_verification_disabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_domain_check</span><span class="p">,</span> <span class="n">mock_hash</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール認証無効で直接ユーザー作成の場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_domain_check</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_hash</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="s2">&quot;hashed_temp_password&quot;</span>
+        
+        <span class="c1"># 既存ユーザーなし</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="c1"># 新規ユーザーのモック</span>
+        <span class="n">new_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">refresh</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">setattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;is_active&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.ENABLE_EMAIL_VERIFICATION&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.UserModel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_user_model</span><span class="p">:</span>
+                <span class="n">mock_user_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">new_user</span>
+                
+                <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+                
+                <span class="k">assert</span> <span class="s2">&quot;ユーザー登録が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+                <span class="k">assert</span> <span class="s2">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">result</span>
+                <span class="k">assert</span> <span class="s2">&quot;is_active&quot;</span> <span class="ow">in</span> <span class="n">result</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+                <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestCreateUserEndpoint.test_create_user_database_error">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestCreateUserEndpoint.test_create_user_database_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_database_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_user_schema</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベースエラーの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Database connection failed&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">valid_user_schema</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span>
+        <span class="k">assert</span> <span class="s2">&quot;予期しないエラーが発生しました&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestVerifyEmailEndpoint">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestVerifyEmailEndpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;verify_email エンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">refresh</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_invalid_token_format">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_invalid_token_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_invalid_token_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;無効なトークン形式の場合のテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なトークン形式です&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_token_not_found">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_token_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_token_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;トークンが見つからない場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;valid-token-12345&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なトークンです&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_already_verified">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_already_verified">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_already_verified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;既に認証済みの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;valid-token-12345&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+        <span class="k">assert</span> <span class="s2">&quot;このメールアドレスは既に確認済みです&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_expired_token">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_expired_token">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_expired_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;期限切れトークンの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 1時間前に期限切れ</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;valid-token-12345&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+        <span class="k">assert</span> <span class="s2">&quot;トークンの有効期限が切れています&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_success">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.bcrypt&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;メール認証成功の場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_hash</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="s2">&quot;hashed_temp_password&quot;</span>
+        
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># まだ有効</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">password_hash</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+        
+        <span class="c1"># 新規ユーザーのモック</span>
+        <span class="n">new_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.UserModel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_user_model</span><span class="p">:</span>
+            <span class="n">mock_user_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">new_user</span>
+            
+            <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;valid-token-12345&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;メールアドレスの確認が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+            <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">123</span>
+            <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;is_active&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span>
+            
+            <span class="c1"># 認証フラグが更新されることを確認</span>
+            <span class="k">assert</span> <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="ow">is</span> <span class="kc">True</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+            <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_success_with_custom_password">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_success_with_custom_password">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.bcrypt&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_success_with_custom_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;カスタムパスワードありでの認証成功テスト&quot;&quot;&quot;</span>
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">password_hash</span> <span class="o">=</span> <span class="s2">&quot;custom_hashed_password&quot;</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+        
+        <span class="n">new_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.UserModel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_user_model</span><span class="p">:</span>
+            <span class="n">mock_user_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">new_user</span>
+            
+            <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;valid-token-12345&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;メールアドレスの確認が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+            <span class="c1"># カスタムパスワードが使用されることを確認（Hashが呼ばれない）</span>
+            <span class="n">mock_hash</span><span class="o">.</span><span class="n">assert_not_called</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestVerifyEmailEndpoint.test_verify_email_url_decoding">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestVerifyEmailEndpoint.test_verify_email_url_decoding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_url_decoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;URLエンコードされたトークンのデコードテスト&quot;&quot;&quot;</span>
+        <span class="n">encoded_token</span> <span class="o">=</span> <span class="s2">&quot;valid%2Dtoken%2D12345&quot;</span>  <span class="c1"># &quot;valid-token-12345&quot;をURLエンコード</span>
+        
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        
+        <span class="c1"># デコードされたトークンで検索される</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mock_query_filter_side_effect</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">mock_filter</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+            <span class="n">mock_filter</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+            <span class="k">return</span> <span class="n">mock_filter</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">mock_query_filter_side_effect</span>
+        
+        <span class="n">new_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.UserModel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_user_model</span><span class="p">:</span>
+            <span class="n">mock_user_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">new_user</span>
+            
+            <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="n">encoded_token</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;メールアドレスの確認が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestShowUserEndpoint">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestShowUserEndpoint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestShowUserEndpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;show_user エンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestShowUserEndpoint.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestShowUserEndpoint.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestShowUserEndpoint.mock_current_user">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestShowUserEndpoint.mock_current_user">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モック現在ユーザー&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;current@example.com&quot;</span>
+        <span class="k">return</span> <span class="n">user</span></div>
+
+    
+<div class="viewcode-block" id="TestShowUserEndpoint.test_show_user_access_other_user">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestShowUserEndpoint.test_show_user_access_other_user">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_show_user_access_other_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;他のユーザーの情報にアクセスしようとした場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">other_user_id</span> <span class="o">=</span> <span class="mi">456</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">show_user</span><span class="p">(</span><span class="n">other_user_id</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span>
+        <span class="k">assert</span> <span class="s2">&quot;他のユーザーの情報にはアクセスできません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestShowUserEndpoint.test_show_user_not_found">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestShowUserEndpoint.test_show_user_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_show_user_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザーが見つからない場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="mi">123</span>  <span class="c1"># 現在のユーザーID</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">show_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+        <span class="k">assert</span> <span class="sa">f</span><span class="s2">&quot;User with id </span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2"> not found&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestShowUserEndpoint.test_show_user_success">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestShowUserEndpoint.test_show_user_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_show_user_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正常なユーザー情報取得のテスト&quot;&quot;&quot;</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="mi">123</span>  <span class="c1"># 現在のユーザーID</span>
+        
+        <span class="n">mock_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;current@example.com&quot;</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">show_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s2">&quot;current@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">password</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># パスワードは返さない</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">is_active</span> <span class="ow">is</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestDeleteUserAccountEndpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;delete_user_account エンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># デフォルトで空リスト</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">rollback</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">delete</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.valid_deletion_request">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.valid_deletion_request">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_deletion_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効な削除リクエスト&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AccountDeletionRequest</span><span class="p">(</span>
+            <span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+            <span class="n">confirm_password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_user_not_found">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_user_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_user_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザーが見つからない場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+        <span class="k">assert</span> <span class="s2">&quot;指定されたメールアドレスのユーザーが見つかりません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_no_password_set">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_no_password_set">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_no_password_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードが設定されていない場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="k">assert</span> <span class="s2">&quot;ユーザーのパスワードが設定されていません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_wrong_password">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_wrong_password">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.verify&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_wrong_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash_verify</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードが間違っている場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_hash_verify</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="n">mock_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;hashed_password&quot;</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span>
+        <span class="k">assert</span> <span class="s2">&quot;パスワードが正しくありません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_no_email">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_no_email">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.verify&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_no_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash_verify</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ユーザーのメールアドレスがない場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_hash_verify</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">mock_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;hashed_password&quot;</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="k">assert</span> <span class="s2">&quot;ユーザーのメールアドレスが見つかりません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_success">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_account_deletion_email&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.verify&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash_verify</span><span class="p">,</span> <span class="n">mock_send_email</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;正常なアカウント削除のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_hash_verify</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_send_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+        
+        <span class="c1"># ユーザーのモック</span>
+        <span class="n">mock_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;hashed_password&quot;</span>
+        <span class="n">mock_user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        
+        <span class="c1"># 記事のモック</span>
+        <span class="n">mock_articles</span> <span class="o">=</span> <span class="p">[</span><span class="n">MagicMock</span><span class="p">(),</span> <span class="n">MagicMock</span><span class="p">()]</span>  <span class="c1"># 2つの記事</span>
+        
+        <span class="c1"># 認証レコードのモック</span>
+        <span class="n">mock_verification_records</span> <span class="o">=</span> <span class="p">[</span><span class="n">MagicMock</span><span class="p">()]</span>
+        
+        <span class="c1"># クエリのモック設定 - より簡潔にするため、個別にセットアップ</span>
+        <span class="c1"># まずユーザークエリをセットアップ</span>
+        <span class="n">user_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">user_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_user</span>
+        
+        <span class="c1"># 記事クエリをセットアップ</span>
+        <span class="n">article_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">article_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_articles</span>
+        
+        <span class="c1"># 認証レコードクエリをセットアップ</span>
+        <span class="n">verification_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">verification_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification_records</span>
+        
+        <span class="c1"># queryメソッドの呼び出し順序に基づいてサイドエフェクトを設定</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_query</span><span class="p">,</span> <span class="n">article_query</span><span class="p">,</span> <span class="n">verification_query</span><span class="p">]</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="s2">&quot;退会処理が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;deleted_articles_count&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span>
+        
+        <span class="c1"># 削除処理の確認</span>
+        <span class="k">assert</span> <span class="n">mock_db</span><span class="o">.</span><span class="n">delete</span><span class="o">.</span><span class="n">call_count</span> <span class="o">&gt;=</span> <span class="mi">4</span>  <span class="c1"># ユーザー、記事2つ、認証レコード1つ</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_password_mismatch">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_password_mismatch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_password_mismatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワード不一致の場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">deletion_request</span> <span class="o">=</span> <span class="n">AccountDeletionRequest</span><span class="p">(</span>
+            <span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+            <span class="n">confirm_password</span><span class="o">=</span><span class="s2">&quot;different456&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="k">assert</span> <span class="s2">&quot;パスワードと確認用パスワードが一致しません&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span><span class="p">)</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountEndpoint.test_delete_user_account_database_error">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountEndpoint.test_delete_user_account_database_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_database_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;データベースエラーの場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Database connection failed&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span>
+        <span class="k">assert</span> <span class="s2">&quot;退会処理中に予期しないエラーが発生しました&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">close</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestResendVerificationEmailEndpoint">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestResendVerificationEmailEndpoint">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestResendVerificationEmailEndpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;resend_verification_email エンドポイントのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestResendVerificationEmailEndpoint.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestResendVerificationEmailEndpoint.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestResendVerificationEmailEndpoint.test_resend_verification_email_not_found">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestResendVerificationEmailEndpoint.test_resend_verification_email_not_found">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_resend_verification_email_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;確認待ちのメールアドレスが見つからない場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">resend_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+        <span class="k">assert</span> <span class="s2">&quot;確認待ちのメールアドレスが見つかりません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestResendVerificationEmailEndpoint.test_resend_verification_email_success">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestResendVerificationEmailEndpoint.test_resend_verification_email_success">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_verification_email&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_resend_verification_email_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_send_email</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証メール再送成功のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_send_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+        
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">old_token</span> <span class="o">=</span> <span class="s2">&quot;old-token&quot;</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">old_token</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">resend_verification_email</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;確認メールを再送信しました。&quot;</span>
+        
+        <span class="c1"># 新しいトークンが生成されることを確認</span>
+        <span class="k">assert</span> <span class="n">mock_verification</span><span class="o">.</span><span class="n">token</span> <span class="o">!=</span> <span class="n">old_token</span>
+        <span class="k">assert</span> <span class="n">mock_verification</span><span class="o">.</span><span class="n">created_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+        <span class="n">mock_send_email</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestUserRouterIntegration">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterIntegration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUserRouterIntegration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザールーターの統合テスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestUserRouterIntegration.client">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterIntegration.client">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;テストクライアント&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestUserRouterIntegration.test_router_configuration">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterIntegration.test_router_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_router_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;ルーター設定のテスト&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">router</span><span class="o">.</span><span class="n">prefix</span> <span class="o">==</span> <span class="s2">&quot;/api/v1&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;user&quot;</span> <span class="ow">in</span> <span class="n">router</span><span class="o">.</span><span class="n">tags</span></div>
+
+    
+<div class="viewcode-block" id="TestUserRouterIntegration.test_router_endpoints_exist">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterIntegration.test_router_endpoints_exist">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_router_endpoints_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;エンドポイントが存在することを確認&quot;&quot;&quot;</span>
+        <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span><span class="n">route</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="n">router</span><span class="o">.</span><span class="n">routes</span><span class="p">]</span>
+        
+        <span class="k">assert</span> <span class="s2">&quot;/api/v1/user&quot;</span> <span class="ow">in</span> <span class="n">routes</span>  <span class="c1"># POST</span>
+        <span class="k">assert</span> <span class="s2">&quot;/api/v1/verify-email&quot;</span> <span class="ow">in</span> <span class="n">routes</span>  <span class="c1"># GET</span>
+        <span class="k">assert</span> <span class="s2">&quot;/api/v1/user/</span><span class="si">{user_id}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">routes</span>  <span class="c1"># GET</span>
+        <span class="k">assert</span> <span class="s2">&quot;/api/v1/user/delete-account&quot;</span> <span class="ow">in</span> <span class="n">routes</span>  <span class="c1"># DELETE</span>
+        <span class="k">assert</span> <span class="s2">&quot;/api/v1/resend-verification&quot;</span> <span class="ow">in</span> <span class="n">routes</span>  <span class="c1"># POST</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestUserRouterEdgeCases">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEdgeCases">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestUserRouterEdgeCases</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;エッジケースのテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestUserRouterEdgeCases.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEdgeCases.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestUserRouterEdgeCases.test_create_user_with_name_field">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEdgeCases.test_create_user_with_name_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_create_user_with_name_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;name フィールドがある場合のユーザー作成テスト&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">UserSchema</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">)</span>
+        <span class="c1"># UserSchemaにはnameフィールドがないため、代わりにメールアドレスからユーザー名を抽出する処理をテスト</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.ENABLE_EMAIL_VERIFICATION&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.is_valid_email_domain&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.bcrypt&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="s2">&quot;hashed&quot;</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.UserModel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_user_model</span><span class="p">:</span>
+                        <span class="n">new_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+                        <span class="n">new_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+                        <span class="n">new_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">mock_user_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">new_user</span>
+                        
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">create_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+                        
+                        <span class="k">assert</span> <span class="s2">&quot;ユーザー登録が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+                        <span class="c1"># ユーザー名がメールアドレスのローカル部分から生成されることを確認</span>
+                        <span class="n">mock_user_model</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestUserRouterEdgeCases.test_verify_email_empty_token">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEdgeCases.test_verify_email_empty_token">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_empty_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;空のトークンの場合のテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span>
+        <span class="k">assert</span> <span class="s2">&quot;無効なトークン形式です&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span></div>
+
+    
+<div class="viewcode-block" id="TestUserRouterEdgeCases.test_verify_email_none_expires_at">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestUserRouterEdgeCases.test_verify_email_none_expires_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_verify_email_none_expires_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;expires_at が None の場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_verification</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">is_verified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># 期限なし</span>
+        <span class="n">mock_verification</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification</span>
+        
+        <span class="n">new_user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">new_user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;routers.user.UserModel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_user_model</span><span class="p">:</span>
+            <span class="n">mock_user_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">new_user</span>
+            
+            <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">verify_email</span><span class="p">(</span><span class="s2">&quot;valid-token-12345&quot;</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">))</span>
+            
+            <span class="k">assert</span> <span class="s2">&quot;メールアドレスの確認が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestDeleteUserAccountWithAuth</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;delete_user_account エンドポイント（認証機能あり）のテスト&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.mock_db">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.mock_db">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モックデータベースセッション&quot;&quot;&quot;</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">Session</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">rollback</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">delete</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.mock_current_user">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.mock_current_user">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mock_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;モック認証ユーザー&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">123</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;hashed_password&quot;</span>
+        <span class="k">return</span> <span class="n">user</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.valid_deletion_request">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.valid_deletion_request">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">valid_deletion_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;有効な削除リクエスト&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AccountDeletionRequest</span><span class="p">(</span>
+            <span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+            <span class="n">confirm_password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.unauthorized_deletion_request">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.unauthorized_deletion_request">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unauthorized_deletion_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;権限のない削除リクエスト（異なるメールアドレス）&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AccountDeletionRequest</span><span class="p">(</span>
+            <span class="n">email</span><span class="o">=</span><span class="s2">&quot;other@example.com&quot;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+            <span class="n">confirm_password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span>
+        <span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.test_delete_user_account_unauthorized_different_email">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_unauthorized_different_email">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_unauthorized_different_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">,</span> <span class="n">unauthorized_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証ユーザーと異なるメールアドレスでアカウント削除を試行する場合のテスト&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">unauthorized_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span>
+        <span class="k">assert</span> <span class="s2">&quot;自分のアカウントのみ削除できます&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.test_delete_user_account_success_with_auth">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_success_with_auth">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.send_account_deletion_email&#39;</span><span class="p">)</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.verify&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_success_with_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash_verify</span><span class="p">,</span> <span class="n">mock_send_email</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証機能ありで正常なアカウント削除のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_hash_verify</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mock_send_email</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+        
+        <span class="c1"># 記事のモック</span>
+        <span class="n">mock_articles</span> <span class="o">=</span> <span class="p">[</span><span class="n">MagicMock</span><span class="p">(),</span> <span class="n">MagicMock</span><span class="p">()]</span>
+        
+        <span class="c1"># 認証レコードのモック</span>
+        <span class="n">mock_verification_records</span> <span class="o">=</span> <span class="p">[</span><span class="n">MagicMock</span><span class="p">()]</span>
+        
+        <span class="c1"># クエリのモック設定</span>
+        <span class="n">user_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">user_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_current_user</span>
+        
+        <span class="n">article_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">article_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_articles</span>
+        
+        <span class="n">verification_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">verification_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_verification_records</span>
+        
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_query</span><span class="p">,</span> <span class="n">article_query</span><span class="p">,</span> <span class="n">verification_query</span><span class="p">]</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="s2">&quot;退会処理が完了しました&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test@example.com&quot;</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;deleted_articles_count&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span>
+        
+        <span class="c1"># 削除処理の確認</span>
+        <span class="k">assert</span> <span class="n">mock_db</span><span class="o">.</span><span class="n">delete</span><span class="o">.</span><span class="n">call_count</span> <span class="o">&gt;=</span> <span class="mi">4</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.test_delete_user_account_password_mismatch_with_auth">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_password_mismatch_with_auth">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_password_mismatch_with_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証機能ありでパスワード不一致の場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">deletion_request</span> <span class="o">=</span> <span class="n">AccountDeletionRequest</span><span class="p">(</span>
+            <span class="n">email</span><span class="o">=</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password123&quot;</span><span class="p">,</span>
+            <span class="n">confirm_password</span><span class="o">=</span><span class="s2">&quot;different456&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+        <span class="k">assert</span> <span class="s2">&quot;パスワードと確認用パスワードが一致しません&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span><span class="p">)</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="TestDeleteUserAccountWithAuth.test_delete_user_account_wrong_password_with_auth">
+<a class="viewcode-back" href="../../tests.test_user_router.html#tests.test_user_router.TestDeleteUserAccountWithAuth.test_delete_user_account_wrong_password_with_auth">[docs]</a>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;routers.user.Hash.verify&#39;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_delete_user_account_wrong_password_with_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_hash_verify</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">,</span> <span class="n">valid_deletion_request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;認証機能ありでパスワードが間違っている場合のテスト&quot;&quot;&quot;</span>
+        <span class="n">mock_hash_verify</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># ユーザークエリのモック</span>
+        <span class="n">user_query</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="n">user_query</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_current_user</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">user_query</span>
+        
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">delete_user_account</span><span class="p">(</span><span class="n">valid_deletion_request</span><span class="p">,</span> <span class="n">mock_db</span><span class="p">,</span> <span class="n">mock_current_user</span><span class="p">))</span>
+        
+        <span class="k">assert</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span>
+        <span class="k">assert</span> <span class="s2">&quot;パスワードが正しくありません&quot;</span> <span class="ow">in</span> <span class="n">exc_info</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">detail</span>
+        <span class="n">mock_db</span><span class="o">.</span><span class="n">rollback</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="c1"># テスト実行用の設定</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--tb=short&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tests.test_email_validator &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_email_validator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Email Validator Module Test Suite</span>
+
+<span class="sd">Comprehensive test coverage for utils/email_validator.py module including:</span>
+<span class="sd">- Domain restriction functionality</span>
+<span class="sd">- Environment variable handling</span>
+<span class="sd">- Valid and invalid email domain checking</span>
+<span class="sd">- Configuration scenarios</span>
+<span class="sd">- Edge cases and error handling</span>
+<span class="sd">- Logging verification</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span><span class="p">,</span> <span class="n">Mock</span>
+
+<span class="c1"># Import the module under test</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/Users/tatu/Documents/GitHub/blog-api-main&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.email_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_valid_email_domain</span>
+
+
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionDisabled">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorDomainRestrictionDisabled</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test email validation when domain restriction is disabled&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_returns_true_for_any_email">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_returns_true_for_any_email">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_disabled_returns_true_for_any_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test that any email is allowed when domain restriction is disabled&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;ドメイン制限は無効です。すべてのドメインを許可: test@example.com&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_by_default">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_by_default">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_disabled_by_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test that domain restriction is disabled by default&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{},</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@anydomain.org&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;ドメイン制限は無効です。すべてのドメインを許可: user@anydomain.org&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_various_values">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_various_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_disabled_various_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test various ways to disable domain restriction&quot;&quot;&quot;</span>
+        <span class="n">disable_values</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;false&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">,</span> <span class="s2">&quot;FALSE&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">disable_values</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed for value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_with_invalid_email_format">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_with_invalid_email_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_disabled_with_invalid_email_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test disabled restriction with invalid email format&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;invalid-email&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;ドメイン制限は無効です。すべてのドメインを許可: invalid-email&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionEnabled">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorDomainRestrictionEnabled</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test email validation when domain restriction is enabled&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_valid_domain">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_valid_domain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_enabled_with_valid_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email validation with allowed domain&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com,test.org&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されたドメインです: example.com&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_invalid_domain">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_invalid_domain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_enabled_with_invalid_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email validation with disallowed domain&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com,test.org&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@notallowed.com&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されていないドメインです: notallowed.com, 許可リスト: [&#39;example.com&#39;, &#39;test.org&#39;]&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_case_insensitive">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_case_insensitive">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_enabled_case_insensitive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test that domain checking is case insensitive&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;Example.COM,Test.ORG&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="n">test_cases</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;user@EXAMPLE.COM&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;user@Example.Com&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;user@test.org&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;user@TEST.ORG&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;user@other.com&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">email</span><span class="p">,</span> <span class="n">expected</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="n">expected</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed for </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">, expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_various_enable_values">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_various_enable_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_enabled_various_enable_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test various ways to enable domain restriction&quot;&quot;&quot;</span>
+        <span class="n">enable_values</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;enabled&quot;</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">enable_values</span><span class="p">:</span>
+            <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+            <span class="p">}</span>
+            
+            <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed for enable value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_multiple_domains">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_multiple_domains">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_restriction_enabled_multiple_domains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test with multiple allowed domains&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;gmail.com,yahoo.com,outlook.com,company.co.jp&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="n">valid_emails</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;user@gmail.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;test@yahoo.com&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;admin@outlook.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;employee@company.co.jp&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="n">invalid_emails</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;user@hotmail.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;test@protonmail.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;admin@aol.com&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">valid_emails</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Should be valid: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span>
+                
+                <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">invalid_emails</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Should be invalid: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorDomainConfiguration">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainConfiguration">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorDomainConfiguration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test domain configuration scenarios&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainConfiguration.test_no_allowed_domains_configured">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_no_allowed_domains_configured">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_no_allowed_domains_configured</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test behavior when no allowed domains are configured&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されたドメインが設定されていません。すべてのドメインを許可&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainConfiguration.test_allowed_domains_not_set">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_not_set">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_allowed_domains_not_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test behavior when ALLOWED_EMAIL_DOMAINS environment variable is not set&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されたドメインが設定されていません。すべてのドメインを許可&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainConfiguration.test_allowed_domains_with_whitespace">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_with_whitespace">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_allowed_domains_with_whitespace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test domain list with extra whitespace&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot; example.com , test.org ,  company.com  &quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="c1"># Should work with properly trimmed domains</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@test.org&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@company.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@other.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainConfiguration.test_allowed_domains_with_empty_entries">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_with_empty_entries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_allowed_domains_with_empty_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test domain list with empty entries&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com,,test.org,,&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@test.org&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@other.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorDomainConfiguration.test_single_domain_configuration">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_single_domain_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_single_domain_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test configuration with single domain&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;company.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;employee@company.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@external.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorInvalidEmailFormats">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorInvalidEmailFormats</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test handling of invalid email formats&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorInvalidEmailFormats.test_email_without_at_symbol">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_without_at_symbol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_without_at_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email without @ symbol&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;userexample.com&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;不正なメールアドレス形式: userexample.com&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorInvalidEmailFormats.test_email_with_multiple_at_symbols">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_with_multiple_at_symbols">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_with_multiple_at_symbols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email with multiple @ symbols&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="c1"># Should use the second part after splitting by @</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@test@example.com&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span>  <span class="c1"># Gets &quot;test&quot; as domain, not &quot;example.com&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorInvalidEmailFormats.test_empty_email">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_empty_email">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_empty_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test empty email string&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;不正なメールアドレス形式: &quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorInvalidEmailFormats.test_email_ending_with_at">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_ending_with_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_ending_with_at</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email ending with @&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@&quot;</span><span class="p">)</span>
+                
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span>
+                <span class="c1"># The domain becomes empty string &quot;&quot;, which is not in allowed domains</span>
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されていないドメインです: , 許可リスト: [&#39;example.com&#39;]&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorInvalidEmailFormats.test_email_starting_with_at">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_starting_with_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_email_starting_with_at</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email starting with @&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;@example.com&quot;</span><span class="p">)</span>
+                <span class="c1"># This actually works as split(&quot;@&quot;)[1] gives &quot;example.com&quot;</span>
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorEdgeCases</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test edge cases and special scenarios&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases.test_unicode_domain">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases.test_unicode_domain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_unicode_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test email with unicode domain&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;テスト.jp,example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@テスト.jp&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases.test_subdomain_handling">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases.test_subdomain_handling">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_subdomain_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test how subdomains are handled&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="c1"># Subdomain should not match parent domain</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@mail.example.com&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases.test_subdomain_explicitly_allowed">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases.test_subdomain_explicitly_allowed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_subdomain_explicitly_allowed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test subdomain that is explicitly allowed&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;mail.example.com,example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@mail.example.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@other.example.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases.test_very_long_domain">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases.test_very_long_domain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_very_long_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test very long domain name&quot;&quot;&quot;</span>
+        <span class="n">long_domain</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span> <span class="o">*</span> <span class="mi">50</span> <span class="o">+</span> <span class="s2">&quot;.com&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="n">long_domain</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;user@</span><span class="si">{</span><span class="n">long_domain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases.test_domain_with_special_characters">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases.test_domain_with_special_characters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_domain_with_special_characters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test domain with special characters&quot;&quot;&quot;</span>
+        <span class="n">special_domains</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ex-ample.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;example123.com&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;ex_ample.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;123example.com&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">special_domains</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">special_domains</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;user@</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed for domain: </span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorEdgeCases.test_international_domain_extensions">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorEdgeCases.test_international_domain_extensions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_international_domain_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test various international domain extensions&quot;&quot;&quot;</span>
+        <span class="n">international_domains</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;example.co.uk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;example.co.jp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;example.com.au&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;example.org.br&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;example.edu.cn&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">international_domains</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">international_domains</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;user@</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Failed for domain: </span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorLogging">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorLogging">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorLogging</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test logging functionality&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorLogging.test_logging_for_disabled_restriction">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_disabled_restriction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logging_for_disabled_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test logging when domain restriction is disabled&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;ドメイン制限は無効です。すべてのドメインを許可: test@example.com&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorLogging.test_logging_for_missing_configuration">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_missing_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logging_for_missing_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test logging when no domains are configured&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;test@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されたドメインが設定されていません。すべてのドメインを許可&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorLogging.test_logging_for_allowed_domain">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_allowed_domain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logging_for_allowed_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test logging for allowed domain&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されたドメインです: example.com&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorLogging.test_logging_for_disallowed_domain">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_disallowed_domain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logging_for_disallowed_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test logging for disallowed domain&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com,test.org&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@notallowed.com&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;許可されていないドメインです: notallowed.com, 許可リスト: [&#39;example.com&#39;, &#39;test.org&#39;]&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorLogging.test_logging_for_invalid_email_format">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_invalid_email_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_logging_for_invalid_email_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test logging for invalid email format&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_logger</span><span class="p">:</span>
+                <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;invalid-email&quot;</span><span class="p">)</span>
+                
+                <span class="n">mock_logger</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">&quot;不正なメールアドレス形式: invalid-email&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorIntegrationScenarios">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorIntegrationScenarios">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorIntegrationScenarios</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test realistic integration scenarios&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorIntegrationScenarios.test_corporate_email_restriction_scenario">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_corporate_email_restriction_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_corporate_email_restriction_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test typical corporate email restriction scenario&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;company.com,partner.org,contractor.net&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># Valid corporate emails</span>
+        <span class="n">valid_emails</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;employee@company.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;manager@company.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;partner@partner.org&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;contractor@contractor.net&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="c1"># Invalid external emails</span>
+        <span class="n">invalid_emails</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;user@gmail.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;test@yahoo.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;external@external.com&quot;</span>
+        <span class="p">]</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">valid_emails</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="n">email</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Corporate email should be valid: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span>
+                
+                <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">invalid_emails</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="n">email</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;External email should be invalid: </span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorIntegrationScenarios.test_educational_institution_scenario">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_educational_institution_scenario">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_educational_institution_scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test educational institution email restriction&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;university.edu,student.university.edu,staff.university.edu&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;professor@university.edu&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;student@student.university.edu&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;admin@staff.university.edu&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;external@gmail.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorIntegrationScenarios.test_multi_environment_configuration">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_multi_environment_configuration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_multi_environment_configuration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test different configurations for different environments&quot;&quot;&quot;</span>
+        <span class="c1"># Development environment - no restrictions</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">}):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;dev@anywhere.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;test@example.org&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+        
+        <span class="c1"># Production environment - strict restrictions</span>
+        <span class="n">prod_env</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;company.com&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">prod_env</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@company.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@external.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestEmailValidatorPerformance">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorPerformance">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestEmailValidatorPerformance</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test performance-related aspects&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="TestEmailValidatorPerformance.test_large_domain_list_performance">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorPerformance.test_large_domain_list_performance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_large_domain_list_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test performance with large domain list&quot;&quot;&quot;</span>
+        <span class="c1"># Create a list of 100 domains</span>
+        <span class="n">large_domain_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;domain</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.com&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
+        
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">large_domain_list</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="c1"># Test validation should still be fast</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@domain50.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@notindomain.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+
+    
+<div class="viewcode-block" id="TestEmailValidatorPerformance.test_repeated_validation_calls">
+<a class="viewcode-back" href="../../tests.test_email_validator.html#tests.test_email_validator.TestEmailValidatorPerformance.test_repeated_validation_calls">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_repeated_validation_calls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test repeated validation calls&quot;&quot;&quot;</span>
+        <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENABLE_DOMAIN_RESTRICTION&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ALLOWED_EMAIL_DOMAINS&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com,test.org&quot;</span>
+        <span class="p">}</span>
+        
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">env_vars</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s1">&#39;utils.email_validator.create_logger&#39;</span><span class="p">):</span>
+                <span class="c1"># Multiple calls should work consistently</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+                    <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@example.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+                    <span class="k">assert</span> <span class="n">is_valid_email_domain</span><span class="p">(</span><span class="s2">&quot;user@invalid.com&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Run specific test groups</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--tb=short&quot;</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

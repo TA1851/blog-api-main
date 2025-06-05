@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests.test_email_validator module &mdash; blog-api-main  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests.test_hashing module" href="tests.test_hashing.html" />
+    <link rel="prev" title="tests.test_email_sender module" href="tests.test_email_sender.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blog-api-main
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_database.html">tests.test_database module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_email_sender.html">tests.test_email_sender module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_email_validator module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorDomainConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorDomainRestrictionDisabled</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorDomainRestrictionEnabled</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorEdgeCases"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorEdgeCases</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorIntegrationScenarios"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorIntegrationScenarios</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorInvalidEmailFormats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorLogging"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorLogging</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_email_validator.TestEmailValidatorPerformance"><code class="docutils literal notranslate"><span class="pre">TestEmailValidatorPerformance</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_main.html">tests.test_main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_oauth2.html">tests.test_oauth2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_routers_corrected.html">tests.test_routers_corrected module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_schemas.html">tests.test_schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_deletion_integration.html">tests.test_user_deletion_integration module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.test_user_router.html">tests.test_user_router module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blog-api-main</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tests.html">tests package</a></li>
+      <li class="breadcrumb-item active">tests.test_email_validator module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.test_email_validator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tests.test_email_validator">
+<span id="tests-test-email-validator-module"></span><h1>tests.test_email_validator module<a class="headerlink" href="#module-tests.test_email_validator" title="Link to this heading"></a></h1>
+<p>Email Validator Module Test Suite</p>
+<p>Comprehensive test coverage for utils/email_validator.py module including:
+- Domain restriction functionality
+- Environment variable handling
+- Valid and invalid email domain checking
+- Configuration scenarios
+- Edge cases and error handling
+- Logging verification</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorDomainConfiguration</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test domain configuration scenarios</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_not_set">
+<span class="sig-name descname"><span class="pre">test_allowed_domains_not_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainConfiguration.test_allowed_domains_not_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_not_set" title="Link to this definition"></a></dt>
+<dd><p>Test behavior when ALLOWED_EMAIL_DOMAINS environment variable is not set</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_with_empty_entries">
+<span class="sig-name descname"><span class="pre">test_allowed_domains_with_empty_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainConfiguration.test_allowed_domains_with_empty_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_with_empty_entries" title="Link to this definition"></a></dt>
+<dd><p>Test domain list with empty entries</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_with_whitespace">
+<span class="sig-name descname"><span class="pre">test_allowed_domains_with_whitespace</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainConfiguration.test_allowed_domains_with_whitespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_allowed_domains_with_whitespace" title="Link to this definition"></a></dt>
+<dd><p>Test domain list with extra whitespace</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_no_allowed_domains_configured">
+<span class="sig-name descname"><span class="pre">test_no_allowed_domains_configured</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainConfiguration.test_no_allowed_domains_configured"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_no_allowed_domains_configured" title="Link to this definition"></a></dt>
+<dd><p>Test behavior when no allowed domains are configured</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_single_domain_configuration">
+<span class="sig-name descname"><span class="pre">test_single_domain_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainConfiguration.test_single_domain_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainConfiguration.test_single_domain_configuration" title="Link to this definition"></a></dt>
+<dd><p>Test configuration with single domain</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorDomainRestrictionDisabled</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionDisabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test email validation when domain restriction is disabled</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_by_default">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_disabled_by_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_by_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_by_default" title="Link to this definition"></a></dt>
+<dd><p>Test that domain restriction is disabled by default</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_returns_true_for_any_email">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_disabled_returns_true_for_any_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_returns_true_for_any_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_returns_true_for_any_email" title="Link to this definition"></a></dt>
+<dd><p>Test that any email is allowed when domain restriction is disabled</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_various_values">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_disabled_various_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_various_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_various_values" title="Link to this definition"></a></dt>
+<dd><p>Test various ways to disable domain restriction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_with_invalid_email_format">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_disabled_with_invalid_email_format</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_with_invalid_email_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionDisabled.test_domain_restriction_disabled_with_invalid_email_format" title="Link to this definition"></a></dt>
+<dd><p>Test disabled restriction with invalid email format</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorDomainRestrictionEnabled</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionEnabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test email validation when domain restriction is enabled</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_case_insensitive">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_enabled_case_insensitive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_case_insensitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_case_insensitive" title="Link to this definition"></a></dt>
+<dd><p>Test that domain checking is case insensitive</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_multiple_domains">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_enabled_multiple_domains</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_multiple_domains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_multiple_domains" title="Link to this definition"></a></dt>
+<dd><p>Test with multiple allowed domains</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_various_enable_values">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_enabled_various_enable_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_various_enable_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_various_enable_values" title="Link to this definition"></a></dt>
+<dd><p>Test various ways to enable domain restriction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_invalid_domain">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_enabled_with_invalid_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_invalid_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_invalid_domain" title="Link to this definition"></a></dt>
+<dd><p>Test email validation with disallowed domain</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_valid_domain">
+<span class="sig-name descname"><span class="pre">test_domain_restriction_enabled_with_valid_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_valid_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorDomainRestrictionEnabled.test_domain_restriction_enabled_with_valid_domain" title="Link to this definition"></a></dt>
+<dd><p>Test email validation with allowed domain</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorEdgeCases</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test edge cases and special scenarios</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases.test_domain_with_special_characters">
+<span class="sig-name descname"><span class="pre">test_domain_with_special_characters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases.test_domain_with_special_characters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases.test_domain_with_special_characters" title="Link to this definition"></a></dt>
+<dd><p>Test domain with special characters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases.test_international_domain_extensions">
+<span class="sig-name descname"><span class="pre">test_international_domain_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases.test_international_domain_extensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases.test_international_domain_extensions" title="Link to this definition"></a></dt>
+<dd><p>Test various international domain extensions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases.test_subdomain_explicitly_allowed">
+<span class="sig-name descname"><span class="pre">test_subdomain_explicitly_allowed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases.test_subdomain_explicitly_allowed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases.test_subdomain_explicitly_allowed" title="Link to this definition"></a></dt>
+<dd><p>Test subdomain that is explicitly allowed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases.test_subdomain_handling">
+<span class="sig-name descname"><span class="pre">test_subdomain_handling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases.test_subdomain_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases.test_subdomain_handling" title="Link to this definition"></a></dt>
+<dd><p>Test how subdomains are handled</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases.test_unicode_domain">
+<span class="sig-name descname"><span class="pre">test_unicode_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases.test_unicode_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases.test_unicode_domain" title="Link to this definition"></a></dt>
+<dd><p>Test email with unicode domain</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorEdgeCases.test_very_long_domain">
+<span class="sig-name descname"><span class="pre">test_very_long_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorEdgeCases.test_very_long_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorEdgeCases.test_very_long_domain" title="Link to this definition"></a></dt>
+<dd><p>Test very long domain name</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorIntegrationScenarios">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorIntegrationScenarios</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorIntegrationScenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorIntegrationScenarios" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test realistic integration scenarios</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_corporate_email_restriction_scenario">
+<span class="sig-name descname"><span class="pre">test_corporate_email_restriction_scenario</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorIntegrationScenarios.test_corporate_email_restriction_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_corporate_email_restriction_scenario" title="Link to this definition"></a></dt>
+<dd><p>Test typical corporate email restriction scenario</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_educational_institution_scenario">
+<span class="sig-name descname"><span class="pre">test_educational_institution_scenario</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorIntegrationScenarios.test_educational_institution_scenario"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_educational_institution_scenario" title="Link to this definition"></a></dt>
+<dd><p>Test educational institution email restriction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_multi_environment_configuration">
+<span class="sig-name descname"><span class="pre">test_multi_environment_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorIntegrationScenarios.test_multi_environment_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorIntegrationScenarios.test_multi_environment_configuration" title="Link to this definition"></a></dt>
+<dd><p>Test different configurations for different environments</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorInvalidEmailFormats">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorInvalidEmailFormats</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorInvalidEmailFormats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test handling of invalid email formats</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_ending_with_at">
+<span class="sig-name descname"><span class="pre">test_email_ending_with_at</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorInvalidEmailFormats.test_email_ending_with_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_ending_with_at" title="Link to this definition"></a></dt>
+<dd><p>Test email ending with &#64;</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_starting_with_at">
+<span class="sig-name descname"><span class="pre">test_email_starting_with_at</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorInvalidEmailFormats.test_email_starting_with_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_starting_with_at" title="Link to this definition"></a></dt>
+<dd><p>Test email starting with &#64;</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_with_multiple_at_symbols">
+<span class="sig-name descname"><span class="pre">test_email_with_multiple_at_symbols</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorInvalidEmailFormats.test_email_with_multiple_at_symbols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_with_multiple_at_symbols" title="Link to this definition"></a></dt>
+<dd><p>Test email with multiple &#64; symbols</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_without_at_symbol">
+<span class="sig-name descname"><span class="pre">test_email_without_at_symbol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorInvalidEmailFormats.test_email_without_at_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_email_without_at_symbol" title="Link to this definition"></a></dt>
+<dd><p>Test email without &#64; symbol</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_empty_email">
+<span class="sig-name descname"><span class="pre">test_empty_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorInvalidEmailFormats.test_empty_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorInvalidEmailFormats.test_empty_email" title="Link to this definition"></a></dt>
+<dd><p>Test empty email string</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorLogging">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorLogging</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorLogging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorLogging" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test logging functionality</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_allowed_domain">
+<span class="sig-name descname"><span class="pre">test_logging_for_allowed_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorLogging.test_logging_for_allowed_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_allowed_domain" title="Link to this definition"></a></dt>
+<dd><p>Test logging for allowed domain</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_disabled_restriction">
+<span class="sig-name descname"><span class="pre">test_logging_for_disabled_restriction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorLogging.test_logging_for_disabled_restriction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_disabled_restriction" title="Link to this definition"></a></dt>
+<dd><p>Test logging when domain restriction is disabled</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_disallowed_domain">
+<span class="sig-name descname"><span class="pre">test_logging_for_disallowed_domain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorLogging.test_logging_for_disallowed_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_disallowed_domain" title="Link to this definition"></a></dt>
+<dd><p>Test logging for disallowed domain</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_invalid_email_format">
+<span class="sig-name descname"><span class="pre">test_logging_for_invalid_email_format</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorLogging.test_logging_for_invalid_email_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_invalid_email_format" title="Link to this definition"></a></dt>
+<dd><p>Test logging for invalid email format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_missing_configuration">
+<span class="sig-name descname"><span class="pre">test_logging_for_missing_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorLogging.test_logging_for_missing_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorLogging.test_logging_for_missing_configuration" title="Link to this definition"></a></dt>
+<dd><p>Test logging when no domains are configured</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorPerformance">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_email_validator.</span></span><span class="sig-name descname"><span class="pre">TestEmailValidatorPerformance</span></span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorPerformance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorPerformance" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test performance-related aspects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorPerformance.test_large_domain_list_performance">
+<span class="sig-name descname"><span class="pre">test_large_domain_list_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorPerformance.test_large_domain_list_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorPerformance.test_large_domain_list_performance" title="Link to this definition"></a></dt>
+<dd><p>Test performance with large domain list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_email_validator.TestEmailValidatorPerformance.test_repeated_validation_calls">
+<span class="sig-name descname"><span class="pre">test_repeated_validation_calls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_email_validator.html#TestEmailValidatorPerformance.test_repeated_validation_calls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_email_validator.TestEmailValidatorPerformance.test_repeated_validation_calls" title="Link to this definition"></a></dt>
+<dd><p>Test repeated validation calls</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tests.test_email_sender.html" class="btn btn-neutral float-left" title="tests.test_email_sender module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.test_hashing.html" class="btn btn-neutral float-right" title="tests.test_hashing module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

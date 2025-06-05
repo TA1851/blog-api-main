@@ -1,42 +1,36 @@
 <!DOCTYPE html>
 
-<html lang="ja" data-content_root="../">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>schemas &#8212; Blog API  ドキュメント</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
-    
-    <script src="../_static/documentation_options.js?v=c033477b"></script>
+    <title>schemas &#8212; blog-api-main  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/translations.js?v=4755f45a"></script>
-    
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" /> 
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
   </head><body>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>ナビゲーション</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="総合索引"
-             accesskey="I">索引</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Pythonモジュール索引"
-             >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">schemas</a></li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <h1>schemas のソースコード</h1><div class="highlight"><pre>
+  <h1>Source code for schemas</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;レスポンスのスキーマを定義するモジュール&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">EmailStr</span><span class="p">,</span> <span class="n">computed_field</span>
@@ -46,7 +40,7 @@
 
 
 <div class="viewcode-block" id="LengthMismatchError">
-<a class="viewcode-back" href="../schemas.html#schemas.LengthMismatchError">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.LengthMismatchError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LengthMismatchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;文字列の長さが一致しないエラーを表すカスタム例外&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
@@ -54,7 +48,7 @@
 
 
 <div class="viewcode-block" id="ArticleBase">
-<a class="viewcode-back" href="../schemas.html#schemas.ArticleBase">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.ArticleBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ArticleBase</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;pydanticのベースモデルを継承して、記事情報のスキーマを定義する。</span>
 
@@ -91,7 +85,7 @@
         <span class="n">html_content</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">html_content</span>
 <div class="viewcode-block" id="ArticleBase.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.ArticleBase.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.ArticleBase.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -99,12 +93,12 @@
 
 
 <div class="viewcode-block" id="Article">
-<a class="viewcode-back" href="../schemas.html#schemas.Article">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.Article">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">ArticleBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ArticleBaseを継承して、記事情報のスキーマを定義する。</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Article.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.Article.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.Article.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -113,7 +107,7 @@
 
 <span class="c1"># FastAPIのエンドポイントで使用する例外ハンドラ</span>
 <div class="viewcode-block" id="validation_exception_handler">
-<a class="viewcode-back" href="../schemas.html#schemas.validation_exception_handler">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.validation_exception_handler">[docs]</a>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validation_exception_handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">RequestValidationError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;RequestValidationErrorをキャッチしてログに記録する例外ハンドラ&quot;&quot;&quot;</span>
     <span class="c1"># バリデーションエラーの情報を取得してログとコンソールに記録</span>
@@ -135,7 +129,7 @@
 
 
 <div class="viewcode-block" id="User">
-<a class="viewcode-back" href="../schemas.html#schemas.User">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.User">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザーモデル</span>
 
@@ -157,7 +151,7 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;TrueまたはFalseで入力してください&quot;</span>
         <span class="p">)</span>
 <div class="viewcode-block" id="User.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.User.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.User.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -165,7 +159,7 @@
 
 
 <div class="viewcode-block" id="ShowUser">
-<a class="viewcode-back" href="../schemas.html#schemas.ShowUser">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.ShowUser">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShowUser</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザー表示用モデル</span>
 
@@ -191,7 +185,7 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ユーザーが作成したブログ記事のリスト&quot;</span>
         <span class="p">)</span>
 <div class="viewcode-block" id="ShowUser.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.ShowUser.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.ShowUser.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -199,7 +193,7 @@
 
 
 <div class="viewcode-block" id="ShowArticle">
-<a class="viewcode-back" href="../schemas.html#schemas.ShowArticle">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.ShowArticle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShowArticle</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;記事表示用モデル</span>
 
@@ -234,7 +228,7 @@
         <span class="n">html_content</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">html_content</span>
 <div class="viewcode-block" id="ShowArticle.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.ShowArticle.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.ShowArticle.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -242,7 +236,7 @@
 
 
 <div class="viewcode-block" id="Login">
-<a class="viewcode-back" href="../schemas.html#schemas.Login">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.Login">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Login</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ログイン用モデル</span>
 
@@ -259,7 +253,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Login.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.Login.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.Login.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -267,7 +261,7 @@
 
 
 <div class="viewcode-block" id="PasswordChange">
-<a class="viewcode-back" href="../schemas.html#schemas.PasswordChange">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.PasswordChange">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PasswordChange</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;パスワード変更用モデル</span>
 
@@ -288,7 +282,7 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;8文字以上50文字以内で新しいパスワードを入力してください&quot;</span>
     <span class="p">)</span>
 <div class="viewcode-block" id="PasswordChange.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.PasswordChange.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.PasswordChange.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -296,7 +290,7 @@
 
 
 <div class="viewcode-block" id="Token">
-<a class="viewcode-back" href="../schemas.html#schemas.Token">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.Token">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Token</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;トークン用モデル</span>
 
@@ -309,7 +303,7 @@
 
 
 <div class="viewcode-block" id="TokenData">
-<a class="viewcode-back" href="../schemas.html#schemas.TokenData">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.TokenData">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TokenData</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンデータ用モデル</span>
 
@@ -320,7 +314,7 @@
 
 
 <div class="viewcode-block" id="PublicArticle">
-<a class="viewcode-back" href="../schemas.html#schemas.PublicArticle">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.PublicArticle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PublicArticle</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;パブリック記事表示用モデル（認証なしで閲覧可能）</span>
 
@@ -340,7 +334,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="PublicArticle.ConfigDict">
-<a class="viewcode-back" href="../schemas.html#schemas.PublicArticle.ConfigDict">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.PublicArticle.ConfigDict">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">ConfigDict</span><span class="p">:</span>
         <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
@@ -348,7 +342,7 @@
 
 
 <div class="viewcode-block" id="AccountDeletionRequest">
-<a class="viewcode-back" href="../schemas.html#schemas.AccountDeletionRequest">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.AccountDeletionRequest">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AccountDeletionRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;退会リクエストのスキーマ&quot;&quot;&quot;</span>
     <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;退会するユーザーのメールアドレス&quot;</span><span class="p">)</span>
@@ -356,7 +350,7 @@
     <span class="n">confirm_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;確認用パスワード&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AccountDeletionRequest.validate_passwords_match">
-<a class="viewcode-back" href="../schemas.html#schemas.AccountDeletionRequest.validate_passwords_match">[ドキュメント]</a>
+<a class="viewcode-back" href="../schemas.html#schemas.AccountDeletionRequest.validate_passwords_match">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_passwords_match</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;パスワードと確認用パスワードが一致するかチェック&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">confirm_password</span><span class="p">:</span>
@@ -366,43 +360,81 @@
 
 </pre></div>
 
-            <div class="clearer"></div>
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">blog-api-main</a></h1>
+
+
+
+
+
+
+
+
+
 <search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">クイック検索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="検索" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
     </form>
     </div>
 </search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../generate_summary_report.html">generate_summary_report module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hashing.html">hashing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">logger package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routers.html">routers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run_continuous_tests.html">run_continuous_tests module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schemas.html">schemas module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="Related">
-      <h3>ナビゲーション</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="総合索引"
-             >索引</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Pythonモジュール索引"
-             >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">schemas</a></li> 
-      </ul>
+    <div class="footer">
+      &#169;2025, Author.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
     </div>
-    <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, TA1851.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
-    </div>
+
+    
+
+    
   </body>
 </html>
