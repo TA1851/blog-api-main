@@ -233,7 +233,7 @@ def generate_summary_report():
         
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">{latest_result['summary']['total']}</div>
+                <div class="stat-number">{latest_result['summary']['total_tests']}</div>
                 <div class="stat-label">総テスト数</div>
             </div>
             <div class="stat-card">
@@ -298,13 +298,19 @@ def generate_summary_report():
         date_str = timestamp.strftime('%m/%d')
         time_str = timestamp.strftime('%H:%M')
         
+        # データ構造の違いに対応
+        summary = entry.get('summary', {})
+        total_tests = summary.get('total_tests', summary.get('total', 0))
+        success_rate = summary.get('success_rate', 0)
+        version = entry.get('version', entry.get('id', 'Unknown'))
+        
         html_content += f"""
             <div class="timeline-item">
                 <div class="timeline-date">{date_str} {time_str}</div>
                 <div class="timeline-content">
-                    <strong>{entry['version']}</strong><br>
-                    {entry['summary']['total']}テスト実行 - 成功率{entry['summary']['success_rate']:.1f}%<br>
-                    <small>{entry.get('notes', '')}</small>
+                    <strong>{version}</strong><br>
+                    {total_tests}テスト実行 - 成功率{success_rate:.1f}%<br>
+                    <small>{entry.get('notes', entry.get('component', ''))}</small>
                 </div>
             </div>
 """

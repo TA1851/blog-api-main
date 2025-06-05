@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="12" skipped="0" tests="29" time="0.709" timestamp="2025-06-05T18:39:05.511495+09:00" hostname="osakatatsuhikonoMac-mini.local"><testcase classname="tests.test_main.TestMainApplication" name="test_app_initialization_success" time="0.240"><failure message="AssertionError: expected call not found.&#10;Expected: create_logger('CORS_ORIGIN -&gt; OK')&#10;  Actual: not called.">tests/test_main.py:68: in test_app_initialization_success
+    mock_logger.assert_called_with("CORS_ORIGIN -&gt; OK")
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:930: in assert_called_with
+    raise AssertionError(error_message)
+E   AssertionError: expected call not found.
+E   Expected: create_logger('CORS_ORIGIN -&gt; OK')
+E     Actual: not called.</failure></testcase><testcase classname="tests.test_main.TestMainApplication" name="test_app_initialization_no_cors_origins" time="0.008"><failure message="AssertionError: expected call not found.&#10;Expected: create_error_logger('CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。')&#10;  Actual: not called.">tests/test_main.py:88: in test_app_initialization_no_cors_origins
+    mock_error_logger.assert_called_with("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:930: in assert_called_with
+    raise AssertionError(error_message)
+E   AssertionError: expected call not found.
+E   Expected: create_error_logger('CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。')
+E     Actual: not called.</failure></testcase><testcase classname="tests.test_main.TestMainApplication" name="test_cors_middleware_configuration" time="0.007" /><testcase classname="tests.test_main.TestMainApplication" name="test_routers_inclusion" time="0.008" /><testcase classname="tests.test_main.TestCORSConfiguration" name="test_cors_origins_parsing_list_format" time="0.040"><failure message="AssertionError: assert {'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com', 'https://nextjs-app-khaki-two.vercel.app'} == {'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'}&#10;  &#10;  Extra items in the left set:&#10;  #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[90m #x1B[39;49;00m {#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'http://127.0.0.1:8000',#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'http://localhost:3000',#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'https://example.com',#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m }#x1B[90m#x1B[39;49;00m">tests/test_main.py:154: in test_cors_origins_parsing_list_format
+    assert set(main.allowed_origins) == set(expected_origins)
+E   AssertionError: assert {'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com', 'https://nextjs-app-khaki-two.vercel.app'} == {'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'}
+E     
+E     Extra items in the left set:
+E     #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[90m #x1B[39;49;00m {#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'http://127.0.0.1:8000',#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'http://localhost:3000',#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'https://example.com',#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m }#x1B[90m#x1B[39;49;00m</failure></testcase><testcase classname="tests.test_main.TestCORSConfiguration" name="test_cors_origins_non_list_type" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == []&#10;  &#10;  Left contains 4 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[91m- []#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ [#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ ]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests/test_main.py:171: in test_cors_origins_non_list_type
+    assert main.allowed_origins == []
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == []
+E     
+E     Left contains 4 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[91m- []#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ [#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ ]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure></testcase><testcase classname="tests.test_main.TestCORSConfiguration" name="test_cors_origins_empty_lists" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == []&#10;  &#10;  Left contains 4 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[91m- []#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ [#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ ]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests/test_main.py:188: in test_cors_origins_empty_lists
+    assert main.allowed_origins == []
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == []
+E     
+E     Left contains 4 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[91m- []#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ [#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ ]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure></testcase><testcase classname="tests.test_main.TestExceptionHandling" name="test_email_validation_error_detection" time="0.001" /><testcase classname="tests.test_main.TestExceptionHandling" name="test_general_validation_error_handling" time="0.001" /><testcase classname="tests.test_main.TestExceptionHandling" name="test_email_error_with_multiple_conditions" time="0.001" /><testcase classname="tests.test_main.TestExceptionHandling" name="test_email_error_with_valid_email_message" time="0.001" /><testcase classname="tests.test_main.TestIntegrationWithTestClient" name="test_app_startup_with_test_client" time="0.001" /><testcase classname="tests.test_main.TestIntegrationWithTestClient" name="test_cors_headers_in_response" time="0.007" /><testcase classname="tests.test_main.TestMiddlewareStack" name="test_middleware_order_and_configuration" time="0.001" /><testcase classname="tests.test_main.TestMiddlewareStack" name="test_cors_middleware_parameters" time="0.001" /><testcase classname="tests.test_main.TestErrorLogging" name="test_validation_error_logging" time="0.001" /><testcase classname="tests.test_main.TestErrorLogging" name="test_email_error_specific_logging" time="0.001" /><testcase classname="tests.test_main.TestDatabaseInitialization" name="test_database_metadata_creation" time="0.001"><failure message="AssertionError: Expected 'create_all' to be called once. Called 0 times.">tests/test_main.py:502: in test_database_metadata_creation
+    mock_base.metadata.create_all.assert_called_once_with(mock_engine)
+/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/unittest/mock.py:950: in assert_called_once_with
+    raise AssertionError(msg)
+E   AssertionError: Expected 'create_all' to be called once. Called 0 times.</failure></testcase><testcase classname="tests.test_main.TestDatabaseInitialization" name="test_database_initialization_with_exception" time="0.001"><failure message="Failed: DID NOT RAISE &lt;class 'Exception'&gt;">tests/test_main.py:520: in test_database_initialization_with_exception
+    with pytest.raises(Exception, match="Database connection failed"):
+E   Failed: DID NOT RAISE &lt;class 'Exception'&gt;</failure></testcase><testcase classname="tests.test_main.TestApplicationConfiguration" name="test_fastapi_app_configuration" time="0.001" /><testcase classname="tests.test_main.TestApplicationConfiguration" name="test_exception_handler_registration" time="0.001" /><testcase classname="tests.test_main.TestEnvironmentVariables" name="test_cors_origins_environment_parsing" time="0.001"><failure message="AssertionError: assert {'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com', 'https://nextjs-app-khaki-two.vercel.app'} == {'https://app.example.com', 'http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8000', 'http://0.0.0.0:8000'}&#10;  &#10;  Extra items in the left set:&#10;  #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://example.com#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Extra items in the right set:&#10;  #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://0.0.0.0:8000#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://app.example.com#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://localhost:8080#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[90m #x1B[39;49;00m {#x1B[90m#x1B[39;49;00m&#10;  #x1B[91m-     'http://0.0.0.0:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'http://127.0.0.1:8000',#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'http://localhost:3000',#x1B[90m#x1B[39;49;00m&#10;  #x1B[91m-     'http://localhost:8080',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[91m-     'https://app.example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  ?              ----#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m }#x1B[90m#x1B[39;49;00m">tests/test_main.py:593: in test_cors_origins_environment_parsing
+    assert set(main.allowed_origins) == set(expected_all_origins)
+E   AssertionError: assert {'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com', 'https://nextjs-app-khaki-two.vercel.app'} == {'https://app.example.com', 'http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8000', 'http://0.0.0.0:8000'}
+E     
+E     Extra items in the left set:
+E     #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://example.com#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Extra items in the right set:
+E     #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://0.0.0.0:8000#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://app.example.com#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://localhost:8080#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[90m #x1B[39;49;00m {#x1B[90m#x1B[39;49;00m
+E     #x1B[91m-     'http://0.0.0.0:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'http://127.0.0.1:8000',#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'http://localhost:3000',#x1B[90m#x1B[39;49;00m
+E     #x1B[91m-     'http://localhost:8080',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[91m-     'https://app.example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     ?              ----#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m }#x1B[90m#x1B[39;49;00m</failure></testcase><testcase classname="tests.test_main.TestEnvironmentVariables" name="test_partial_cors_configuration" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == ['https://production.example.com']&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://production.example.com#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  Left contains 3 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://localhost:3000#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[90m #x1B[39;49;00m [#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[91m-     'https://production.example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  ?              -----------#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m ]#x1B[90m#x1B[39;49;00m">tests/test_main.py:611: in test_partial_cors_configuration
+    assert main.allowed_origins == ['https://production.example.com']
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == ['https://production.example.com']
+E     
+E     At index 0 diff: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://production.example.com#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     Left contains 3 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://localhost:3000#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[90m #x1B[39;49;00m [#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[91m-     'https://production.example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     ?              -----------#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m ]#x1B[90m#x1B[39;49;00m</failure></testcase><testcase classname="tests.test_main.TestEnvironmentVariables" name="test_environment_variable_none_values" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == []&#10;  &#10;  Left contains 4 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[91m- []#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ [#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+ ]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m">tests/test_main.py:629: in test_environment_variable_none_values
+    assert main.allowed_origins == []
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == []
+E     
+E     Left contains 4 more items, first extra item: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[91m- []#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ [#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'http://127.0.0.1:8000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+ ]#x1B[39;49;00m#x1B[90m#x1B[39;49;00m</failure></testcase><testcase classname="tests.test_main.TestPerformanceAndResourceUsage" name="test_app_initialization_performance" time="0.001" /><testcase classname="tests.test_main.TestPerformanceAndResourceUsage" name="test_large_cors_origins_list_handling" time="0.001"><failure message="AssertionError: assert 4 == 150&#10; +  where 4 = len(['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'])&#10; +    where ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] = &lt;module 'main' from '/Users/tatu/Documents/GitHub/blog-api-main/main.py'&gt;.allowed_origins">tests/test_main.py:677: in test_large_cors_origins_list_handling
+    assert len(main.allowed_origins) == expected_total
+E   AssertionError: assert 4 == 150
+E    +  where 4 = len(['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'])
+E    +    where ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] = &lt;module 'main' from '/Users/tatu/Documents/GitHub/blog-api-main/main.py'&gt;.allowed_origins</failure></testcase><testcase classname="tests.test_main.TestEdgeCases" name="test_exception_handler_with_empty_errors" time="0.001" /><testcase classname="tests.test_main.TestEdgeCases" name="test_exception_handler_with_complex_error_structure" time="0.001" /><testcase classname="tests.test_main.TestEdgeCases" name="test_cors_origins_duplicate_handling" time="0.001"><failure message="AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == ['http://localhost:3000', 'https://example.com', 'http://localhost:3000', 'http://127.0.0.1:8000']&#10;  &#10;  At index 0 diff: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://localhost:3000#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  &#10;  Full diff:&#10;  #x1B[0m#x1B[90m #x1B[39;49;00m [#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[91m-     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[91m-     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'http://localhost:3000',#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m     'http://127.0.0.1:8000',#x1B[90m#x1B[39;49;00m&#10;  #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m&#10;  #x1B[90m #x1B[39;49;00m ]#x1B[90m#x1B[39;49;00m">tests/test_main.py:760: in test_cors_origins_duplicate_handling
+    assert main.allowed_origins == expected_origins
+E   AssertionError: assert ['https://nextjs-app-khaki-two.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:8000', 'https://example.com'] == ['http://localhost:3000', 'https://example.com', 'http://localhost:3000', 'http://127.0.0.1:8000']
+E     
+E     At index 0 diff: #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttps://nextjs-app-khaki-two.vercel.app#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m != #x1B[0m#x1B[33m'#x1B[39;49;00m#x1B[33mhttp://localhost:3000#x1B[39;49;00m#x1B[33m'#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     
+E     Full diff:
+E     #x1B[0m#x1B[90m #x1B[39;49;00m [#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://nextjs-app-khaki-two.vercel.app',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[91m-     'http://localhost:3000',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[91m-     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'http://localhost:3000',#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m     'http://127.0.0.1:8000',#x1B[90m#x1B[39;49;00m
+E     #x1B[92m+     'https://example.com',#x1B[39;49;00m#x1B[90m#x1B[39;49;00m
+E     #x1B[90m #x1B[39;49;00m ]#x1B[90m#x1B[39;49;00m</failure></testcase></testsuite></testsuites>
