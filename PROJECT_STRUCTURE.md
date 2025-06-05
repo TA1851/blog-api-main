@@ -218,17 +218,11 @@ tests/
 ### 環境変数
 
 ```bash
-# 必須環境変数
-ENVIRONMENT=development|production
-SECRET_KEY=<JWT署名用秘密鍵>
-ALGORITHM=HS256
+# 開発環境
+.envに記述する
 
-# データベース（本番環境のみ）
-DATABASE_URL=<PostgreSQL接続URL>
-POSGRE_URL=<PostgreSQL接続URL>
-
-# CORS設定
-CORS_ORIGINS=http://localhost:3000,https://yourdomain.com
+# 本番環境
+Renderに環境変数を設定する
 ```
 
 ## 🔧 開発・運用コマンド
@@ -263,16 +257,16 @@ alembic revision --autogenerate -m "マイグレーション名"
 alembic upgrade head
 ```
 
-### ドキュメント生成
+### ドキュメント
 ```bash
-# Sphinx ドキュメント生成
-cd doc && make html
+# 監視モード
+cd doc/ &&
+python -m sphinx_autobuild . _build/html --host 0.0.0.0 --port 8080
 ```
 
 ## 📈 モニタリング・品質管理
 
 ### コードカバレッジ
-- 目標: 90%以上
 - レポート: `htmlcov/index.html`
 
 ### コード品質
@@ -280,7 +274,7 @@ cd doc && make html
 - **フォーマット**: black, isort
 - **リンティング**: flake8
 
-### ログ監視
+### ログ監視(開発環境)
 - アプリケーションログ: `log/`
 - エラー追跡: カスタムロガー
 - パフォーマンス監視: FastAPI自動生成メトリクス
@@ -310,6 +304,6 @@ fastapi dev main.py
 
 ---
 
-📝 **最終更新**: 2025年6月4日  
-🏗️ **プロジェクトバージョン**: 1.0.0  
+📝 **最終更新**: 2025年6月5日
+🏗️ **プロジェクトバージョン**: 1.0.0
 👥 **開発チーム**: Blog API Team
