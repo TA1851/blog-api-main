@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>database module &#8212; venv  ドキュメント</title>
+    <title>database module &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
     
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="custom_token.html" title="custom_token module"
              accesskey="P">前へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">database module</a></li> 
       </ul>
     </div>  
@@ -47,6 +47,31 @@
   <section id="module-database">
 <span id="database-module"></span><h1>database module<a class="headerlink" href="#module-database" title="Link to this heading">¶</a></h1>
 <p>データベース接続モジュール</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="database.Base">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#Base"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.Base" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeclarativeBase</span></code></p>
+<p>SQLAlchemyのベースクラス</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.Base.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[MetaData]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetaData()</span></em><a class="headerlink" href="#database.Base.metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Refers to the <code class="xref py py-class docutils literal notranslate"><span class="pre">_schema.MetaData</span></code> collection that will be used
+for new <code class="xref py py-class docutils literal notranslate"><span class="pre">_schema.Table</span></code> objects.</p>
+<div class="admonition seealso">
+<p class="admonition-title">参考</p>
+<p><span class="xref std std-ref">orm_declarative_metadata</span></p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.Base.registry">
+<span class="sig-name descname"><span class="pre">registry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[_RegistryType]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;sqlalchemy.orm.decl_api.registry</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#database.Base.registry" title="Link to this definition">¶</a></dt>
+<dd><p>Refers to the <code class="xref py py-class docutils literal notranslate"><span class="pre">_orm.registry</span></code> in use where new
+<code class="xref py py-class docutils literal notranslate"><span class="pre">_orm.Mapper</span></code> objects will be associated.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py exception">
 <dt class="sig sig-object py" id="database.DatabaseConnectionError">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">DatabaseConnectionError</span></span><a class="reference internal" href="_modules/database.html#DatabaseConnectionError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.DatabaseConnectionError" title="Link to this definition">¶</a></dt>
@@ -54,16 +79,46 @@
 <p>データベース接続エラーを表すカスタム例外</p>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="database.EnvironmentConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">EnvironmentConfig</span></span><a class="reference internal" href="_modules/database.html#EnvironmentConfig"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.EnvironmentConfig" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>環境変数設定の型定義</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.EnvironmentConfig.algo">
+<span class="sig-name descname"><span class="pre">algo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#database.EnvironmentConfig.algo" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.EnvironmentConfig.cors_origins">
+<span class="sig-name descname"><span class="pre">cors_origins</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]</span></em><a class="headerlink" href="#database.EnvironmentConfig.cors_origins" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.EnvironmentConfig.environment">
+<span class="sig-name descname"><span class="pre">environment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#database.EnvironmentConfig.environment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.EnvironmentConfig.posgre_url">
+<span class="sig-name descname"><span class="pre">posgre_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#database.EnvironmentConfig.posgre_url" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="database.EnvironmentConfig.secret_key">
+<span class="sig-name descname"><span class="pre">secret_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#database.EnvironmentConfig.secret_key" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="database.check_env_file">
 <span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">check_env_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#check_env_file"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.check_env_file" title="Link to this definition">¶</a></dt>
-<dd><p>ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。</p>
+<dd><p>開発環境では、デフォルトで`.env`ファイルを使用し、
+本番環境では、Renderから環境変数を取得します。</p>
 <dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>default_env_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- str | Path</p>
-</dd>
-<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -71,9 +126,8 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="database.create_database_engine">
 <span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_database_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#create_database_engine"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.create_database_engine" title="Link to this definition">¶</a></dt>
-<dd><p>環境変数からデータベースURLを取得し、データベースエンジンを作成する。</p>
-<p>データベースURLが設定されていない場合は、DatabaseConnectionErrorをスローします。</p>
-<p>connect_args = {&quot;check_same_thread&quot;: False} : SQLite固有の接続オプション</p>
+<dd><p>データベースURLを取得し、データベースエンジンを作成する。</p>
+<p>・開発環境ではSQLite、本番環境ではPostgreSQLを使用します。</p>
 <dl class="field-list simple">
 <dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></span></p>
@@ -84,7 +138,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="database.create_session">
 <span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#create_session"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.create_session" title="Link to this definition">¶</a></dt>
-<dd><p>SQLAlchemyのセッションを作成：データベースに接続し、データの操作を行う前処理を行う。</p>
+<dd><p>SQLAlchemyのセッションを作成する。</p>
 <dl class="field-list simple">
 <dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -100,7 +154,21 @@ CRUD操作をグループ化して、全ての処理が成功した場合、デ�
 </ul>
 </dd>
 <dt class="field-even">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">sessionmaker</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="database.get_db">
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#get_db"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.get_db" title="Link to this definition">¶</a></dt>
+<dd><p>データベースセッションを取得する</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値<span class="colon">:</span></dt>
+<dd class="field-odd"><p>データベースセッション</p>
+</dd>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-even"><p>Session</p>
 </dd>
 </dl>
 </dd></dl>
@@ -108,12 +176,10 @@ CRUD操作をグループ化して、全ての処理が成功した場合、デ�
 <dl class="py function">
 <dt class="sig sig-object py" id="database.read_env_var">
 <span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">read_env_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#read_env_var"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.read_env_var" title="Link to this definition">¶</a></dt>
-<dd><p>dotenvモジュールのload_dotenv関数でENVファイルから環境変数を取得し、ログに記録する。</p>
-<p>file_id: 環境変数から取得したファイルID</p>
-<p>database_url: 環境変数から取得したDB_URL</p>
+<dd><p>環境変数の取得</p>
 <dl class="field-list simple">
 <dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#database.EnvironmentConfig" title="database.EnvironmentConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvironmentConfig</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -131,10 +197,24 @@ CRUD操作をグループ化して、全ての処理が成功した場合、デ�
     <h3><a href="index.html">目次</a></h3>
     <ul>
 <li><a class="reference internal" href="#">database module</a><ul>
+<li><a class="reference internal" href="#database.Base"><code class="docutils literal notranslate"><span class="pre">Base</span></code></a><ul>
+<li><a class="reference internal" href="#database.Base.metadata"><code class="docutils literal notranslate"><span class="pre">Base.metadata</span></code></a></li>
+<li><a class="reference internal" href="#database.Base.registry"><code class="docutils literal notranslate"><span class="pre">Base.registry</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#database.DatabaseConnectionError"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError</span></code></a></li>
+<li><a class="reference internal" href="#database.EnvironmentConfig"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig</span></code></a><ul>
+<li><a class="reference internal" href="#database.EnvironmentConfig.algo"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.algo</span></code></a></li>
+<li><a class="reference internal" href="#database.EnvironmentConfig.cors_origins"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.cors_origins</span></code></a></li>
+<li><a class="reference internal" href="#database.EnvironmentConfig.environment"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.environment</span></code></a></li>
+<li><a class="reference internal" href="#database.EnvironmentConfig.posgre_url"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.posgre_url</span></code></a></li>
+<li><a class="reference internal" href="#database.EnvironmentConfig.secret_key"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.secret_key</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#database.check_env_file"><code class="docutils literal notranslate"><span class="pre">check_env_file()</span></code></a></li>
 <li><a class="reference internal" href="#database.create_database_engine"><code class="docutils literal notranslate"><span class="pre">create_database_engine()</span></code></a></li>
 <li><a class="reference internal" href="#database.create_session"><code class="docutils literal notranslate"><span class="pre">create_session()</span></code></a></li>
+<li><a class="reference internal" href="#database.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
 <li><a class="reference internal" href="#database.read_env_var"><code class="docutils literal notranslate"><span class="pre">read_env_var()</span></code></a></li>
 </ul>
 </li>
@@ -187,12 +267,12 @@ CRUD操作をグループ化して、全ての処理が成功した場合、デ�
         <li class="right" >
           <a href="custom_token.html" title="custom_token module"
              >前へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">database module</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

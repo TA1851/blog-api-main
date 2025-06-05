@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>routers.auth &#8212; venv  ドキュメント</title>
+    <title>routers.auth &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">routers.auth</a></li> 
       </ul>
@@ -38,103 +38,70 @@
             
   <h1>routers.auth のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;認証機能を実装するためのルーターモジュール&quot;&quot;&quot;</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">HTTPException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordRequestForm</span><span class="p">,</span> <span class="n">OAuth2PasswordBearer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Login</span><span class="p">,</span> <span class="n">ShowArticle</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">session</span><span class="p">,</span> <span class="n">db_env</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">hashing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hash</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShowArticle</span><span class="p">,</span> <span class="n">PasswordChange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hash</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">custom_token</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_access_token</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Article</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils.email_sender</span><span class="w"> </span><span class="kn">import</span> <span class="n">send_registration_complete_email</span>
+
+
+<span class="c1"># 認証レスポンスの型定義</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+
+<div class="viewcode-block" id="LoginResponse">
+<a class="viewcode-back" href="../../routers.html#routers.auth.LoginResponse">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LoginResponse</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ログインレスポンスの型定義&quot;&quot;&quot;</span>
+    <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">token_type</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="TokenResponse">
+<a class="viewcode-back" href="../../routers.html#routers.auth.TokenResponse">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TokenResponse</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンレスポンスの型定義&quot;&quot;&quot;</span>
+    <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">token_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span></div>
+
 
 
 <span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
-    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span>  <span class="c1"># APIのバージョンを指定</span>
-    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">],</span>  <span class="c1"># SwaggerUIのタグを指定</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/v1&quot;</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;auth&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-
-
-<span class="c1"># 環境変数の取得</span>
-<span class="n">db_env</span>
-<span class="c1"># print(db_env)</span>
-<span class="n">db_url</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;database_url&quot;</span><span class="p">)</span>
-<span class="n">key03</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_03&quot;</span><span class="p">)</span>
-<span class="n">key09</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_id_09&quot;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="check_environment_variable">
-<a class="viewcode-back" href="../../routers.html#routers.auth.check_environment_variable">[ドキュメント]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_environment_variable</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;環境変数を取得する</span>
-
-<span class="sd">    :param key09: auth.pyの環境変数</span>
-<span class="sd">    :type key09: str</span>
-<span class="sd">    :return: 環境変数の値</span>
-<span class="sd">    :rtype: str</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">key09</span><span class="p">:</span>
-        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">key09</span><span class="si">}</span><span class="s2">が設定されていません。</span><span class="si">{</span><span class="n">key09</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。-&gt; </span><span class="si">{</span><span class="n">key09</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP20：環境変数：</span><span class="si">{</span><span class="n">key09</span><span class="si">}</span><span class="s2">を取得しました。 -&gt; </span><span class="si">{</span><span class="n">key09</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数</span><span class="si">{</span><span class="n">key09</span><span class="si">}</span><span class="s2">を取得しました。:&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">key09</span></div>
-
-
-<span class="n">check_environment_variable</span><span class="p">()</span>
-
-
-<div class="viewcode-block" id="check_db_url">
-<a class="viewcode-back" href="../../routers.html#routers.auth.check_db_url">[ドキュメント]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_db_url</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースURLを取得する</span>
-<span class="sd">    </span>
-<span class="sd">    :param key03: auth.pyの環境変数</span>
-<span class="sd">    :type key03: str</span>
-<span class="sd">    :param db_url: auth.pyの環境変数</span>
-<span class="sd">    :type db_url: str</span>
-<span class="sd">    :return: 環境変数の値</span>
-<span class="sd">    :rtype: str</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_url</span><span class="p">:</span>
-        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数:</span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">が設定されていません。 -&gt; </span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数が設定されていません。</span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP21：環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。&quot;</span><span class="p">)</span>
-    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;環境変数: </span><span class="si">{</span><span class="n">db_url</span><span class="si">}</span><span class="s2">を読み込みました。 -&gt; </span><span class="si">{</span><span class="n">key03</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">db_url</span></div>
-
-
-<span class="n">check_db_url</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STEP22：ログイン機能を検証します。Swaggerで確認してください。&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------------------&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_db">
 <a class="viewcode-back" href="../../routers.html#routers.auth.get_db">[ドキュメント]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Session</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースセッションを取得するための依存関数&quot;&quot;&quot;</span>
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">session</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">db</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
-        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをコミットしました&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span>
+            <span class="s2">&quot;DBセッションをコミットしました&quot;</span>
+            <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DBセッションのコミットに失敗しました。: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;DBセッションのコミットに失敗しました。: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">raise</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズしました&quot;</span><span class="p">)</span>
-        <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;DBセッションをクローズしました&quot;</span><span class="p">)</span></div>
-
-
+        <span class="n">create_logger</span><span class="p">(</span>
+            <span class="s2">&quot;DBセッションをクローズしました&quot;</span>
+        <span class="p">)</span></div>
 
 
 
@@ -144,15 +111,45 @@
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span>
     <span class="n">request</span><span class="p">:</span> <span class="n">OAuth2PasswordRequestForm</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(),</span>
     <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;ログインエンドポイント</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoginResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザー認証を行い、ログインする</span>
+
+<span class="sd">    ログインエンドポイント：</span>
+<span class="sd">    ```</span>
+<span class="sd">    http://127.0.0.1:8080/api/v1/login</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください：</span>
+<span class="sd">    ```</span>
+<span class="sd">    http://127.0.0.1:8080/api/v1/change-password</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    パラメータ：</span>
+<span class="sd">    ```</span>
+<span class="sd">    username: ユーザー名（メールアドレス）</span>
+<span class="sd">    password: パスワード</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    レスポンス：成功時(200 OK), 失敗時(404 Not Found)</span>
+<span class="sd">    ```</span>
+<span class="sd">    {</span>
+<span class="sd">        &quot;access_token&quot;: &quot;JWTトークン文字列&quot;,</span>
+<span class="sd">        &quot;token_type&quot;: &quot;bearer&quot;</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
 
 <span class="sd">    :param request: OAuth2PasswordRequestForm</span>
+
 <span class="sd">    :type request: OAuth2PasswordRequestForm</span>
+
 <span class="sd">    :param db: データベースセッション</span>
+
 <span class="sd">    :type db: Session</span>
-<span class="sd">    :return: アクセストークンとトークンタイプ</span>
+
+<span class="sd">    :return: アクセストークンを返します。token_type:bearer</span>
+
 <span class="sd">    :rtype: dict</span>
+
 <span class="sd">    :raises HTTPException: ユーザー名またはパスワードが無効な場合</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login attempt with username: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -160,38 +157,37 @@
 
     <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User not found with email: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;無効なユーザー名です: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;無効なユーザー名です: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
             <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
             <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;無効なユーザー名です&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">Hash</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span>
-        <span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">password</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">Hash</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">password</span>
     <span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Password verification failed&quot;</span><span class="p">)</span>
-        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;無効なパスワードです: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">password</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># print(&quot;Password verification failed&quot;)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;無効なパスワードです: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">password</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
             <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
             <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;無効なパスワードです&quot;</span>
         <span class="p">)</span>
     <span class="n">access_token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span>
-        <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
     <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==================================================&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ログインしました。: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==================================================&quot;</span><span class="p">)</span>
-    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ログインに成功しました: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">create_logger</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;ログインに成功しました: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;unknown&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;access_token&quot;</span><span class="p">:</span> <span class="n">access_token</span><span class="p">,</span> <span class="s2">&quot;token_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bearer&quot;</span><span class="p">}</span></div>
 
 
 
 <span class="c1"># OAuth2スキームを定義</span>
 <span class="n">oauth2_scheme</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearer</span><span class="p">(</span><span class="n">tokenUrl</span><span class="o">=</span><span class="s2">&quot;/api/v1/login&quot;</span><span class="p">)</span>
-
-
-<span class="c1"># ブラックリストを保持するセット（メモリ内）</span>
 <span class="n">token_blacklist</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
 
@@ -201,14 +197,19 @@
     <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span>
         <span class="n">oauth2_scheme</span>
         <span class="p">)</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンを検証し、無効化されたトークンを拒否する</span>
 
 <span class="sd">    :param token: 認証トークン（ヘッダーから自動取得）</span>
+
 <span class="sd">    :type token: str</span>
+
 <span class="sd">    :raises HTTPException: トークンが無効な場合</span>
+
 <span class="sd">    :return: トークンのペイロード</span>
+
 <span class="sd">    :rtype: dict</span>
+
 <span class="sd">    :raises HTTPException: トークンが無効化されている場合</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">token_blacklist</span><span class="p">:</span>
@@ -217,8 +218,10 @@
             <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;トークンが無効化されています&quot;</span>
         <span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># トークンの検証ロジック（既存のコードがあれば利用）</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;your-secret-key&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">])</span>
+        <span class="c1"># トークンの検証ロジックを実装</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+            <span class="n">token</span><span class="p">,</span> <span class="s2">&quot;your-secret-key&quot;</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;HS256&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
         <span class="n">email</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sub&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
@@ -233,6 +236,7 @@
         <span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="logout">
 <a class="viewcode-back" href="../../routers.html#routers.auth.logout">[ドキュメント]</a>
 <span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
@@ -242,19 +246,49 @@
     <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span>
         <span class="n">oauth2_scheme</span>
         <span class="p">)</span>
-    <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;ログアウトエンドポイント</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ログアウトエンドポイント:https://127.0.0.1:8000/api/v1/logout</span>
+
+<span class="sd">    リクエストヘッダー</span>
+<span class="sd">    ```</span>
+<span class="sd">    Authorization: Bearer &lt;token&gt;</span>
+<span class="sd">    Content-Type: application/json</span>
+<span class="sd">    ```</span>
+<span class="sd">    パラメータ：</span>
+<span class="sd">    ```</span>
+<span class="sd">    Authorizationヘッダーから自動取得</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    レスポンス：成功時(200 OK), 失敗時(401 Unauthorized)</span>
+<span class="sd">    ```</span>
+<span class="sd">    {</span>
+<span class="sd">        &quot;message&quot;: &quot;ログアウトしました&quot;</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+<span class="sd">    エラー時：</span>
+<span class="sd">    401 Unauthorized：トークンが無効な場合</span>
+<span class="sd">    422 Unprocessable Entity：トークンが既に無効化されている場合</span>
+<span class="sd">    ```</span>
+<span class="sd">    {</span>
+<span class="sd">        &quot;detail&quot;: &quot;トークンが無効化されています&quot;</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
 
 <span class="sd">    :param token: 認証トークン（ヘッダーから自動取得）</span>
-<span class="sd">    :type token: str</span>
+
+<span class="sd">    :type token: Bearer</span>
+
 <span class="sd">    :raises HTTPException: トークンが無効な場合</span>
-<span class="sd">    :return: ログアウトメッセージ</span>
+
+<span class="sd">    :return: ログアウトしました。</span>
+
 <span class="sd">    :rtype: dict</span>
+
 <span class="sd">    :raises HTTPException: トークンが無効化されている場合</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># トークンをブラックリストに追加して無効化</span>
     <span class="n">token_blacklist</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ログアウトしました。&quot;</span><span class="p">)</span>
+    <span class="c1"># print(f&quot;ログアウトしました。&quot;)</span>
     <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;ログアウトに成功しました&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;ログアウトしました&quot;</span><span class="p">}</span></div>
 
@@ -267,15 +301,132 @@
     <span class="n">response_model</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ShowArticle</span><span class="p">]</span>
     <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_all_blogs</span><span class="p">(</span>
-    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)):</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ShowArticle</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;全てのブログ記事を取得するエンドポイント</span>
 
 <span class="sd">    :param db: データベースセッション</span>
+
 <span class="sd">    :type db: Session</span>
+
 <span class="sd">    :return: 記事のリスト</span>
+
 <span class="sd">    :rtype: List[ShowArticle]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ShowArticle</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">ShowArticle</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">article</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">article</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">article</span><span class="o">.</span><span class="n">body</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">articles</span>
+    <span class="p">]</span></div>
+
+
+
+<span class="c1"># パスワード変更レスポンス型</span>
+<div class="viewcode-block" id="PasswordChangeResponse">
+<a class="viewcode-back" href="../../routers.html#routers.auth.PasswordChangeResponse">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PasswordChangeResponse</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;パスワード変更レスポンスの型定義&quot;&quot;&quot;</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="change_password">
+<a class="viewcode-back" href="../../routers.html#routers.auth.change_password">[ドキュメント]</a>
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/change-password&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">change_password</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">PasswordChange</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PasswordChangeResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;仮パスワードから新パスワードへの変更を行うエンドポイント</span>
+
+<span class="sd">    パスワード変更エンドポイント：</span>
+<span class="sd">    ```</span>
+<span class="sd">    http://127.0.0.1:8080/api/v1/change-password</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    パラメータ：</span>
+<span class="sd">    ```</span>
+<span class="sd">    username: ユーザー名（メールアドレス）</span>
+<span class="sd">    temp_password: 現在の仮パスワード</span>
+<span class="sd">    new_password: 新しいパスワード</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request)</span>
+<span class="sd">    ```</span>
+<span class="sd">    {</span>
+<span class="sd">        &quot;access_token&quot;: &quot;JWTトークン文字列&quot;,</span>
+<span class="sd">        &quot;token_type&quot;: &quot;bearer&quot;,</span>
+<span class="sd">        &quot;message&quot;: &quot;パスワードが正常に変更されました。登録完了メールを送信しました。&quot;</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+<span class="sd">    </span>
+<span class="sd">    注意：パスワード変更成功後、登録完了メールが自動的に送信されます。</span>
+
+<span class="sd">    :param request: PasswordChange</span>
+<span class="sd">    :type request: PasswordChange</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :return: アクセストークンとメッセージを返します</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    :raises HTTPException: ユーザー名または仮パスワードが無効な場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Password change attempt for username: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;パスワード変更試行: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ユーザーの存在確認</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;無効なユーザー名です: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;無効なユーザー名です&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 仮パスワードの検証</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">Hash</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">temp_password</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">):</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;無効な仮パスワードです: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;無効な仮パスワードです&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 新しいパスワードのハッシュ化と更新</span>
+    <span class="n">hashed_new_password</span> <span class="o">=</span> <span class="n">Hash</span><span class="o">.</span><span class="n">bcrypt</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">new_password</span><span class="p">)</span>
+    <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">hashed_new_password</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;パスワード変更成功: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 登録完了メールを送信</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">:</span>
+                <span class="c1"># user.nameがNoneの場合はメールアドレスのローカル部分を使用</span>
+                <span class="n">user_name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">await</span> <span class="n">send_registration_complete_email</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">user_name</span><span class="p">)</span>
+                <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;登録完了メールを送信しました: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">email_error</span><span class="p">:</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;登録完了メール送信に失敗しました: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="si">}</span><span class="s2">, エラー: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">email_error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 新しいアクセストークンを生成</span>
+        <span class="n">access_token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sub&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パスワードが正常に変更されました。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;パスワード変更失敗: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2">, エラー: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;パスワード変更中にエラーが発生しました&quot;</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 
@@ -308,13 +459,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">routers.auth</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

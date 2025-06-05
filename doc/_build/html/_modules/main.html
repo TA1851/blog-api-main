@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>main &#8212; venv  ドキュメント</title>
+    <title>main &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">main</a></li> 
       </ul>
@@ -37,58 +37,111 @@
           <div class="body" role="main">
             
   <h1>main のソースコード</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">Request</span>
+<span></span><span class="sd">&quot;&quot;&quot;FastAPIのエントリーポイント&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">Request</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestValidationError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONResponse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.middleware.cors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CORSMiddleware</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span><span class="p">,</span> <span class="n">User</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArticleBase</span><span class="p">,</span> <span class="n">validation_exception_handler</span><span class="p">,</span> <span class="n">User</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">Base</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">article</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">auth</span>
 
-<span class="c1"># FastAPIのインスタンスを作成</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">Base</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">db_env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">validation_exception_handler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">article</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">auth</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
+
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 
+<span class="c1"># 環境変数から取得したCORS_ORIGINSリストを使用</span>
+<span class="n">origins</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cors_origins&quot;</span><span class="p">,</span> <span class="p">[])</span>
+<span class="n">local_origin</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;local_origin&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
-<span class="c1"># 許可するオリジン（フロントエンドのURLを指定）</span>
-<span class="n">origins</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;http://127.0.0.1:3000&quot;</span><span class="p">,</span>  <span class="c1"># ReactやNext.jsのローカル開発環境</span>
-    <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>  <span class="c1"># ReactやNext.jsのローカル開発環境</span>
+<span class="c1"># テスト環境用のデフォルトのオリジンリスト</span>
+<span class="n">test_origins</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http://127.0.0.1:8000&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://example.com&quot;</span>
 <span class="p">]</span>
+
+<span class="c1"># 両方のオリジンリストを結合</span>
+<span class="n">allowed_origins</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="n">origins</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">origins</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="n">allowed_origins</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">origins</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">local_origin</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">local_origin</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="n">allowed_origins</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">local_origin</span><span class="p">)</span>
+
+<span class="c1"># テスト実行時には、デフォルトでテスト環境用オリジンを追加</span>
+<span class="c1"># 本番環境ではこれらは使用されない</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="k">if</span> <span class="s2">&quot;pytest&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="n">allowed_origins</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">test_origins</span><span class="p">)</span>
+
+<span class="c1"># デフォルト値の設定</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">allowed_origins</span><span class="p">:</span>
+    <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。&quot;</span><span class="p">)</span>
+    <span class="c1"># テスト実行時のフォールバック</span>
+    <span class="n">allowed_origins</span> <span class="o">=</span> <span class="n">test_origins</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CORS_ORIGIN -&gt; OK&quot;</span><span class="p">)</span>
 
 <span class="c1"># CORSミドルウェアの設定</span>
 <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
     <span class="n">CORSMiddleware</span><span class="p">,</span>
-    <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>  <span class="c1"># 全てのオリジンを許可</span>
+    <span class="n">allow_origins</span><span class="o">=</span><span class="n">allowed_origins</span><span class="p">,</span>  <span class="c1"># 結合したオリジンリストを使用</span>
     <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Cookieを含むリクエストを許可</span>
-    <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="s2">&quot;DELETE&quot;</span><span class="p">],</span>     <span class="c1"># 許可するHTTPメソッド（GET, POSTなど）</span>
-    <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>     <span class="c1"># 許可するHTTPヘッダー</span>
+    <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;PUT&quot;</span><span class="p">,</span> <span class="s2">&quot;DELETE&quot;</span><span class="p">],</span>  <span class="c1"># 許可するHTTPメソッド</span>
+    <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>  <span class="c1"># 許可するHTTPヘッダー</span>
 <span class="p">)</span>
 
-
-<span class="c1"># SQLAlchemyを使用してデータベースのテーブルを作成</span>
 <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
-
-<div class="viewcode-block" id="read_root">
-<a class="viewcode-back" href="../main.html#main.read_root">[ドキュメント]</a>
-<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">read_root</span><span class="p">():</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;HOME&quot;</span><span class="p">:</span> <span class="s2">&quot;最初のページ&quot;</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="handler">
 <a class="viewcode-back" href="../main.html#main.handler">[ドキュメント]</a>
-<span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">RequestValidationError</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span><span class="n">RequestValidationError</span><span class="p">):</span>
-    <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="p">{},</span> <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span><span class="p">)</span></div>
+<span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span>
+    <span class="n">RequestValidationError</span>
+    <span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handler</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span>
+    <span class="n">exc</span><span class="p">:</span> <span class="n">RequestValidationError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="c1"># pprint.pprint(exc.errors())</span>
+    <span class="n">create_error_logger</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;バリデーションエラー: </span><span class="si">{</span><span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># メールアドレス形式エラーを検出</span>
+    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">():</span>
+        <span class="c1"># エラーの場所（フィールド名）を確認</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">error_type</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;msg&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="c1"># メールアドレスフィールドのエラーかどうかを判定</span>
+        <span class="n">is_email_field</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;email&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">location</span><span class="p">)</span>
+        <span class="c1"># メールアドレス関連のエラータイプを検出</span>
+        <span class="n">email_error_types</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;value_error.email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value_error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type_error.str&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;missing&quot;</span>
+        <span class="p">]</span>
+        <span class="c1"># メールアドレスエラーの条件判定</span>
+        <span class="k">if</span> <span class="n">is_email_field</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="nb">any</span><span class="p">(</span><span class="n">et</span> <span class="ow">in</span> <span class="n">error_type</span> <span class="k">for</span> <span class="n">et</span> <span class="ow">in</span> <span class="n">email_error_types</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="s2">&quot;email&quot;</span> <span class="ow">in</span> <span class="n">error_msg</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span>
+            <span class="s2">&quot;valid email&quot;</span> <span class="ow">in</span> <span class="n">error_msg</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span>
+            <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="p">):</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;メールアドレス形式エラーを検出: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;メールアドレスの形式が不正です。&quot;</span><span class="p">},</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
+            <span class="p">)</span>
+    <span class="c1"># その他のバリデーションエラーはデフォルトのまま</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+        <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;入力データが無効です。&quot;</span><span class="p">},</span>
+        <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_422_UNPROCESSABLE_ENTITY</span>
+        <span class="p">)</span></div>
+
 
 
 <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">router</span><span class="p">)</span>
-<span class="n">app</span><span class="o">.</span><span class="n">add_exception_handler</span><span class="p">(</span><span class="n">RequestValidationError</span><span class="p">,</span> <span class="n">validation_exception_handler</span><span class="p">)</span>
 <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">router</span><span class="p">)</span>
 <span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">auth</span><span class="o">.</span><span class="n">router</span><span class="p">)</span>
 </pre></div>
@@ -122,13 +175,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">main</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

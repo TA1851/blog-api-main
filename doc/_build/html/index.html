@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>venv documentation &#8212; venv  ドキュメント</title>
+    <title>venv documentation &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
     
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="custom_token.html" title="custom_token module"
              accesskey="N">次へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="#">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">venv documentation</a></li> 
       </ul>
     </div>  
@@ -49,23 +49,48 @@ documentation for details.</p>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_token.html#custom_token.TokenConfig"><code class="docutils literal notranslate"><span class="pre">TokenConfig</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_token.html#custom_token.TokenConfig.DEFAULT_EXPIRES"><code class="docutils literal notranslate"><span class="pre">TokenConfig.DEFAULT_EXPIRES</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="custom_token.html#custom_token.TokenType"><code class="docutils literal notranslate"><span class="pre">TokenType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_token.html#custom_token.TokenType.ACCESS"><code class="docutils literal notranslate"><span class="pre">TokenType.ACCESS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_token.html#custom_token.TokenType.EMAIL_VERIFICATION"><code class="docutils literal notranslate"><span class="pre">TokenType.EMAIL_VERIFICATION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_token.html#custom_token.TokenType.PASSWORD_RESET"><code class="docutils literal notranslate"><span class="pre">TokenType.PASSWORD_RESET</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="custom_token.html#custom_token.create_access_token"><code class="docutils literal notranslate"><span class="pre">create_access_token()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_token.html#custom_token.get_user_by_id"><code class="docutils literal notranslate"><span class="pre">get_user_by_id()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_token.html#custom_token.verify_token"><code class="docutils literal notranslate"><span class="pre">verify_token()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_token.html#custom_token.verify_token_with_type"><code class="docutils literal notranslate"><span class="pre">verify_token_with_type()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="database.html">database module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="database.html#database.Base"><code class="docutils literal notranslate"><span class="pre">Base</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.Base.metadata"><code class="docutils literal notranslate"><span class="pre">Base.metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.Base.registry"><code class="docutils literal notranslate"><span class="pre">Base.registry</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="database.html#database.DatabaseConnectionError"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#database.EnvironmentConfig"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.EnvironmentConfig.algo"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.algo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.EnvironmentConfig.cors_origins"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.cors_origins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.EnvironmentConfig.environment"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.environment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.EnvironmentConfig.posgre_url"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.posgre_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html#database.EnvironmentConfig.secret_key"><code class="docutils literal notranslate"><span class="pre">EnvironmentConfig.secret_key</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="database.html#database.check_env_file"><code class="docutils literal notranslate"><span class="pre">check_env_file()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="database.html#database.create_database_engine"><code class="docutils literal notranslate"><span class="pre">create_database_engine()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="database.html#database.create_session"><code class="docutils literal notranslate"><span class="pre">create_session()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html#database.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="database.html#database.read_env_var"><code class="docutils literal notranslate"><span class="pre">read_env_var()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">functions package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="functions.html#module-functions.article">functions.article module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="functions.html#module-functions">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#functions-article-module">functions.article module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a><ul>
@@ -88,7 +113,6 @@ documentation for details.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="main.html">main module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="main.html#main.handler"><code class="docutils literal notranslate"><span class="pre">handler()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="main.html#main.read_root"><code class="docutils literal notranslate"><span class="pre">read_root()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">models module</a><ul>
@@ -99,6 +123,17 @@ documentation for details.</p>
 <li class="toctree-l3"><a class="reference internal" href="models.html#models.Article.owner"><code class="docutils literal notranslate"><span class="pre">Article.owner</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="models.html#models.Article.title"><code class="docutils literal notranslate"><span class="pre">Article.title</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="models.html#models.Article.user_id"><code class="docutils literal notranslate"><span class="pre">Article.user_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#models.EmailVerification"><code class="docutils literal notranslate"><span class="pre">EmailVerification</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.create_verification"><code class="docutils literal notranslate"><span class="pre">EmailVerification.create_verification()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.created_at"><code class="docutils literal notranslate"><span class="pre">EmailVerification.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.email"><code class="docutils literal notranslate"><span class="pre">EmailVerification.email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.expires_at"><code class="docutils literal notranslate"><span class="pre">EmailVerification.expires_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.id"><code class="docutils literal notranslate"><span class="pre">EmailVerification.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.is_verified"><code class="docutils literal notranslate"><span class="pre">EmailVerification.is_verified</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.password_hash"><code class="docutils literal notranslate"><span class="pre">EmailVerification.password_hash</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#models.EmailVerification.token"><code class="docutils literal notranslate"><span class="pre">EmailVerification.token</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="models.html#models.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
@@ -113,28 +148,40 @@ documentation for details.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html#oauth2.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html#oauth2.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html#oauth2.get_current_user"><code class="docutils literal notranslate"><span class="pre">get_current_user()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html#oauth2.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="routers.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="routers.html#module-routers.article">routers.article module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.all_fetch"><code class="docutils literal notranslate"><span class="pre">all_fetch()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.create_article"><code class="docutils literal notranslate"><span class="pre">create_article()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.delete_article"><code class="docutils literal notranslate"><span class="pre">delete_article()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.get_article"><code class="docutils literal notranslate"><span class="pre">get_article()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.get_public_article_by_id"><code class="docutils literal notranslate"><span class="pre">get_public_article_by_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.get_public_articles"><code class="docutils literal notranslate"><span class="pre">get_public_articles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.search_public_articles"><code class="docutils literal notranslate"><span class="pre">search_public_articles()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.article.update_article"><code class="docutils literal notranslate"><span class="pre">update_article()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="routers.html#module-routers.auth">routers.auth module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.LoginResponse"><code class="docutils literal notranslate"><span class="pre">LoginResponse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.LoginResponse.access_token"><code class="docutils literal notranslate"><span class="pre">LoginResponse.access_token</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.LoginResponse.token_type"><code class="docutils literal notranslate"><span class="pre">LoginResponse.token_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.PasswordChangeResponse"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.PasswordChangeResponse.message"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.PasswordChangeResponse.user_id"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.user_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.TokenResponse"><code class="docutils literal notranslate"><span class="pre">TokenResponse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.TokenResponse.access_token"><code class="docutils literal notranslate"><span class="pre">TokenResponse.access_token</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.TokenResponse.token_type"><code class="docutils literal notranslate"><span class="pre">TokenResponse.token_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.auth.TokenResponse.user_id"><code class="docutils literal notranslate"><span class="pre">TokenResponse.user_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.change_password"><code class="docutils literal notranslate"><span class="pre">change_password()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.get_all_blogs"><code class="docutils literal notranslate"><span class="pre">get_all_blogs()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
@@ -143,22 +190,32 @@ documentation for details.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="routers.html#module-routers.user">routers.user module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.DatabaseError"><code class="docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.EmailVerificationError"><code class="docutils literal notranslate"><span class="pre">EmailVerificationError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.IntegrityError"><code class="docutils literal notranslate"><span class="pre">IntegrityError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.SQLAlchemyError"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.UserRouter"><code class="docutils literal notranslate"><span class="pre">UserRouter</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="routers.html#routers.user.UserRouter.create_user"><code class="docutils literal notranslate"><span class="pre">UserRouter.create_user()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.UserNotFoundError"><code class="docutils literal notranslate"><span class="pre">UserNotFoundError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.create_user"><code class="docutils literal notranslate"><span class="pre">create_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.delete_user_account"><code class="docutils literal notranslate"><span class="pre">delete_user_account()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.resend_verification_email"><code class="docutils literal notranslate"><span class="pre">resend_verification_email()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.show_user"><code class="docutils literal notranslate"><span class="pre">show_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="routers.html#routers.user.verify_email"><code class="docutils literal notranslate"><span class="pre">verify_email()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="routers.html#module-routers">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="schemas.html#schemas.AccountDeletionRequest"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.AccountDeletionRequest.confirm_password"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.confirm_password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.AccountDeletionRequest.email"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.email</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.AccountDeletionRequest.model_config"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.AccountDeletionRequest.password"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.AccountDeletionRequest.validate_passwords_match"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.validate_passwords_match()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="schemas.html#schemas.Article"><code class="docutils literal notranslate"><span class="pre">Article</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.Article.ConfigDict"><code class="docutils literal notranslate"><span class="pre">Article.ConfigDict</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="schemas.html#schemas.Article.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">Article.ConfigDict.model_config</span></code></a></li>
@@ -174,6 +231,7 @@ documentation for details.</p>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ArticleBase.article_id"><code class="docutils literal notranslate"><span class="pre">ArticleBase.article_id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ArticleBase.body"><code class="docutils literal notranslate"><span class="pre">ArticleBase.body</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ArticleBase.body_html"><code class="docutils literal notranslate"><span class="pre">ArticleBase.body_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ArticleBase.model_config"><code class="docutils literal notranslate"><span class="pre">ArticleBase.model_config</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ArticleBase.title"><code class="docutils literal notranslate"><span class="pre">ArticleBase.title</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ArticleBase.user_id"><code class="docutils literal notranslate"><span class="pre">ArticleBase.user_id</span></code></a></li>
@@ -190,12 +248,35 @@ documentation for details.</p>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.Login.password"><code class="docutils literal notranslate"><span class="pre">Login.password</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="schemas.html#schemas.PasswordChange"><code class="docutils literal notranslate"><span class="pre">PasswordChange</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PasswordChange.ConfigDict"><code class="docutils literal notranslate"><span class="pre">PasswordChange.ConfigDict</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="schemas.html#schemas.PasswordChange.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">PasswordChange.ConfigDict.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PasswordChange.model_config"><code class="docutils literal notranslate"><span class="pre">PasswordChange.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PasswordChange.new_password"><code class="docutils literal notranslate"><span class="pre">PasswordChange.new_password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PasswordChange.temp_password"><code class="docutils literal notranslate"><span class="pre">PasswordChange.temp_password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PasswordChange.username"><code class="docutils literal notranslate"><span class="pre">PasswordChange.username</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="schemas.html#schemas.PublicArticle"><code class="docutils literal notranslate"><span class="pre">PublicArticle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PublicArticle.ConfigDict"><code class="docutils literal notranslate"><span class="pre">PublicArticle.ConfigDict</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="schemas.html#schemas.PublicArticle.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">PublicArticle.ConfigDict.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PublicArticle.article_id"><code class="docutils literal notranslate"><span class="pre">PublicArticle.article_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PublicArticle.body_html"><code class="docutils literal notranslate"><span class="pre">PublicArticle.body_html</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PublicArticle.model_config"><code class="docutils literal notranslate"><span class="pre">PublicArticle.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.PublicArticle.title"><code class="docutils literal notranslate"><span class="pre">PublicArticle.title</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="schemas.html#schemas.ShowArticle"><code class="docutils literal notranslate"><span class="pre">ShowArticle</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowArticle.ConfigDict"><code class="docutils literal notranslate"><span class="pre">ShowArticle.ConfigDict</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="schemas.html#schemas.ShowArticle.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">ShowArticle.ConfigDict.model_config</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowArticle.body"><code class="docutils literal notranslate"><span class="pre">ShowArticle.body</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowArticle.body_html"><code class="docutils literal notranslate"><span class="pre">ShowArticle.body_html</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowArticle.id"><code class="docutils literal notranslate"><span class="pre">ShowArticle.id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowArticle.model_config"><code class="docutils literal notranslate"><span class="pre">ShowArticle.model_config</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowArticle.title"><code class="docutils literal notranslate"><span class="pre">ShowArticle.title</span></code></a></li>
@@ -211,7 +292,6 @@ documentation for details.</p>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowUser.id"><code class="docutils literal notranslate"><span class="pre">ShowUser.id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowUser.is_active"><code class="docutils literal notranslate"><span class="pre">ShowUser.is_active</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowUser.model_config"><code class="docutils literal notranslate"><span class="pre">ShowUser.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.ShowUser.name"><code class="docutils literal notranslate"><span class="pre">ShowUser.name</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="schemas.html#schemas.Token"><code class="docutils literal notranslate"><span class="pre">Token</span></code></a><ul>
@@ -233,7 +313,6 @@ documentation for details.</p>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.User.email"><code class="docutils literal notranslate"><span class="pre">User.email</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.User.is_active"><code class="docutils literal notranslate"><span class="pre">User.is_active</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.User.model_config"><code class="docutils literal notranslate"><span class="pre">User.model_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.User.name"><code class="docutils literal notranslate"><span class="pre">User.name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="schemas.html#schemas.User.password"><code class="docutils literal notranslate"><span class="pre">User.password</span></code></a></li>
 </ul>
 </li>
@@ -245,7 +324,77 @@ documentation for details.</p>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tests.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_hashing">tests.test_hashing module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.test_hash_bcrypt"><code class="docutils literal notranslate"><span class="pre">test_hash_bcrypt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_basic_hashing"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_basic_hashing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_different_passwords_different_hashes"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_different_passwords_different_hashes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_empty_password"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_empty_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_hash_format"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_hash_format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_long_password"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_long_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_rounds_configuration"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_rounds_configuration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_same_password_different_salts"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_same_password_different_salts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_special_characters"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_special_characters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_unicode_password"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_unicode_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestBcryptHashing.test_bcrypt_version_identifier"><code class="docutils literal notranslate"><span class="pre">TestBcryptHashing.test_bcrypt_version_identifier()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases.test_binary_like_password_safe"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases.test_binary_like_password_safe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases.test_newline_password"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases.test_newline_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases.test_null_byte_password_error"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases.test_null_byte_password_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases.test_numeric_only_password"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases.test_numeric_only_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases.test_password_size_limit"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases.test_password_size_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestEdgeCases.test_very_long_password"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases.test_very_long_password()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling.test_bcrypt_context_error_handling"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling.test_bcrypt_context_error_handling()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling.test_bcrypt_none_password"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling.test_bcrypt_none_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling.test_verify_context_error_handling"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling.test_verify_context_error_handling()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling.test_verify_invalid_hash_format"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling.test_verify_invalid_hash_format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling.test_verify_none_hash"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling.test_verify_none_hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestErrorHandling.test_verify_none_password"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling.test_verify_none_password()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashClass"><code class="docutils literal notranslate"><span class="pre">TestHashClass</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashClass.test_hash_class_exists"><code class="docutils literal notranslate"><span class="pre">TestHashClass.test_hash_class_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashClass.test_hash_methods_are_static"><code class="docutils literal notranslate"><span class="pre">TestHashClass.test_hash_methods_are_static()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashSecurity"><code class="docutils literal notranslate"><span class="pre">TestHashSecurity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashSecurity.test_hash_strength"><code class="docutils literal notranslate"><span class="pre">TestHashSecurity.test_hash_strength()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashSecurity.test_hash_timing_consistency"><code class="docutils literal notranslate"><span class="pre">TestHashSecurity.test_hash_timing_consistency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashSecurity.test_salt_randomness"><code class="docutils literal notranslate"><span class="pre">TestHashSecurity.test_salt_randomness()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestHashSecurity.test_verify_timing_consistency"><code class="docutils literal notranslate"><span class="pre">TestHashSecurity.test_verify_timing_consistency()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestIntegration"><code class="docutils literal notranslate"><span class="pre">TestIntegration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestIntegration.test_concurrent_operations_simulation"><code class="docutils literal notranslate"><span class="pre">TestIntegration.test_concurrent_operations_simulation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestIntegration.test_cross_platform_compatibility"><code class="docutils literal notranslate"><span class="pre">TestIntegration.test_cross_platform_compatibility()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestIntegration.test_full_password_lifecycle"><code class="docutils literal notranslate"><span class="pre">TestIntegration.test_full_password_lifecycle()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordContext"><code class="docutils literal notranslate"><span class="pre">TestPasswordContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordContext.test_deprecated_schemes"><code class="docutils literal notranslate"><span class="pre">TestPasswordContext.test_deprecated_schemes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordContext.test_password_context_configuration"><code class="docutils literal notranslate"><span class="pre">TestPasswordContext.test_password_context_configuration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordContext.test_password_context_creation"><code class="docutils literal notranslate"><span class="pre">TestPasswordContext.test_password_context_creation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordContext.test_password_context_schemes"><code class="docutils literal notranslate"><span class="pre">TestPasswordContext.test_password_context_schemes()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification.test_verify_case_sensitive"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification.test_verify_case_sensitive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification.test_verify_correct_password"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification.test_verify_correct_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification.test_verify_empty_password"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification.test_verify_empty_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification.test_verify_incorrect_password"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification.test_verify_incorrect_password()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification.test_verify_multiple_passwords"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification.test_verify_multiple_passwords()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPasswordVerification.test_verify_whitespace_password"><code class="docutils literal notranslate"><span class="pre">TestPasswordVerification.test_verify_whitespace_password()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html#tests.test_hashing.TestPerformance"><code class="docutils literal notranslate"><span class="pre">TestPerformance</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPerformance.test_hashing_performance"><code class="docutils literal notranslate"><span class="pre">TestPerformance.test_hashing_performance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPerformance.test_multiple_operations_performance"><code class="docutils literal notranslate"><span class="pre">TestPerformance.test_multiple_operations_performance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tests.html#tests.test_hashing.TestPerformance.test_verification_performance"><code class="docutils literal notranslate"><span class="pre">TestPerformance.test_verification_performance()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
@@ -300,12 +449,12 @@ documentation for details.</p>
         <li class="right" >
           <a href="custom_token.html" title="custom_token module"
              >次へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="#">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">venv documentation</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

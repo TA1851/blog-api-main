@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>logger.custom_logger &#8212; venv  ドキュメント</title>
+    <title>logger.custom_logger &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">logger.custom_logger</a></li> 
       </ul>
@@ -38,7 +38,6 @@
             
   <h1>logger.custom_logger のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;カスタムロガーパッケージ&quot;&quot;&quot;</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span><span class="p">,</span> <span class="n">FileHandler</span><span class="p">,</span> <span class="n">Formatter</span><span class="p">,</span> <span class="n">INFO</span><span class="p">,</span> <span class="n">ERROR</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -51,6 +50,7 @@
 <span class="sd">:type log_file: str</span>
 <span class="sd">:param log_level: ログレベル</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 
 <span class="c1"># ロガーの設定</span>
 <span class="n">log_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;log&#39;</span>
@@ -81,7 +81,7 @@
 <span class="c1"># INFOレベルを呼び出し先でに記録する</span>
 <div class="viewcode-block" id="create_logger">
 <a class="viewcode-back" href="../../logger.html#logger.custom_logger.create_logger">[ドキュメント]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_logger</span><span class="p">(</span><span class="n">info_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_logger</span><span class="p">(</span><span class="n">info_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;INFOレベルのログを記録する関数</span>
 
 <span class="sd">    :param info_msg: ログに記録するメッセージ</span>
@@ -93,7 +93,7 @@
 <span class="c1"># ERRORレベルを呼び出し先でに記録する</span>
 <div class="viewcode-block" id="create_error_logger">
 <a class="viewcode-back" href="../../logger.html#logger.custom_logger.create_error_logger">[ドキュメント]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_error_logger</span><span class="p">(</span><span class="n">error_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_error_logger</span><span class="p">(</span><span class="n">error_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ERRORレベルのログを記録する関数</span>
 
 <span class="sd">    :param error_msg: ログに記録するメッセージ</span>
@@ -132,13 +132,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">logger.custom_logger</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

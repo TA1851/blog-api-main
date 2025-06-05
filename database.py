@@ -6,7 +6,9 @@ from typing_extensions import TypedDict
 from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import declarative_base, sessionmaker, Session, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+
+from logger.custom_logger import create_logger, create_error_logger
 
 
 class EnvironmentConfig(TypedDict, total=False):
@@ -21,9 +23,9 @@ class EnvironmentConfig(TypedDict, total=False):
 def check_env_file(
     default_env_path: Optional[Union[Path, str]] = None
     ) -> Optional[Path]:
-    """ENVファイルを検出し、PATHモジュールでENVファイルのパスを設定する。
+    """・開発環境：「.env」ファイルを使用する。
 
-    :param default_env_path: str | Path
+    ・本番環境：Renderから環境変数を取得する。
     """
     if default_env_path is None:
         default_env_path = Path(__file__).parent / '.env'
@@ -33,27 +35,26 @@ def check_env_file(
         else default_env_path
 
     if not default_env_path.exists():
-        print("スキップ処理")
+        create_logger(
+            "スタート"
+            )
     else:
-        print("処理を開始します。")
+        create_logger(
+            "前処理の開始"
+            )
     return default_env_path
 
 env_var = check_env_file()
 
 
 def read_env_var(env_path: Path) -> EnvironmentConfig:
-    """dotenvモジュールのload_dotenv関数でENVファイルから環境変数を取得し、ログに記録する。
-
-    file_id: 環境変数から取得したファイルID
-
-    database_url: 環境変数から取得したDB_URL
-    """
+    """環境変数の取得"""
     load_dotenv(dotenv_path=env_path)
     result: EnvironmentConfig = {}
 
     # TODO: 開発時に切り替える（環境変数）
     environment = os.getenv("ENVIRONMENT")
-    posgre_database_url = os.getenv("POSGRE_URL") or os.getenv("DATABASE_URL")  # DATABASE_URLもサポート
+    posgre_database_url = os.getenv("POSGRE_URL")
     secret_key = os.getenv("SECRET_KEY")
     algo = os.getenv("ALGORITHM")
     cors_origins = os.getenv("CORS_ORIGINS")
@@ -64,30 +65,45 @@ def read_env_var(env_path: Path) -> EnvironmentConfig:
     if posgre_database_url:
         result["posgre_url"] = posgre_database_url
     else:
-        print("DB_URLが取得できませんでした。")
+        create_error_logger(
+            "DB_URLが取得できませんでした。"
+            )
     if secret_key:
         result["secret_key"] = secret_key
     else:
-        print("SECRET_KEYが取得できませんでした。")
+        create_error_logger(
+            "SECRET_KEYが取得できませんでした。"
+            )
     if algo:
         result["algo"] = algo
     else:
-        print("ALGORITHMが取得できませんでした。")
+        create_error_logger(
+            "ALGORITHMが取得できませんでした。"
+            )
     if cors_origins:
         if "," in cors_origins:
-            result["cors_origins"] = [origin.strip() for origin in cors_origins.split(",")]
+            result["cors_origins"] = [
+                origin.strip() \
+                for origin in cors_origins.split(",")
+                ]
         else:
-            result["cors_origins"] = [cors_origins.strip()]
+            result["cors_origins"] = [
+                cors_origins.strip()
+                ]
     else:
-        print("CORS_ORIGINSが取得できませんでした。")
+        create_error_logger(
+            "CORS_ORIGINSが取得できませんでした。"
+            )
     if not result:
-        print("環境変数の取得に失敗しました。")
-        # 空の辞書でも返すように修正（エラーで停止させない）
+        create_error_logger(
+            "環境変数の取得に失敗しました。"
+            )
         return EnvironmentConfig()
     else:
         return result
 
-db_env: EnvironmentConfig = read_env_var(env_var) if env_var else EnvironmentConfig()
+db_env: EnvironmentConfig = read_env_var(env_var) \
+    if env_var else EnvironmentConfig()
 
 
 class DatabaseConnectionError(Exception):
@@ -97,26 +113,28 @@ class DatabaseConnectionError(Exception):
 
 # データベースエンジンを作成
 def create_database_engine() -> Engine:
-    """環境変数からデータベースURLを取得し、データベースエンジンを作成する。
+    """データベースエンジンを作成する。
 
-    開発環境（development）ではSQLite、本番環境（production）ではPostgreSQLを使用します。
-    ENVIRONMENTが未設定の場合は開発環境として扱います。
-
-    connect_args:
-    - SQLite: {"check_same_thread": False}
-    - PostgreSQL: 接続プール設定
+    ・開発環境ではSQLite、本番環境ではPostgreSQLを使用します。
     """
     try:
         environment = db_env.get("environment")
         if environment == "production":
             posgre_database_url = db_env.get("posgre_url")
             if not posgre_database_url:
-                print("DBのURLが設定されていません。")
-                raise DatabaseConnectionError("本番環境DBのURLが設定されていません。")
-
+                create_error_logger(
+                    "DBのURLが設定されていません。"
+                    )
+                raise DatabaseConnectionError(
+                    "本番環境DBのURLが設定されていません。"
+                    )
             if not posgre_database_url.startswith("postgresql"):
-                print(f"DBのURLが不正です。")
-                raise DatabaseConnectionError("DBのURLが不正です。")
+                create_logger(
+                    "DBのURLが不正です。"
+                    )
+                raise DatabaseConnectionError(
+                    "DBのURLが不正です。"
+                    )
             engine = create_engine(
                 posgre_database_url,
                 pool_size=10,
@@ -136,7 +154,9 @@ def create_database_engine() -> Engine:
             )
             return engine
     except Exception as e:
-        raise DatabaseConnectionError(f"データベース接続に失敗しました。: {str(e)}")
+        raise DatabaseConnectionError(
+            f"データベース接続に失敗しました。: {str(e)}"
+        )
 
 
 # SQLAlchemy 2.0スタイルのベースクラス
@@ -148,21 +168,22 @@ engine = create_database_engine()
 
 # セッションを作成
 def create_session(engine: Engine) -> sessionmaker[Session]:
-    """SQLAlchemyのセッションを作成：データベースに接続し、データの操作を行う前処理を行う。
+    """SQLAlchemyのセッションを作成する。
 
     :param engine: SQLAlchemyのエンジンオブジェクト
 
-    :param SessionLocal:
-        ・autocommit=False（デフォルト値）:
-        CRUD操作をグループ化して、全ての処理が成功した場合、データベースに反映されるようにできます。
+    :param autocommit=False（デフォルト値）:
+        CRUD操作をグループ化して、全ての処理が成功した場合、
+        データベースに反映されるようにできます。
 
-        　エラーが発生した場合はrollback()を呼び出して全ての変更を取り消せます。
+        エラーが発生した場合はrollback()を呼び出して全ての変更を取り消せます。
 
-        ・autoflush=False:
-        大量のオブジェクトを追加/更新する場合、各オペレーションでフラッシュが発生するのを避けられます。
+    :param autoflush=False:
+        大量のオブジェクトを追加/更新する場合、
+        各オペレーションでフラッシュが発生するのを避けられます。
         デフォルト値はTrueです。
 
-        ・bind=engine: エンジンを生成する呼び出し可能オブジェクト
+    :param bind=engine: エンジンを生成する呼び出し可能オブジェクト
     """
     try:
         SessionLocal = sessionmaker(
@@ -172,7 +193,9 @@ def create_session(engine: Engine) -> sessionmaker[Session]:
             )
         return SessionLocal
     except Exception as e:
-        print("セッション作成に失敗しました。: {str(e)}")
+        create_error_logger(
+            f"セッション作成に失敗しました。: {str(e)}"
+            )
         raise
 
 session = create_session(engine)
@@ -189,7 +212,9 @@ def get_db() -> Generator[Session, None, None]:
     try:
         yield db
     except Exception as e:
-        print(f"DBセッションのコミットに失敗しました。: {str(e)}")
+        create_error_logger(
+            f"DBセッションのコミットに失敗しました。: {str(e)}"
+            )
         raise
     finally:
         db.close()

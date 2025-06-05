@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>custom_token &#8212; venv  ドキュメント</title>
+    <title>custom_token &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">custom_token</a></li> 
       </ul>
@@ -38,102 +38,232 @@
             
   <h1>custom_token のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;カスタムトークンの作成&quot;&quot;&quot;</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">HTTPException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
+<span class="c1"># import pprint</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Login</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">hashing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jose</span><span class="w"> </span><span class="kn">import</span> <span class="n">JWTError</span><span class="p">,</span> <span class="n">jwt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">HTTPException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">database</span><span class="w"> </span><span class="kn">import</span> <span class="n">db_env</span><span class="p">,</span> <span class="n">get_db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">logger.custom_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">create_error_logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">routers.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_db</span>
+
+
+<span class="c1"># JWTペイロードの型定義</span>
+<span class="n">JWTPayload</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">datetime</span><span class="p">]]</span>
 
 
 <span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
-  <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Auth&quot;</span><span class="p">]</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Auth&quot;</span><span class="p">]</span>
 <span class="p">)</span>
 
-<span class="c1"># TODO:環境変数設定ファイルに移行する</span>
 
-<span class="c1"># SECRET_KEY = db_env.get(&quot;secret_key&quot;)</span>
-<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s2">&quot;1cf296882c7c9a8b1dc448dab881e44fe1de6e279930d48dc1790a160cab8a0d&quot;</span>
-<span class="c1"># ALGORITHM = db_env.get(&quot;algorithm&quot;)</span>
-<span class="n">ALGORITHM</span> <span class="o">=</span> <span class="s2">&quot;HS256&quot;</span>
+<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;secret_key&quot;</span><span class="p">)</span>
+<span class="n">ALGORITHM</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">db_env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algo&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;HS256&quot;</span>
 <span class="n">ACCESS_TOKEN_EXPIRE_MINUTES</span> <span class="o">=</span> <span class="mi">60</span>
+
+
+<div class="viewcode-block" id="TokenType">
+<a class="viewcode-back" href="../custom_token.html#custom_token.TokenType">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TokenType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンタイプの定義&quot;&quot;&quot;</span>
+    <span class="n">ACCESS</span> <span class="o">=</span> <span class="s2">&quot;access&quot;</span>
+    <span class="n">EMAIL_VERIFICATION</span> <span class="o">=</span> <span class="s2">&quot;email_verification&quot;</span>
+    <span class="n">PASSWORD_RESET</span> <span class="o">=</span> <span class="s2">&quot;password_reset&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TokenConfig">
+<a class="viewcode-back" href="../custom_token.html#custom_token.TokenConfig">[ドキュメント]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TokenConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークン設定の一元管理</span>
+
+<span class="sd">    トークンの有効期限：</span>
+<span class="sd">    - アクセス: 1時間</span>
+<span class="sd">    - メール確認トークン: 1時間</span>
+<span class="sd">    - パスワードリセットトークン: 30分</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEFAULT_EXPIRES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">TokenType</span><span class="o">.</span><span class="n">EMAIL_VERIFICATION</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">TokenType</span><span class="o">.</span><span class="n">PASSWORD_RESET</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="p">}</span></div>
+
+
 
 <div class="viewcode-block" id="create_access_token">
 <a class="viewcode-back" href="../custom_token.html#custom_token.create_access_token">[ドキュメント]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_access_token</span><span class="p">(</span>
-  <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-  <span class="n">expires_delta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">timedelta</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-  <span class="p">):</span>
-<span class="w">  </span><span class="sd">&quot;&quot;&quot;アクセストークンを作成する関数</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">JWTPayload</span><span class="p">,</span>
+    <span class="n">expires_delta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">timedelta</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">token_type</span><span class="p">:</span> <span class="n">TokenType</span> <span class="o">=</span> <span class="n">TokenType</span><span class="o">.</span><span class="n">ACCESS</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;アクセストークンを作成する関数（改善版）</span>
 
-<span class="sd">  :param data: トークンに含めるデータ</span>
-<span class="sd">  :type data: dict</span>
-<span class="sd">  :param expires_delta: トークンの有効期限</span>
-<span class="sd">  :type expires_delta: timedelta</span>
-<span class="sd">  :return: JWTトークン</span>
-<span class="sd">  :rtype: str</span>
-<span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">to_encode</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-  <span class="c1"># adding</span>
-  <span class="k">if</span> <span class="n">expires_delta</span><span class="p">:</span>
-    <span class="n">expire</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">expires_delta</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;expire: </span><span class="si">{</span><span class="n">expire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;expire: </span><span class="si">{</span><span class="n">expire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-  <span class="k">else</span><span class="p">:</span>
-      <span class="n">expire</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;expire: </span><span class="si">{</span><span class="n">expire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-      <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;expire: </span><span class="si">{</span><span class="n">expire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-  <span class="n">to_encode</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="n">expire</span><span class="p">})</span>
-  <span class="n">encoded_jwt</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">to_encode</span><span class="p">,</span> <span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="n">ALGORITHM</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">encoded_jwt</span></div>
+<span class="sd">    :param data: トークンに含めるデータ</span>
+<span class="sd">    :type data: JWTPayload</span>
+<span class="sd">    :param expires_delta: トークンの有効期限</span>
+<span class="sd">    :type expires_delta: timedelta</span>
+<span class="sd">    :param token_type: トークンの種類</span>
+<span class="sd">    :type token_type: TokenType</span>
+<span class="sd">    :return: JWTトークン</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    :raises ValueError: データが無効な場合</span>
+<span class="sd">    :raises RuntimeError: トークン生成に失敗した場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;データが空です&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;データは辞書形式である必要があります&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">to_encode</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># 有効期限の決定（優先順位: カスタム &gt; 設定 &gt; デフォルト）</span>
+        <span class="k">if</span> <span class="n">expires_delta</span><span class="p">:</span>
+            <span class="n">expire</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">expires_delta</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_expire</span> <span class="o">=</span> <span class="n">TokenConfig</span><span class="o">.</span><span class="n">DEFAULT_EXPIRES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">token_type</span><span class="p">,</span>
+                <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">expire</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">+</span> <span class="n">default_expire</span>
+
+        <span class="c1"># トークンタイプと有効期限を追加</span>
+        <span class="n">to_encode</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s2">&quot;exp&quot;</span><span class="p">:</span> <span class="n">expire</span><span class="p">,</span>
+            <span class="s2">&quot;iat&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>  <span class="c1"># 発行時刻</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">token_type</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># トークンタイプ</span>
+        <span class="p">})</span>
+
+        <span class="c1"># 環境変数の検証</span>
+        <span class="n">secret_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SECRET_KEY&quot;</span><span class="p">)</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ALGORITHM&quot;</span><span class="p">,</span> <span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">secret_key</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">)</span>
+
+        <span class="c1"># JWTトークンの生成</span>
+        <span class="n">encoded_jwt</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">to_encode</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="n">algorithm</span><span class="p">)</span>
+
+        <span class="c1"># 開発環境でのみログ出力</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ENVIRONMENT&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;development&quot;</span><span class="p">:</span>
+            <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;トークン生成成功 - タイプ: </span><span class="si">{</span><span class="n">token_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, 有効期限: </span><span class="si">{</span><span class="n">expire</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">encoded_jwt</span>
+
+    <span class="k">except</span> <span class="n">JWTError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JWTトークン生成エラー: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;トークン生成に失敗しました: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;予期しないエラー: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;トークン生成中に予期しないエラーが発生しました: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="verify_token_with_type">
+<a class="viewcode-back" href="../custom_token.html#custom_token.verify_token_with_type">[ドキュメント]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">verify_token_with_type</span><span class="p">(</span>
+    <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">expected_type</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span>
+    <span class="n">credentials_exception</span><span class="p">:</span> <span class="ne">Exception</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JWTPayload</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンタイプを検証する関数</span>
+
+<span class="sd">    :param token: 検証するトークン</span>
+<span class="sd">    :type token: str</span>
+<span class="sd">    :param expected_type: 期待するトークンタイプ</span>
+<span class="sd">    :type expected_type: TokenType</span>
+<span class="sd">    :param credentials_exception: 認証例外</span>
+<span class="sd">    :type credentials_exception: HTTPException</span>
+<span class="sd">    :return: トークンのペイロード</span>
+<span class="sd">    :rtype: JWTPayload</span>
+<span class="sd">    :raises Exception: トークンが無効または期待と異なるタイプの場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">secret_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SECRET_KEY&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">secret_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">)</span>
+        
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ALGORITHM&quot;</span><span class="p">,</span> <span class="s2">&quot;HS256&quot;</span><span class="p">)</span>
+
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">secret_key</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="n">algorithm</span><span class="p">])</span>
+
+        <span class="c1"># トークンタイプの検証</span>
+        <span class="n">token_type</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">token_type</span> <span class="o">!=</span> <span class="n">expected_type</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;無効なトークンタイプ: 期待=</span><span class="si">{</span><span class="n">expected_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, 実際=</span><span class="si">{</span><span class="n">token_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">credentials_exception</span>
+
+        <span class="k">return</span> <span class="n">payload</span>
+
+    <span class="k">except</span> <span class="n">JWTError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;トークン検証エラー: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">credentials_exception</span></div>
+
 
 
 <div class="viewcode-block" id="verify_token">
 <a class="viewcode-back" href="../custom_token.html#custom_token.verify_token">[ドキュメント]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">verify_token</span><span class="p">(</span>
-  <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-  <span class="n">credentials_exception</span><span class="p">,</span>
-  <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
-  <span class="p">):</span>
-<span class="w">  </span><span class="sd">&quot;&quot;&quot;トークンを検証する関数</span>
+    <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">credentials_exception</span><span class="p">:</span> <span class="n">HTTPException</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;トークンを検証する関数</span>
 
-<span class="sd">  :param token: 検証するトークン</span>
-<span class="sd">  :type token: str</span>
-<span class="sd">  :param credentials_exception: 認証例外</span>
-<span class="sd">  :type credentials_exception: HTTPException</span>
-<span class="sd">  :param db: データベースセッション</span>
-<span class="sd">  :type db: Session</span>
-<span class="sd">  :return: ユーザー情報</span>
-<span class="sd">  :rtype: User</span>
-<span class="sd">  &quot;&quot;&quot;</span>
-  <span class="k">try</span><span class="p">:</span>
-      <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="n">ALGORITHM</span><span class="p">])</span>
-      <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sub&quot;</span><span class="p">)</span>
-      <span class="nb">id</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+<span class="sd">    :param token: 検証するトークン</span>
+<span class="sd">    :type token: str</span>
+<span class="sd">    :param credentials_exception: 認証例外</span>
+<span class="sd">    :type credentials_exception: HTTPException</span>
+<span class="sd">    :param db: データベースセッション</span>
+<span class="sd">    :type db: Session</span>
+<span class="sd">    :return: ユーザー情報</span>
+<span class="sd">    :rtype: User</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">SECRET_KEY</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;SECRET_KEYが設定されていません&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">credentials_exception</span>
+        
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">SECRET_KEY</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="n">ALGORITHM</span><span class="p">])</span>
+        <span class="n">email_raw</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sub&quot;</span><span class="p">)</span>
+        <span class="n">id_raw</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
 
-      <span class="k">if</span> <span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;emailがNoneです&quot;</span><span class="p">)</span>
-          <span class="k">raise</span> <span class="n">credentials_exception</span>
+        <span class="k">if</span> <span class="n">email_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;トークンからemailが取得できませんでした&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">credentials_exception</span>
+        
+        <span class="k">if</span> <span class="n">id_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;トークンからidが取得できませんでした&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">credentials_exception</span>
 
-      <span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenData</span>
-      <span class="n">token_data</span> <span class="o">=</span> <span class="n">TokenData</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
-      <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;token_data: </span><span class="si">{</span><span class="n">token_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-      <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;token_data: </span><span class="si">{</span><span class="n">token_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-  <span class="k">except</span> <span class="n">JWTError</span><span class="p">:</span>
-      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;JWTErrorが発生しました&quot;</span><span class="p">)</span>
-      <span class="k">raise</span> <span class="n">credentials_exception</span>
-  <span class="n">user</span> <span class="o">=</span> <span class="n">get_user_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">user</span></div>
+        <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">email_raw</span><span class="p">)</span>
+        <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">id_raw</span><span class="p">)</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">TokenData</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="n">TokenData</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;token_data: </span><span class="si">{</span><span class="n">token_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">create_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;token_data: </span><span class="si">{</span><span class="n">token_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">JWTError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;JWTErrorが発生しました。&quot;</span><span class="p">)</span>
+        <span class="n">create_error_logger</span><span class="p">(</span><span class="s2">&quot;JWTError occurred during token verification&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">credentials_exception</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">get_user_by_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span></div>
+
 
 
 <div class="viewcode-block" id="get_user_by_id">
 <a class="viewcode-back" href="../custom_token.html#custom_token.get_user_by_id">[ドキュメント]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_user_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_user_by_id</span><span class="p">(</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ユーザーIDからユーザー情報を取得する関数</span>
 
 <span class="sd">    :param id: ユーザーID</span>
@@ -146,9 +276,9 @@
     <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
-          <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span> \
-          <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;User with id </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> not found&quot;</span>
-          <span class="p">)</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;User with id </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">user</span></div>
 
 </pre></div>
@@ -182,13 +312,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">custom_token</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

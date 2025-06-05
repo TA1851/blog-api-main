@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hashing &#8212; venv  ドキュメント</title>
+    <title>hashing &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">hashing</a></li> 
       </ul>
@@ -38,7 +38,6 @@
             
   <h1>hashing のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;パスワードのハッシュ化と検証を行うためのクラスを定義。&quot;&quot;&quot;</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">passlib.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">CryptContext</span>
 
 <span class="n">password_context</span> <span class="o">=</span> <span class="n">CryptContext</span><span class="p">(</span>
@@ -67,36 +66,16 @@
 <div class="viewcode-block" id="Hash.verify">
 <a class="viewcode-back" href="../hashing.html#hashing.Hash.verify">[ドキュメント]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">verify</span><span class="p">(</span><span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plain_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify</span><span class="p">(</span><span class="n">plain_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;平文のパスワードとハッシュ化されたパスワードを比較</span>
 
-<span class="sd">        :param hashed_password: ハッシュ化されたパスワード</span>
 <span class="sd">        :param plain_password: 平文のパスワード</span>
+<span class="sd">        :param hashed_password: ハッシュ化されたパスワード</span>
 <span class="sd">        :return: 一致する場合は True, それ以外は False</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">password_context</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">plain_password</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">)</span></div>
 </div>
 
-
-
-<span class="c1"># TODO: verify()</span>
-<span class="sd">&quot;&quot;&quot;このコードは、パスワードの検証を行う関数 verify を定義しています。</span>
-<span class="sd">この関数は、ユーザーが入力した平文のパスワード（plain_password）と、</span>
-<span class="sd">データベースなどに保存されているハッシュ化されたパスワード（hashed_password）を比較し、一致するかどうかを確認します。</span>
-<span class="sd">password_context.verify は、パスワードのハッシュ化と検証をサポートするライブラリ（例えば、passlib）のメソッドである可能性が高いです。</span>
-<span class="sd">このメソッドは、まず保存されているハッシュ化されたパスワード（hashed_password）を解析し、</span>
-<span class="sd">どのアルゴリズムでハッシュ化されたかを特定します。</span>
-<span class="sd">その後、ユーザーが入力した平文のパスワード（plain_password）を同じアルゴリズムでハッシュ化し、結果を比較します。</span>
-<span class="sd">一致すれば True を返し、一致しなければ False を返します。</span>
-<span class="sd">この関数は、認証システムの一部として使用されることが一般的です。</span>
-<span class="sd">例えば、ユーザーがログインフォームにパスワードを入力した際、この関数を使用して入力されたパスワードが正しいかどうかを確認します。</span>
-<span class="sd">これにより、平文のパスワードを直接保存することなく、セキュリティを確保しながら認証を行うことができます。</span>
-<span class="sd">ただし、このコードには注意点があります。</span>
-<span class="sd">password_context がどのように定義されているかが明示されていないため、</span>
-<span class="sd">コード全体の動作を理解するには、password_context の設定や使用しているライブラリ</span>
-<span class="sd">（例えば、passlib.context.CryptContext）を確認する必要があります。</span>
-<span class="sd">また、セキュリティを確保するために、最新のハッシュアルゴリズム（例: bcrypt や argon2）を使用することが推奨されます。</span>
-<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
             <div class="clearer"></div>
@@ -128,13 +107,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Pythonモジュール索引"
              >モジュール</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Blog API  ドキュメント</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >モジュールコード</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">hashing</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

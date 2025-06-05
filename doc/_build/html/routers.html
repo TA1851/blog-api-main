@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>routers package &#8212; venv  ドキュメント</title>
+    <title>routers package &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
     
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="oauth2.html" title="oauth2 module"
              accesskey="P">前へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">routers package</a></li> 
       </ul>
     </div>  
@@ -60,7 +60,7 @@
 <dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 <li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- 取得する最大記事数（指定しない場合は全件取得）</p></li>
 </ul>
 </dd>
@@ -80,40 +80,6 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="routers.article.check_db_url">
-<span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">check_db_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#check_db_url"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.check_db_url" title="Link to this definition">¶</a></dt>
-<dd><p>データベースのURLを取得する</p>
-<dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>db_url</strong> (<em>str</em>) -- データベースのURL</p>
-</dd>
-<dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>データベースのURL</p>
-</dd>
-<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="routers.article.check_environment_variable">
-<span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">check_environment_variable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#check_environment_variable"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.check_environment_variable" title="Link to this definition">¶</a></dt>
-<dd><p>環境変数を取得する</p>
-<dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key07</strong> (<em>str</em>) -- artile.pyの環境変数</p>
-</dd>
-<dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>環境変数の値</p>
-</dd>
-<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="routers.article.create_article">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">create_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#create_article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.create_article" title="Link to this definition">¶</a></dt>
 <dd><p>新しい記事を作成するエンドポイント</p>
@@ -122,7 +88,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>blog</strong> (<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><em>ArticleBase</em></a>) -- 記事の内容</p></li>
 <li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 </ul>
 </dd>
 <dt class="field-even">戻り値<span class="colon">:</span></dt>
@@ -137,17 +103,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.delete_article">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">delete_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#delete_article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.delete_article" title="Link to this definition">¶</a></dt>
-<dd><p>指定したIDの記事を削除するエンドポイント</p>
+<dd><p>記事を削除するエンドポイント</p>
 <dl class="field-list simple">
 <dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>article_id</strong> (<em>int</em>) -- 記事のID</p></li>
 <li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 </ul>
 </dd>
 <dt class="field-even">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
 </dd>
 <dt class="field-odd">戻り値<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
@@ -179,15 +145,73 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="routers.article.get_db">
-<span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#get_db"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.get_db" title="Link to this definition">¶</a></dt>
-<dd><p>データベースセッションを取得する</p>
+<dt class="sig sig-object py" id="routers.article.get_public_article_by_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_public_article_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#get_public_article_by_id"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.get_public_article_by_id" title="Link to this definition">¶</a></dt>
+<dd><p>指定されたIDのパブリック記事を取得するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">戻り値<span class="colon">:</span></dt>
-<dd class="field-odd"><p>データベースセッション</p>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>article_id</strong> (<em>int</em>) -- 取得する記事のID</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+</ul>
 </dd>
-<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-even"><p>Session</p>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
+<dd class="field-even"><p>指定されたIDの記事詳細</p>
+</dd>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle">PublicArticle</a></p>
+</dd>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- 記事が見つからない場合や取得エラーが発生した場合</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="routers.article.get_public_articles">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#get_public_articles"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.get_public_articles" title="Link to this definition">¶</a></dt>
+<dd><p>認証なしでパブリック記事を取得するエンドポイント</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- 取得する最大記事数</p></li>
+<li><p><strong>skip</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- スキップする記事数</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
+<dd class="field-even"><p>パブリック記事のリスト</p>
+</dd>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle">PublicArticle</a>]</p>
+</dd>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- データベースエラーが発生した場合</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="routers.article.search_public_articles">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">search_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/article.html#search_public_articles"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.search_public_articles" title="Link to this definition">¶</a></dt>
+<dd><p>キーワードでパブリック記事を検索するエンドポイント（日本語対応）</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>str</em>) -- 検索キーワード（日本語・英語対応）</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- 取得する最大記事数</p></li>
+<li><p><strong>skip</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- スキップする記事数</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
+<dd class="field-even"><p>検索結果の記事リスト</p>
+</dd>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle">PublicArticle</a>]</p>
+</dd>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- データベースエラーが発生した場合</p>
 </dd>
 </dl>
 </dd></dl>
@@ -202,7 +226,7 @@
 <li><p><strong>article_id</strong> (<em>int</em>) -- 記事のID</p></li>
 <li><p><strong>blog</strong> (<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><em>ArticleBase</em></a>) -- 更新する記事の内容</p></li>
 <li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 </ul>
 </dd>
 <dt class="field-even">戻り値<span class="colon">:</span></dt>
@@ -224,41 +248,117 @@
 <section id="module-routers.auth">
 <span id="routers-auth-module"></span><h2>routers.auth module<a class="headerlink" href="#module-routers.auth" title="Link to this heading">¶</a></h2>
 <p>認証機能を実装するためのルーターモジュール</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="routers.auth.check_db_url">
-<span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">check_db_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/auth.html#check_db_url"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.check_db_url" title="Link to this definition">¶</a></dt>
-<dd><p>データベースURLを取得する</p>
-<dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key03</strong> (<em>str</em>) -- auth.pyの環境変数</p></li>
-<li><p><strong>db_url</strong> (<em>str</em>) -- auth.pyの環境変数</p></li>
-</ul>
-</dd>
-<dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>環境変数の値</p>
-</dd>
-<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="routers.auth.LoginResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">LoginResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#LoginResponse"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.LoginResponse" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>ログインレスポンスの型定義</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.LoginResponse.access_token">
+<span class="sig-name descname"><span class="pre">access_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.LoginResponse.access_token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.LoginResponse.token_type">
+<span class="sig-name descname"><span class="pre">token_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.LoginResponse.token_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">PasswordChangeResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#PasswordChangeResponse"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.PasswordChangeResponse" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>パスワード変更レスポンスの型定義</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.message">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.message" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.user_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="routers.auth.TokenResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">TokenResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#TokenResponse"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.TokenResponse" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>トークンレスポンスの型定義</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.TokenResponse.access_token">
+<span class="sig-name descname"><span class="pre">access_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.TokenResponse.access_token" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.TokenResponse.token_type">
+<span class="sig-name descname"><span class="pre">token_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.TokenResponse.token_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.TokenResponse.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#routers.auth.TokenResponse.user_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="routers.auth.check_environment_variable">
-<span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">check_environment_variable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/auth.html#check_environment_variable"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.check_environment_variable" title="Link to this definition">¶</a></dt>
-<dd><p>環境変数を取得する</p>
+<dt class="sig sig-object py" id="routers.auth.change_password">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">change_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/auth.html#change_password"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.change_password" title="Link to this definition">¶</a></dt>
+<dd><p>仮パスワードから新パスワードへの変更を行うエンドポイント</p>
+<p>パスワード変更エンドポイント：
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">http://127.0.0.1:8080/api/v1/change-password</span>
+<span class="pre">`</span></code></p>
+<p>パラメータ：
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">username:</span> <span class="pre">ユーザー名（メールアドレス）</span>
+<span class="pre">temp_password:</span> <span class="pre">現在の仮パスワード</span>
+<span class="pre">new_password:</span> <span class="pre">新しいパスワード</span>
+<span class="pre">`</span></code></p>
+<p>レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request)
+<a href="#id1"><span class="problematic" id="id2">``</span></a>`
+{</p>
+<blockquote>
+<div><p>&quot;access_token&quot;: &quot;JWTトークン文字列&quot;,
+&quot;token_type&quot;: &quot;bearer&quot;,
+&quot;message&quot;: &quot;パスワードが正常に変更されました。登録完了メールを送信しました。&quot;</p>
+</div></blockquote>
+<section id="id3">
+<h3>}<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p>注意：パスワード変更成功後、登録完了メールが自動的に送信されます。</p>
 <dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key09</strong> (<em>str</em>) -- auth.pyの環境変数</p>
+<dt class="field-odd">type request<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="schemas.html#schemas.PasswordChange" title="schemas.PasswordChange"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordChange</span></code></a></span></p>
 </dd>
-<dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>環境変数の値</p>
+<dt class="field-even">param request<span class="colon">:</span></dt>
+<dd class="field-even"><p>PasswordChange</p>
 </dd>
-<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dt class="field-odd">type request<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PasswordChange</p>
+</dd>
+<dt class="field-even">type db<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></span></p>
+</dd>
+<dt class="field-odd">param db<span class="colon">:</span></dt>
+<dd class="field-odd"><p>データベースセッション</p>
+</dd>
+<dt class="field-even">type db<span class="colon">:</span></dt>
+<dd class="field-even"><p>Session</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>アクセストークンとメッセージを返します</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">raises HTTPException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ユーザー名または仮パスワードが無効な場合</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -282,52 +382,127 @@
 <dt class="sig sig-object py" id="routers.auth.get_db">
 <span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/auth.html#get_db"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.get_db" title="Link to this definition">¶</a></dt>
 <dd><p>データベースセッションを取得するための依存関数</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.login">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(NoneType)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/auth.html#login"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.login" title="Link to this definition">¶</a></dt>
-<dd><p>ログインエンドポイント</p>
+<dd><p>ユーザー認証を行い、ログインする</p>
+<p>ログインエンドポイント：
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">http://127.0.0.1:8080/api/v1/login</span>
+<span class="pre">`</span></code></p>
+<p>注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください：
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">http://127.0.0.1:8080/api/v1/change-password</span>
+<span class="pre">`</span></code></p>
+<p>パラメータ：
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">username:</span> <span class="pre">ユーザー名（メールアドレス）</span>
+<span class="pre">password:</span> <span class="pre">パスワード</span>
+<span class="pre">`</span></code></p>
+<p>レスポンス：成功時(200 OK), 失敗時(404 Not Found)
+<a href="#id4"><span class="problematic" id="id5">``</span></a>`
+{</p>
+<blockquote>
+<div><p>&quot;access_token&quot;: &quot;JWTトークン文字列&quot;,
+&quot;token_type&quot;: &quot;bearer&quot;</p>
+</div></blockquote>
+<section id="id6">
+<h3>}<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>request</strong> (<em>OAuth2PasswordRequestForm</em>) -- OAuth2PasswordRequestForm</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
-</ul>
+<dt class="field-odd">type request<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">OAuth2PasswordRequestForm</span></code></span></p>
 </dd>
-<dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>アクセストークンとトークンタイプ</p>
+<dt class="field-even">param request<span class="colon">:</span></dt>
+<dd class="field-even"><p>OAuth2PasswordRequestForm</p>
 </dd>
-<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
+<dt class="field-odd">type request<span class="colon">:</span></dt>
+<dd class="field-odd"><p>OAuth2PasswordRequestForm</p>
 </dd>
-<dt class="field-even">例外<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> -- ユーザー名またはパスワードが無効な場合</p>
+<dt class="field-even">type db<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></span></p>
+</dd>
+<dt class="field-odd">param db<span class="colon">:</span></dt>
+<dd class="field-odd"><p>データベースセッション</p>
+</dd>
+<dt class="field-even">type db<span class="colon">:</span></dt>
+<dd class="field-even"><p>Session</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>アクセストークンを返します。token_type:bearer</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">raises HTTPException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ユーザー名またはパスワードが無効な場合</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.logout">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/auth.html#logout"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.logout" title="Link to this definition">¶</a></dt>
-<dd><p>ログアウトエンドポイント</p>
+<dd><p>ログアウトエンドポイント:<a class="reference external" href="https://127.0.0.1:8000/api/v1/logout">https://127.0.0.1:8000/api/v1/logout</a></p>
+<p>リクエストヘッダー
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">Authorization:</span> <span class="pre">Bearer</span> <span class="pre">&lt;token&gt;</span>
+<span class="pre">Content-Type:</span> <span class="pre">application/json</span>
+<span class="pre">`</span></code>
+パラメータ：
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">Authorizationヘッダーから自動取得</span>
+<span class="pre">`</span></code></p>
+<p>レスポンス：成功時(200 OK), 失敗時(401 Unauthorized)
+<a href="#id7"><span class="problematic" id="id8">``</span></a>`
+{</p>
+<blockquote>
+<div><p>&quot;message&quot;: &quot;ログアウトしました&quot;</p>
+</div></blockquote>
+<section id="id9">
+<h3>}<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<p>エラー時：
+401 Unauthorized：トークンが無効な場合
+422 Unprocessable Entity：トークンが既に無効化されている場合
+<a href="#id10"><span class="problematic" id="id11">``</span></a>`
+{</p>
+<blockquote>
+<div><p>&quot;detail&quot;: &quot;トークンが無効化されています&quot;</p>
+</div></blockquote>
+</section>
+<section id="id12">
+<h3>}<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>token</strong> (<em>str</em>) -- 認証トークン（ヘッダーから自動取得）</p>
+<dt class="field-odd">type token<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
-<dt class="field-even">例外<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>HTTPException</strong> -- トークンが無効な場合</p></li>
-<li><p><strong>HTTPException</strong> -- トークンが無効化されている場合</p></li>
-</ul>
+<dt class="field-even">param token<span class="colon">:</span></dt>
+<dd class="field-even"><p>認証トークン（ヘッダーから自動取得）</p>
 </dd>
-<dt class="field-odd">戻り値<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ログアウトメッセージ</p>
+<dt class="field-odd">type token<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bearer</p>
 </dd>
-<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
+<dt class="field-even">raises HTTPException<span class="colon">:</span></dt>
+<dd class="field-even"><p>トークンが無効な場合</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ログアウトしました。</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
+<dt class="field-odd">raises HTTPException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>トークンが無効化されている場合</p>
+</dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -358,6 +533,20 @@
 <span id="routers-user-module"></span><h2>routers.user module<a class="headerlink" href="#module-routers.user" title="Link to this heading">¶</a></h2>
 <p>ユーザ認証機能を実装するためのルーターモジュール</p>
 <dl class="py exception">
+<dt class="sig sig-object py" id="routers.user.DatabaseError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">DatabaseError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#DatabaseError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.DatabaseError" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>データベース関連の例外</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="routers.user.EmailVerificationError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">EmailVerificationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#EmailVerificationError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.EmailVerificationError" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>メール確認に関する例外</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="routers.user.IntegrityError">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">IntegrityError</span></span><a class="reference internal" href="_modules/routers/user.html#IntegrityError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.IntegrityError" title="Link to this definition">¶</a></dt>
 <dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
@@ -371,38 +560,11 @@
 <p>データベース関連のエラー</p>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="routers.user.UserRouter">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">UserRouter</span></span><a class="reference internal" href="_modules/routers/user.html#UserRouter"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.UserRouter" title="Link to this definition">¶</a></dt>
-<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="routers.user.UserRouter.create_user">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#UserRouter.create_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.UserRouter.create_user" title="Link to this definition">¶</a></dt>
-<dd><p>ユーザーを作成するAPIエンドポイント</p>
-<dl class="field-list simple">
-<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>user</strong> (<em>UserSchema</em>) -- ユーザー情報を含むPydanticモデル</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
-</ul>
-</dd>
-<dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>作成されたユーザー情報を含むSQLAlchemyモデル</p>
-</dd>
-<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>UserModel</p>
-</dd>
-<dt class="field-even">例外<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>HTTPException</strong> -- ユーザーの作成に失敗した場合</p></li>
-<li><p><a class="reference internal" href="#routers.user.IntegrityError" title="routers.user.IntegrityError"><strong>IntegrityError</strong></a> -- ユーザーの作成に失敗した場合</p></li>
-<li><p><a class="reference internal" href="#routers.user.SQLAlchemyError" title="routers.user.SQLAlchemyError"><strong>SQLAlchemyError</strong></a> -- データベースエラーが発生した場合</p></li>
-<li><p><strong>Exception</strong> -- その他のエラーが発生した場合</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+<dl class="py exception">
+<dt class="sig sig-object py" id="routers.user.UserNotFoundError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">UserNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#UserNotFoundError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.UserNotFoundError" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>ユーザーが見つからない場合の例外</p>
 </dd></dl>
 
 <dl class="py function">
@@ -443,27 +605,77 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="routers.user.get_db">
-<span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#get_db"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.get_db" title="Link to this definition">¶</a></dt>
-<dd><p>データベースセッションを取得するための依存関数</p>
+<dt class="sig sig-object py" id="routers.user.create_user">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#create_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.create_user" title="Link to this definition">¶</a></dt>
+<dd><p>ユーザーを作成するエンドポイント</p>
+<p>ユーザーは登録後にパスワード変更エンドポイントでパスワードを設定する必要があります。</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="routers.user.delete_user_account">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">delete_user_account</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deletion_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#delete_user_account"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.delete_user_account" title="Link to this definition">¶</a></dt>
+<dd><p>ユーザーアカウントを削除するエンドポイント（認証必須）</p>
+<p>このエンドポイントは認証されたユーザーのみアクセス可能で、
+ユーザーは自分のアカウントのみ削除できます。</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>deletion_request</strong> (<em>アカウント削除リクエスト</em>) -- 退会リクエストデータ</p>
+</dd>
+</dl>
+<p>:deletion_request.validate_passwords_match</p>
+<p>:パスワードの一致を検証するメソッド</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>current_user</strong> (<em>UserModel</em>) -- 現在の認証されたユーザー</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
+<dd class="field-even"><p>退会完了メッセージ</p>
+</dd>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- ユーザーが見つからない、パスワードが間違っている、認証エラー、権限なしの場合</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="routers.user.resend_verification_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">resend_verification_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#resend_verification_email"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.resend_verification_email" title="Link to this definition">¶</a></dt>
+<dd><p>登録確認メールを送信する</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.user.show_user">
-<span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">show_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#show_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.show_user" title="Link to this definition">¶</a></dt>
-<dd><p>ユーザー情報を表示するAPIエンドポイント</p>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">show_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#show_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.show_user" title="Link to this definition">¶</a></dt>
+<dd><p>ユーザー情報を取得する関数（認証が必要）</p>
 <dl class="field-list simple">
 <dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> (<em>int</em>) -- ユーザーID</p></li>
+<li><p><strong>user_id</strong> (<em>int</em>) -- ユーザーID</p></li>
 <li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>current_user</strong> (<em>UserModel</em>) -- 現在ログインしているユーザー</p></li>
 </ul>
 </dd>
 <dt class="field-even">戻り値<span class="colon">:</span></dt>
-<dd class="field-even"><p>ユーザー情報を含むSQLAlchemyモデル</p>
+<dd class="field-even"><p>ユーザー情報</p>
 </dd>
 <dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>UserModel</p>
+<dd class="field-odd"><p>UserSchema</p>
 </dd>
 <dt class="field-even">例外<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>HTTPException</strong> -- ユーザーが見つからない場合</p>
@@ -471,9 +683,21 @@
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="routers.user.verify_email">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.user.</span></span><span class="sig-name descname"><span class="pre">verify_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/routers/user.html#verify_email"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.user.verify_email" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-routers">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-routers" title="Link to this heading">¶</a></h2>
+<p>Blog API routers package.</p>
+<p>This package contains the route handlers for the Blog API application.</p>
 </section>
 </section>
 
@@ -491,18 +715,33 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-routers.article">routers.article module</a><ul>
 <li><a class="reference internal" href="#routers.article.all_fetch"><code class="docutils literal notranslate"><span class="pre">all_fetch()</span></code></a></li>
-<li><a class="reference internal" href="#routers.article.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
-<li><a class="reference internal" href="#routers.article.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
 <li><a class="reference internal" href="#routers.article.create_article"><code class="docutils literal notranslate"><span class="pre">create_article()</span></code></a></li>
 <li><a class="reference internal" href="#routers.article.delete_article"><code class="docutils literal notranslate"><span class="pre">delete_article()</span></code></a></li>
 <li><a class="reference internal" href="#routers.article.get_article"><code class="docutils literal notranslate"><span class="pre">get_article()</span></code></a></li>
-<li><a class="reference internal" href="#routers.article.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+<li><a class="reference internal" href="#routers.article.get_public_article_by_id"><code class="docutils literal notranslate"><span class="pre">get_public_article_by_id()</span></code></a></li>
+<li><a class="reference internal" href="#routers.article.get_public_articles"><code class="docutils literal notranslate"><span class="pre">get_public_articles()</span></code></a></li>
+<li><a class="reference internal" href="#routers.article.search_public_articles"><code class="docutils literal notranslate"><span class="pre">search_public_articles()</span></code></a></li>
 <li><a class="reference internal" href="#routers.article.update_article"><code class="docutils literal notranslate"><span class="pre">update_article()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-routers.auth">routers.auth module</a><ul>
-<li><a class="reference internal" href="#routers.auth.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
-<li><a class="reference internal" href="#routers.auth.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
+<li><a class="reference internal" href="#routers.auth.LoginResponse"><code class="docutils literal notranslate"><span class="pre">LoginResponse</span></code></a><ul>
+<li><a class="reference internal" href="#routers.auth.LoginResponse.access_token"><code class="docutils literal notranslate"><span class="pre">LoginResponse.access_token</span></code></a></li>
+<li><a class="reference internal" href="#routers.auth.LoginResponse.token_type"><code class="docutils literal notranslate"><span class="pre">LoginResponse.token_type</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#routers.auth.PasswordChangeResponse"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse</span></code></a><ul>
+<li><a class="reference internal" href="#routers.auth.PasswordChangeResponse.message"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.message</span></code></a></li>
+<li><a class="reference internal" href="#routers.auth.PasswordChangeResponse.user_id"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.user_id</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#routers.auth.TokenResponse"><code class="docutils literal notranslate"><span class="pre">TokenResponse</span></code></a><ul>
+<li><a class="reference internal" href="#routers.auth.TokenResponse.access_token"><code class="docutils literal notranslate"><span class="pre">TokenResponse.access_token</span></code></a></li>
+<li><a class="reference internal" href="#routers.auth.TokenResponse.token_type"><code class="docutils literal notranslate"><span class="pre">TokenResponse.token_type</span></code></a></li>
+<li><a class="reference internal" href="#routers.auth.TokenResponse.user_id"><code class="docutils literal notranslate"><span class="pre">TokenResponse.user_id</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#routers.auth.change_password"><code class="docutils literal notranslate"><span class="pre">change_password()</span></code></a></li>
 <li><a class="reference internal" href="#routers.auth.get_all_blogs"><code class="docutils literal notranslate"><span class="pre">get_all_blogs()</span></code></a></li>
 <li><a class="reference internal" href="#routers.auth.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
 <li><a class="reference internal" href="#routers.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
@@ -511,16 +750,18 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-routers.user">routers.user module</a><ul>
+<li><a class="reference internal" href="#routers.user.DatabaseError"><code class="docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></li>
+<li><a class="reference internal" href="#routers.user.EmailVerificationError"><code class="docutils literal notranslate"><span class="pre">EmailVerificationError</span></code></a></li>
 <li><a class="reference internal" href="#routers.user.IntegrityError"><code class="docutils literal notranslate"><span class="pre">IntegrityError</span></code></a></li>
 <li><a class="reference internal" href="#routers.user.SQLAlchemyError"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyError</span></code></a></li>
-<li><a class="reference internal" href="#routers.user.UserRouter"><code class="docutils literal notranslate"><span class="pre">UserRouter</span></code></a><ul>
-<li><a class="reference internal" href="#routers.user.UserRouter.create_user"><code class="docutils literal notranslate"><span class="pre">UserRouter.create_user()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#routers.user.UserNotFoundError"><code class="docutils literal notranslate"><span class="pre">UserNotFoundError</span></code></a></li>
 <li><a class="reference internal" href="#routers.user.check_db_url"><code class="docutils literal notranslate"><span class="pre">check_db_url()</span></code></a></li>
 <li><a class="reference internal" href="#routers.user.check_environment_variable"><code class="docutils literal notranslate"><span class="pre">check_environment_variable()</span></code></a></li>
-<li><a class="reference internal" href="#routers.user.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+<li><a class="reference internal" href="#routers.user.create_user"><code class="docutils literal notranslate"><span class="pre">create_user()</span></code></a></li>
+<li><a class="reference internal" href="#routers.user.delete_user_account"><code class="docutils literal notranslate"><span class="pre">delete_user_account()</span></code></a></li>
+<li><a class="reference internal" href="#routers.user.resend_verification_email"><code class="docutils literal notranslate"><span class="pre">resend_verification_email()</span></code></a></li>
 <li><a class="reference internal" href="#routers.user.show_user"><code class="docutils literal notranslate"><span class="pre">show_user()</span></code></a></li>
+<li><a class="reference internal" href="#routers.user.verify_email"><code class="docutils literal notranslate"><span class="pre">verify_email()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-routers">Module contents</a></li>
@@ -575,12 +816,12 @@
         <li class="right" >
           <a href="oauth2.html" title="oauth2 module"
              >前へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">routers package</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>

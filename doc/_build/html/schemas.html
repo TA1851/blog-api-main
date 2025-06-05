@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>schemas module &#8212; venv  ドキュメント</title>
+    <title>schemas module &#8212; Blog API  ドキュメント</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
     
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="routers.html" title="routers package"
              accesskey="P">前へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">schemas module</a></li> 
       </ul>
     </div>  
@@ -47,6 +47,45 @@
   <section id="module-schemas">
 <span id="schemas-module"></span><h1>schemas module<a class="headerlink" href="#module-schemas" title="Link to this heading">¶</a></h1>
 <p>レスポンスのスキーマを定義するモジュール</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="schemas.AccountDeletionRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">schemas.</span></span><span class="sig-name descname"><span class="pre">AccountDeletionRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#AccountDeletionRequest"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.AccountDeletionRequest" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>退会リクエストのスキーマ</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.AccountDeletionRequest.confirm_password">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.AccountDeletionRequest.confirm_password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.AccountDeletionRequest.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailStr</span></code></em><a class="headerlink" href="#schemas.AccountDeletionRequest.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.AccountDeletionRequest.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#schemas.AccountDeletionRequest.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.AccountDeletionRequest.password">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.AccountDeletionRequest.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="schemas.AccountDeletionRequest.validate_passwords_match">
+<span class="sig-name descname"><span class="pre">validate_passwords_match</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#AccountDeletionRequest.validate_passwords_match"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.AccountDeletionRequest.validate_passwords_match" title="Link to this definition">¶</a></dt>
+<dd><p>パスワードと確認用パスワードが一致するかチェック</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="schemas.Article">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">schemas.</span></span><span class="sig-name descname"><span class="pre">Article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#Article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.Article" title="Link to this definition">¶</a></dt>
@@ -82,6 +121,7 @@
 <li><p><strong>article_id</strong> -- 記事のID</p></li>
 <li><p><strong>title</strong> -- 記事のタイトル</p></li>
 <li><p><strong>body</strong> -- 記事の本文</p></li>
+<li><p><strong>body_html</strong> -- 記事の本文（HTML形式）</p></li>
 <li><p><strong>user_id</strong> -- 記事を作成したユーザーのID</p></li>
 <li><p><strong>ConfigDict</strong> -- Pydantic v3.0で class Config が削除される予定のためConfigDictを使用</p></li>
 <li><p><strong>model_config</strong> -- Pydantic v3.0で class Config が削除される予定のためConfigDictを使用</p></li>
@@ -101,13 +141,27 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="schemas.ArticleBase.article_id">
-<span class="sig-name descname"><span class="pre">article_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#schemas.ArticleBase.article_id" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">article_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#schemas.ArticleBase.article_id" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="schemas.ArticleBase.body">
-<span class="sig-name descname"><span class="pre">body</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#schemas.ArticleBase.body" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">body</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.ArticleBase.body" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="schemas.ArticleBase.body_html">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">body_html</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#schemas.ArticleBase.body_html" title="Link to this definition">¶</a></dt>
+<dd><p>MarkdownテキストをHTMLに変換</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTML形式の本文</p>
+</dd>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="schemas.ArticleBase.model_config">
@@ -117,7 +171,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="schemas.ArticleBase.title">
-<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#schemas.ArticleBase.title" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.ArticleBase.title" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -177,6 +231,102 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="schemas.PasswordChange">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">schemas.</span></span><span class="sig-name descname"><span class="pre">PasswordChange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#PasswordChange"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.PasswordChange" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>パスワード変更用モデル</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> -- ユーザー名（メールアドレス）</p></li>
+<li><p><strong>temp_password</strong> -- 仮パスワード</p></li>
+<li><p><strong>new_password</strong> -- 新しいパスワード</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="schemas.PasswordChange.ConfigDict">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ConfigDict</span></span><a class="reference internal" href="_modules/schemas.html#PasswordChange.ConfigDict"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.PasswordChange.ConfigDict" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PasswordChange.ConfigDict.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#schemas.PasswordChange.ConfigDict.model_config" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PasswordChange.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#schemas.PasswordChange.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PasswordChange.new_password">
+<span class="sig-name descname"><span class="pre">new_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.PasswordChange.new_password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PasswordChange.temp_password">
+<span class="sig-name descname"><span class="pre">temp_password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.PasswordChange.temp_password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PasswordChange.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailStr</span></code></em><a class="headerlink" href="#schemas.PasswordChange.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="schemas.PublicArticle">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">schemas.</span></span><span class="sig-name descname"><span class="pre">PublicArticle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#PublicArticle"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.PublicArticle" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>パブリック記事表示用モデル（認証なしで閲覧可能）</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>article_id</strong> -- 記事のID</p></li>
+<li><p><strong>title</strong> -- 記事のタイトル</p></li>
+<li><p><strong>body_html</strong> -- 記事の本文（HTML形式）</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="schemas.PublicArticle.ConfigDict">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ConfigDict</span></span><a class="reference internal" href="_modules/schemas.html#PublicArticle.ConfigDict"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.PublicArticle.ConfigDict" title="Link to this definition">¶</a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PublicArticle.ConfigDict.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#schemas.PublicArticle.ConfigDict.model_config" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PublicArticle.article_id">
+<span class="sig-name descname"><span class="pre">article_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#schemas.PublicArticle.article_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PublicArticle.body_html">
+<span class="sig-name descname"><span class="pre">body_html</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.PublicArticle.body_html" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PublicArticle.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#schemas.PublicArticle.model_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="schemas.PublicArticle.title">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#schemas.PublicArticle.title" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="schemas.ShowArticle">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">schemas.</span></span><span class="sig-name descname"><span class="pre">ShowArticle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#ShowArticle"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.ShowArticle" title="Link to this definition">¶</a></dt>
 <dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
@@ -187,6 +337,7 @@
 <li><p><strong>id</strong> -- 記事のID</p></li>
 <li><p><strong>title</strong> -- 記事のタイトル</p></li>
 <li><p><strong>body</strong> -- 記事の本文</p></li>
+<li><p><strong>body_html</strong> -- 記事の本文（HTML形式）</p></li>
 </ul>
 </dd>
 </dl>
@@ -205,6 +356,20 @@
 <dt class="sig sig-object py" id="schemas.ShowArticle.body">
 <span class="sig-name descname"><span class="pre">body</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#schemas.ShowArticle.body" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="schemas.ShowArticle.body_html">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">body_html</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#schemas.ShowArticle.body_html" title="Link to this definition">¶</a></dt>
+<dd><p>MarkdownテキストをHTMLに変換</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTML形式の本文</p>
+</dd>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="schemas.ShowArticle.id">
@@ -276,11 +441,6 @@
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#schemas.ShowUser.model_config" title="Link to this definition">¶</a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="schemas.ShowUser.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#schemas.ShowUser.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -382,11 +542,6 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="schemas.User.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#schemas.User.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="schemas.User.password">
 <span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#schemas.User.password" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -397,6 +552,11 @@
 <dt class="sig sig-object py" id="schemas.validation_exception_handler">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">schemas.</span></span><span class="sig-name descname"><span class="pre">validation_exception_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/schemas.html#validation_exception_handler"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#schemas.validation_exception_handler" title="Link to this definition">¶</a></dt>
 <dd><p>RequestValidationErrorをキャッチしてログに記録する例外ハンドラ</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -412,6 +572,14 @@
     <h3><a href="index.html">目次</a></h3>
     <ul>
 <li><a class="reference internal" href="#">schemas module</a><ul>
+<li><a class="reference internal" href="#schemas.AccountDeletionRequest"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest</span></code></a><ul>
+<li><a class="reference internal" href="#schemas.AccountDeletionRequest.confirm_password"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#schemas.AccountDeletionRequest.email"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.email</span></code></a></li>
+<li><a class="reference internal" href="#schemas.AccountDeletionRequest.model_config"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.model_config</span></code></a></li>
+<li><a class="reference internal" href="#schemas.AccountDeletionRequest.password"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.password</span></code></a></li>
+<li><a class="reference internal" href="#schemas.AccountDeletionRequest.validate_passwords_match"><code class="docutils literal notranslate"><span class="pre">AccountDeletionRequest.validate_passwords_match()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#schemas.Article"><code class="docutils literal notranslate"><span class="pre">Article</span></code></a><ul>
 <li><a class="reference internal" href="#schemas.Article.ConfigDict"><code class="docutils literal notranslate"><span class="pre">Article.ConfigDict</span></code></a><ul>
 <li><a class="reference internal" href="#schemas.Article.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">Article.ConfigDict.model_config</span></code></a></li>
@@ -427,6 +595,7 @@
 </li>
 <li><a class="reference internal" href="#schemas.ArticleBase.article_id"><code class="docutils literal notranslate"><span class="pre">ArticleBase.article_id</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ArticleBase.body"><code class="docutils literal notranslate"><span class="pre">ArticleBase.body</span></code></a></li>
+<li><a class="reference internal" href="#schemas.ArticleBase.body_html"><code class="docutils literal notranslate"><span class="pre">ArticleBase.body_html</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ArticleBase.model_config"><code class="docutils literal notranslate"><span class="pre">ArticleBase.model_config</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ArticleBase.title"><code class="docutils literal notranslate"><span class="pre">ArticleBase.title</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ArticleBase.user_id"><code class="docutils literal notranslate"><span class="pre">ArticleBase.user_id</span></code></a></li>
@@ -443,12 +612,35 @@
 <li><a class="reference internal" href="#schemas.Login.password"><code class="docutils literal notranslate"><span class="pre">Login.password</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#schemas.PasswordChange"><code class="docutils literal notranslate"><span class="pre">PasswordChange</span></code></a><ul>
+<li><a class="reference internal" href="#schemas.PasswordChange.ConfigDict"><code class="docutils literal notranslate"><span class="pre">PasswordChange.ConfigDict</span></code></a><ul>
+<li><a class="reference internal" href="#schemas.PasswordChange.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">PasswordChange.ConfigDict.model_config</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#schemas.PasswordChange.model_config"><code class="docutils literal notranslate"><span class="pre">PasswordChange.model_config</span></code></a></li>
+<li><a class="reference internal" href="#schemas.PasswordChange.new_password"><code class="docutils literal notranslate"><span class="pre">PasswordChange.new_password</span></code></a></li>
+<li><a class="reference internal" href="#schemas.PasswordChange.temp_password"><code class="docutils literal notranslate"><span class="pre">PasswordChange.temp_password</span></code></a></li>
+<li><a class="reference internal" href="#schemas.PasswordChange.username"><code class="docutils literal notranslate"><span class="pre">PasswordChange.username</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#schemas.PublicArticle"><code class="docutils literal notranslate"><span class="pre">PublicArticle</span></code></a><ul>
+<li><a class="reference internal" href="#schemas.PublicArticle.ConfigDict"><code class="docutils literal notranslate"><span class="pre">PublicArticle.ConfigDict</span></code></a><ul>
+<li><a class="reference internal" href="#schemas.PublicArticle.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">PublicArticle.ConfigDict.model_config</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#schemas.PublicArticle.article_id"><code class="docutils literal notranslate"><span class="pre">PublicArticle.article_id</span></code></a></li>
+<li><a class="reference internal" href="#schemas.PublicArticle.body_html"><code class="docutils literal notranslate"><span class="pre">PublicArticle.body_html</span></code></a></li>
+<li><a class="reference internal" href="#schemas.PublicArticle.model_config"><code class="docutils literal notranslate"><span class="pre">PublicArticle.model_config</span></code></a></li>
+<li><a class="reference internal" href="#schemas.PublicArticle.title"><code class="docutils literal notranslate"><span class="pre">PublicArticle.title</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#schemas.ShowArticle"><code class="docutils literal notranslate"><span class="pre">ShowArticle</span></code></a><ul>
 <li><a class="reference internal" href="#schemas.ShowArticle.ConfigDict"><code class="docutils literal notranslate"><span class="pre">ShowArticle.ConfigDict</span></code></a><ul>
 <li><a class="reference internal" href="#schemas.ShowArticle.ConfigDict.model_config"><code class="docutils literal notranslate"><span class="pre">ShowArticle.ConfigDict.model_config</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#schemas.ShowArticle.body"><code class="docutils literal notranslate"><span class="pre">ShowArticle.body</span></code></a></li>
+<li><a class="reference internal" href="#schemas.ShowArticle.body_html"><code class="docutils literal notranslate"><span class="pre">ShowArticle.body_html</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ShowArticle.id"><code class="docutils literal notranslate"><span class="pre">ShowArticle.id</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ShowArticle.model_config"><code class="docutils literal notranslate"><span class="pre">ShowArticle.model_config</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ShowArticle.title"><code class="docutils literal notranslate"><span class="pre">ShowArticle.title</span></code></a></li>
@@ -464,7 +656,6 @@
 <li><a class="reference internal" href="#schemas.ShowUser.id"><code class="docutils literal notranslate"><span class="pre">ShowUser.id</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ShowUser.is_active"><code class="docutils literal notranslate"><span class="pre">ShowUser.is_active</span></code></a></li>
 <li><a class="reference internal" href="#schemas.ShowUser.model_config"><code class="docutils literal notranslate"><span class="pre">ShowUser.model_config</span></code></a></li>
-<li><a class="reference internal" href="#schemas.ShowUser.name"><code class="docutils literal notranslate"><span class="pre">ShowUser.name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#schemas.Token"><code class="docutils literal notranslate"><span class="pre">Token</span></code></a><ul>
@@ -486,7 +677,6 @@
 <li><a class="reference internal" href="#schemas.User.email"><code class="docutils literal notranslate"><span class="pre">User.email</span></code></a></li>
 <li><a class="reference internal" href="#schemas.User.is_active"><code class="docutils literal notranslate"><span class="pre">User.is_active</span></code></a></li>
 <li><a class="reference internal" href="#schemas.User.model_config"><code class="docutils literal notranslate"><span class="pre">User.model_config</span></code></a></li>
-<li><a class="reference internal" href="#schemas.User.name"><code class="docutils literal notranslate"><span class="pre">User.name</span></code></a></li>
 <li><a class="reference internal" href="#schemas.User.password"><code class="docutils literal notranslate"><span class="pre">User.password</span></code></a></li>
 </ul>
 </li>
@@ -542,12 +732,12 @@
         <li class="right" >
           <a href="routers.html" title="routers package"
              >前へ</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">venv  ドキュメント</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blog API  ドキュメント</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">schemas module</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; 著作権 2025, Author.
+    &#169; 著作権 2025, TA1851.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
