@@ -8,8 +8,6 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
 
-from logger.custom_logger import create_logger, create_error_logger
-
 
 class EnvironmentConfig(TypedDict, total=False):
     """環境変数設定の型定義"""
@@ -35,11 +33,11 @@ def check_env_file(
         else default_env_path
 
     if not default_env_path.exists():
-        create_logger(
+        print(
             "スタート"
             )
     else:
-        create_logger(
+        print(
             "前処理の開始"
             )
     return default_env_path
@@ -65,19 +63,19 @@ def read_env_var(env_path: Path) -> EnvironmentConfig:
     if posgre_database_url:
         result["posgre_url"] = posgre_database_url
     else:
-        create_error_logger(
+        print(
             "DB_URLが取得できませんでした。"
             )
     if secret_key:
         result["secret_key"] = secret_key
     else:
-        create_error_logger(
+        print(
             "SECRET_KEYが取得できませんでした。"
             )
     if algo:
         result["algo"] = algo
     else:
-        create_error_logger(
+        print(
             "ALGORITHMが取得できませんでした。"
             )
     if cors_origins:
@@ -91,11 +89,11 @@ def read_env_var(env_path: Path) -> EnvironmentConfig:
                 cors_origins.strip()
                 ]
     else:
-        create_error_logger(
+        print(
             "CORS_ORIGINSが取得できませんでした。"
             )
     if not result:
-        create_error_logger(
+        print(
             "環境変数の取得に失敗しました。"
             )
         return EnvironmentConfig()
@@ -122,14 +120,14 @@ def create_database_engine() -> Engine:
         if environment == "production":
             posgre_database_url = db_env.get("posgre_url")
             if not posgre_database_url:
-                create_error_logger(
+                print(
                     "DBのURLが設定されていません。"
                     )
                 raise DatabaseConnectionError(
                     "本番環境DBのURLが設定されていません。"
                     )
             if not posgre_database_url.startswith("postgresql"):
-                create_logger(
+                print(
                     "DBのURLが不正です。"
                     )
                 raise DatabaseConnectionError(
@@ -145,7 +143,7 @@ def create_database_engine() -> Engine:
             )
             return engine
         else:
-            create_error_logger(
+            print(
                 "データベースに接続できません。"
             )
             return engine
@@ -189,7 +187,7 @@ def create_session(engine: Engine) -> sessionmaker[Session]:
             )
         return SessionLocal
     except Exception as e:
-        create_error_logger(
+        print(
             f"セッション作成に失敗しました。: {str(e)}"
             )
         raise
@@ -208,7 +206,7 @@ def get_db() -> Generator[Session, None, None]:
     try:
         yield db
     except Exception as e:
-        create_error_logger(
+        print(
             f"DBセッションのコミットに失敗しました。: {str(e)}"
             )
         raise
