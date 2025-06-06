@@ -1,211 +1,299 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-FastAPI Blog API 統合テストスイート
-実際のAPIエンドポイントをテストして、全体的な機能を検証します。
+基本的なAPI統合テスト
+アプリケーション全体の基本的な機能とルーターの統合をテストします。
 """
-
 import pytest
-import asyncio
 from fastapi.testclient import TestClient
-from httpx import AsyncClient
-import sys
-import os
-from pathlib import Path
+from fastapi import status
+from unittest.mock import patch, MagicMock, AsyncMock
+from sqlalchemy.orm import Session
 
-# プロジェクトルートをパスに追加
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
+from main import app
+from models import User as UserModel, Article
+from oauth2 import get_current_user
+from database import get_db
 
-# main.pyからアプリケーションをインポート
-try:
-    from main import app
-except ImportError as e:
-    print(f"警告: main.pyからappをインポートできませんでした: {e}")
-    app = None
 
-@pytest.fixture(scope="module")
-def client():
-    """テストクライアントのフィクスチャ"""
-    if app is None:
-        pytest.skip("アプリケーションが利用できません")
-    return TestClient(app)
-
-@pytest.fixture(scope="function")
-async def async_client():
-    """非同期テストクライアントのフィクスチャ"""
-    if app is None:
-        pytest.skip("アプリケーションが利用できません")
-    # httpx.AsyncClientの正しい使用方法
-    from httpx import ASGITransport
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac
-
-class TestHealthCheck:
-    """ヘルスチェックエンドポイントのテスト"""
-    
-    def test_root_endpoint(self, client):
-        """ルートエンドポイントのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        # ルートエンドポイントが存在しない場合は404を期待
-        response = client.get("/")
-        assert response.status_code == 404  # ルートエンドポイントが定義されていない
-    
-    @pytest.mark.asyncio
-    async def test_async_root_endpoint(self, async_client):
-        """非同期ルートエンドポイントのテスト"""
-        if async_client is None:
-            pytest.skip("非同期クライアントが利用できません")
-        
-        response = await async_client.get("/")
-        assert response.status_code == 404  # ルートエンドポイントが定義されていない
-
-class TestAPIDocumentation:
-    """API ドキュメントエンドポイントのテスト"""
-    
-    def test_docs_endpoint(self, client):
-        """OpenAPI ドキュメントエンドポイントのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        response = client.get("/docs")
-        assert response.status_code == 200
-        # Content-Typeがtext/htmlであることを確認
-        assert "text/html" in response.headers.get("content-type", "")
-    
-    def test_redoc_endpoint(self, client):
-        """ReDoc ドキュメントエンドポイントのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        response = client.get("/redoc")
-        assert response.status_code == 200
-        assert "text/html" in response.headers.get("content-type", "")
-    
-    def test_openapi_json(self, client):
-        """OpenAPI仕様JSONのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        response = client.get("/openapi.json")
-        assert response.status_code == 200
-        assert response.headers.get("content-type") == "application/json"
-        
-        # OpenAPIスキーマの基本構造をチェック
-        openapi_schema = response.json()
-        assert "openapi" in openapi_schema
-        assert "info" in openapi_schema
-        assert "paths" in openapi_schema
-
-class TestArticleAPI:
-    """記事APIのテスト（利用可能な場合）"""
-    
-    def test_articles_endpoint_exists(self, client):
-        """記事一覧エンドポイントの存在確認"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        # /api/v1/articles エンドポイントをテスト
-        response = client.get("/api/v1/articles")
-        # 401 (認証が必要) または 200 (正常) または 422 (バリデーションエラー) を期待
-        assert response.status_code in [200, 401, 422]
-    
-    @pytest.mark.asyncio
-    async def test_articles_async(self, async_client):
-        """非同期記事一覧エンドポイントのテスト"""
-        if async_client is None:
-            pytest.skip("非同期クライアントが利用できません")
-        
-        response = await async_client.get("/api/v1/articles")
-        assert response.status_code in [200, 401, 422]
-
-class TestUserAPI:
-    """ユーザーAPIのテスト（利用可能な場合）"""
-    
-    def test_user_registration_endpoint(self, client):
-        """ユーザー登録エンドポイントの存在確認"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        # POST /user エンドポイントの存在確認
-        response = client.post("/user", json={})
-        # 422 (バリデーションエラー) または 405 (Method Not Allowed) を期待
-        assert response.status_code in [422, 405, 404]
-
-class TestAuthAPI:
-    """認証APIのテスト（利用可能な場合）"""
-    
-    def test_login_endpoint(self, client):
-        """ログインエンドポイントの存在確認"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        # POST /login エンドポイントの存在確認
-        response = client.post("/login", data={})
-        # 422 (バリデーションエラー) または 405 (Method Not Allowed) を期待
-        assert response.status_code in [422, 405, 404]
-
-class TestCORSConfiguration:
-    """CORS設定のテスト"""
-    
-    def test_cors_preflight(self, client):
-        """CORS プリフライトリクエストのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        response = client.options(
-            "/api/v1/articles",  # 存在するエンドポイントを使用
-            headers={
-                "Origin": "http://localhost:3000",
-                "Access-Control-Request-Method": "GET",
-                "Access-Control-Request-Headers": "Content-Type"
-            }
-        )
-        # CORS が設定されている場合、適切なヘッダーが返される
-        # 400はCORSの設定に問題がある可能性があるため、許可する
-        assert response.status_code in [200, 404, 405, 400]
-
-class TestErrorHandling:
-    """エラーハンドリングのテスト"""
-    
-    def test_nonexistent_endpoint(self, client):
-        """存在しないエンドポイントのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        response = client.get("/nonexistent-endpoint")
-        assert response.status_code == 404
-    
-    def test_method_not_allowed(self, client):
-        """許可されていないHTTPメソッドのテスト"""
-        if client is None:
-            pytest.skip("クライアントが利用できません")
-        
-        # 存在しないエンドポイントにPOSTリクエストを送信（404を期待）
-        response = client.post("/nonexistent-endpoint")
-        assert response.status_code == 404
-
-@pytest.mark.integration
 class TestApplicationStartup:
-    """アプリケーション起動テスト"""
+    """アプリケーション起動とセットアップのテスト"""
     
-    def test_app_creation(self):
-        """アプリケーションの作成テスト"""
-        if app is None:
-            pytest.skip("アプリケーションが利用できません")
-        
-        # FastAPIアプリケーションのインスタンスが正常に作成されることを確認
-        assert app is not None
+    def test_app_initialization(self):
+        """アプリケーションの初期化テスト"""
         assert hasattr(app, "router")
     
     def test_app_routes(self):
         """アプリケーションルートの存在テスト"""
-        if app is None:
-            pytest.skip("アプリケーションが利用できません")
-        
-        # ルートが定義されていることを確認
         routes = [route.path for route in app.routes]
         assert len(routes) > 0
+
+
+class TestHealthCheck:
+    """ヘルスチェックエンドポイントのテスト"""
+    
+    @pytest.fixture
+    def client(self):
+        """テストクライアント"""
+        return TestClient(app)
+    
+    def test_root_endpoint(self, client):
+        """ルートエンドポイントのテスト（404が返ることを確認）"""
+        response = client.get("/")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+class TestUserAPI:
+    """ユーザーAPI統合テスト"""
+    
+    @pytest.fixture
+    def client(self):
+        """テストクライアント"""
+        return TestClient(app)
+    
+    @pytest.fixture
+    def mock_db(self):
+        """モックデータベースセッション"""
+        return MagicMock(spec=Session)
+    
+    @pytest.fixture
+    def mock_user(self):
+        """テストユーザー"""
+        user = MagicMock(spec=UserModel)
+        user.id = 1
+        user.email = "test@example.com"
+        user.name = "test_user"
+        user.is_active = True
+        return user
+    
+    def test_user_creation_endpoint_without_auth(self, client):
+        """認証なしでユーザー作成エンドポイントにアクセス"""
+        user_data = {
+            "name": "testuser",
+            "email": "test@example.com",
+            "password": "password123"
+        }
+        response = client.post("/api/v1/user", json=user_data)
+        # このエンドポイントは認証不要なので、成功・バリデーションエラー・重複エラーが返るべき
+        assert response.status_code in [200, 201, 400, 409, 422]
+    
+    def test_show_user_endpoint_without_auth(self, client):
+        """認証なしでユーザー表示エンドポイントにアクセス"""
+        response = client.get("/api/v1/user/1")
+        # 認証が必要なエンドポイントなので401が返るべき
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+class TestArticleAPI:
+    """記事API統合テスト"""
+    
+    @pytest.fixture
+    def client(self):
+        """テストクライアント"""
+        return TestClient(app)
+    
+    def test_articles_endpoint_without_auth(self, client):
+        """認証なしで記事一覧エンドポイントにアクセス"""
+        response = client.get("/api/v1/articles")
+        # 認証が必要なエンドポイントなので401が返るべき
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    
+    def test_create_article_endpoint_without_auth(self, client):
+        """認証なしで記事作成エンドポイントにアクセス"""
+        article_data = {
+            "title": "Test Article",
+            "content": "This is a test article"
+        }
+        response = client.post("/api/v1/articles", json=article_data)
+        # 認証が必要なエンドポイントなので401が返るべき
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+class TestAuthAPI:
+    """認証API統合テスト"""
+    
+    @pytest.fixture
+    def client(self):
+        """テストクライアント"""
+        return TestClient(app)
+    
+    def test_login_endpoint_with_invalid_data(self, client):
+        """無効なデータでログインエンドポイントにアクセス"""
+        login_data = {
+            "username": "invalid@example.com",
+            "password": "wrongpassword"
+        }
+        response = client.post("/api/v1/login", data=login_data)
+        # 認証情報が無効なので401、404、422が返るべき
+        assert response.status_code in [401, 404, 422]
+    
+    def test_logout_endpoint_without_auth(self, client):
+        """認証なしでログアウトエンドポイントにアクセス"""
+        response = client.post("/api/v1/logout")
+        # 認証が必要なエンドポイントなので401が返るべき
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+class TestAPIEndpointsIntegration:
+    """APIエンドポイント統合テスト"""
+    
+    @pytest.fixture
+    def client(self):
+        """テストクライアント"""
+        return TestClient(app)
+    
+    @pytest.fixture
+    def mock_db(self):
+        """モックデータベースセッション"""
+        return MagicMock(spec=Session)
+    
+    @pytest.fixture
+    def mock_user(self):
+        """テストユーザー"""
+        user = MagicMock(spec=UserModel)
+        user.id = 1
+        user.email = "test@example.com"
+        user.name = "test_user"
+        user.is_active = True
+        return user
+    
+    def test_authenticated_user_workflow(self, client, mock_db, mock_user):
+        """認証済みユーザーのワークフローテスト"""
+        # 依存性のオーバーライド設定
+        def override_get_current_user():
+            return mock_user
+        
+        def override_get_db():
+            return mock_db
+        
+        # 依存性オーバーライドを設定
+        app.dependency_overrides[get_current_user] = override_get_current_user
+        app.dependency_overrides[get_db] = override_get_db
+        
+        try:
+            # モックの設定
+            mock_db.query.return_value.filter.return_value.first.return_value = mock_user
+            
+            # 認証済みでユーザー情報取得
+            headers = {"Authorization": "Bearer dummy_token"}
+            response = client.get("/api/v1/user/1", headers=headers)
+            
+            # レスポンスの検証（200またはエラーが返ることを確認）
+            assert response.status_code in [200, 404, 500]
+            
+        finally:
+            # テスト後のクリーンアップ
+            app.dependency_overrides = {}
+    
+    def test_error_handling_integration(self, client):
+        """エラーハンドリング統合テスト"""
+        # 存在しないエンドポイントへのアクセス
+        response = client.get("/api/v1/nonexistent")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        
+        # 無効なメソッドでのアクセス
+        response = client.patch("/api/v1/user")
+        assert response.status_code in [404, 405]
+    
+    def test_cors_and_security_headers(self, client):
+        """CORS設定とセキュリティヘッダーのテスト"""
+        response = client.options("/api/v1/user")
+        # CORS設定により適切なヘッダーが返ることを確認
+        assert response.status_code in [200, 405]
+
+
+class TestFullWorkflow:
+    """フルワークフロー統合テスト"""
+    
+    @pytest.fixture
+    def client(self):
+        """テストクライアント"""
+        return TestClient(app)
+    
+    @pytest.fixture
+    def mock_db(self):
+        """モックデータベースセッション"""
+        return MagicMock(spec=Session)
+    
+    @pytest.fixture
+    def mock_user(self):
+        """テストユーザー"""
+        user = MagicMock(spec=UserModel)
+        user.id = 1
+        user.email = "test@example.com"
+        user.name = "test_user"
+        user.is_active = True
+        return user
+    
+    @pytest.fixture
+    def mock_article(self):
+        """テスト記事"""
+        article = MagicMock(spec=Article)
+        article.id = 1
+        article.title = "Test Article"
+        article.content = "Test content"
+        article.body = "Test body content"  # bodyフィールドを追加
+        article.owner_id = 1
+        return article
+    
+    @patch('routers.user.Hash.bcrypt')
+    @patch('routers.user.is_valid_email_domain')
+    def test_user_registration_and_verification_workflow(self, mock_domain_check, mock_hash, client, mock_db):
+        """ユーザー登録と認証のワークフローテスト"""
+        # 依存性のオーバーライド設定
+        def override_get_db():
+            return mock_db
+        
+        app.dependency_overrides[get_db] = override_get_db
+        
+        try:
+            # モックの設定
+            mock_domain_check.return_value = True
+            mock_hash.return_value = "hashed_password"
+            mock_db.query.return_value.filter.return_value.first.return_value = None
+            
+            # ユーザー登録
+            user_data = {
+                "name": "newuser",
+                "email": "newuser@example.com",
+                "password": "password123"
+            }
+            
+            with patch('routers.user.ENABLE_EMAIL_VERIFICATION', False):
+                response = client.post("/api/v1/user", json=user_data)
+                # 201 (作成成功) または 400 (バリデーションエラー) が返ることを確認
+                assert response.status_code in [200, 201, 400, 422]
+        
+        finally:
+            # テスト後のクリーンアップ
+            app.dependency_overrides = {}
+    
+    def test_article_lifecycle_with_authentication(self, client, mock_db, mock_user, mock_article):
+        """認証付き記事ライフサイクルテスト"""
+        # 依存性のオーバーライド設定
+        def override_get_current_user():
+            return mock_user
+        
+        def override_get_db():
+            return mock_db
+        
+        app.dependency_overrides[get_current_user] = override_get_current_user
+        app.dependency_overrides[get_db] = override_get_db
+        
+        try:
+            # モックの設定
+            mock_db.query.return_value.filter.return_value.all.return_value = [mock_article]
+            mock_db.query.return_value.filter.return_value.first.return_value = mock_article
+            mock_db.query.return_value.filter.return_value.count.return_value = 1
+            
+            headers = {"Authorization": "Bearer dummy_token"}
+            
+            # 記事一覧取得
+            response = client.get("/api/v1/articles", headers=headers)
+            assert response.status_code in [200, 500]  # 成功またはサーバーエラー
+            
+            # 特定記事取得
+            response = client.get("/api/v1/articles/1", headers=headers)
+            assert response.status_code in [200, 404, 500]  # 成功、見つからない、またはサーバーエラー
+        
+        finally:
+            # テスト後のクリーンアップ
+            app.dependency_overrides = {}

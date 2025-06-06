@@ -472,22 +472,32 @@ class TestDeleteUserAccountEndpoint:
     
     def test_delete_user_account_user_not_found(self, mock_db, valid_deletion_request):
         """ユーザーが見つからない場合のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         mock_db.query.return_value.filter.return_value.first.return_value = None
         
         with pytest.raises(HTTPException) as exc_info:
-            asyncio.run(delete_user_account(valid_deletion_request, mock_db))
+            asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
         
         assert exc_info.value.status_code == status.HTTP_404_NOT_FOUND
         assert "指定されたメールアドレスのユーザーが見つかりません" in exc_info.value.detail
     
     def test_delete_user_account_no_password_set(self, mock_db, valid_deletion_request):
         """パスワードが設定されていない場合のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         mock_user = MagicMock()
         mock_user.password = None
         mock_db.query.return_value.filter.return_value.first.return_value = mock_user
         
         with pytest.raises(HTTPException) as exc_info:
-            asyncio.run(delete_user_account(valid_deletion_request, mock_db))
+            asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
         
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
         assert "ユーザーのパスワードが設定されていません" in exc_info.value.detail
@@ -495,6 +505,11 @@ class TestDeleteUserAccountEndpoint:
     @patch('routers.user.Hash.verify')
     def test_delete_user_account_wrong_password(self, mock_hash_verify, mock_db, valid_deletion_request):
         """パスワードが間違っている場合のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         mock_hash_verify.return_value = False
         
         mock_user = MagicMock()
@@ -503,7 +518,7 @@ class TestDeleteUserAccountEndpoint:
         mock_db.query.return_value.filter.return_value.first.return_value = mock_user
         
         with pytest.raises(HTTPException) as exc_info:
-            asyncio.run(delete_user_account(valid_deletion_request, mock_db))
+            asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
         
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert "パスワードが正しくありません" in exc_info.value.detail
@@ -511,6 +526,11 @@ class TestDeleteUserAccountEndpoint:
     @patch('routers.user.Hash.verify')
     def test_delete_user_account_no_email(self, mock_hash_verify, mock_db, valid_deletion_request):
         """ユーザーのメールアドレスがない場合のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         mock_hash_verify.return_value = True
         
         mock_user = MagicMock()
@@ -519,7 +539,7 @@ class TestDeleteUserAccountEndpoint:
         mock_db.query.return_value.filter.return_value.first.return_value = mock_user
         
         with pytest.raises(HTTPException) as exc_info:
-            asyncio.run(delete_user_account(valid_deletion_request, mock_db))
+            asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
         
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
         assert "ユーザーのメールアドレスが見つかりません" in exc_info.value.detail
@@ -528,6 +548,11 @@ class TestDeleteUserAccountEndpoint:
     @patch('routers.user.Hash.verify')
     def test_delete_user_account_success(self, mock_hash_verify, mock_send_email, mock_db, valid_deletion_request):
         """正常なアカウント削除のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         mock_hash_verify.return_value = True
         mock_send_email.return_value = AsyncMock()
         
@@ -559,7 +584,7 @@ class TestDeleteUserAccountEndpoint:
         # queryメソッドの呼び出し順序に基づいてサイドエフェクトを設定
         mock_db.query.side_effect = [user_query, article_query, verification_query]
         
-        result = asyncio.run(delete_user_account(valid_deletion_request, mock_db))
+        result = asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
         
         assert "退会処理が完了しました" in result["message"]
         assert result["email"] == "test@example.com"
@@ -571,6 +596,11 @@ class TestDeleteUserAccountEndpoint:
     
     def test_delete_user_account_password_mismatch(self, mock_db):
         """パスワード不一致の場合のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         deletion_request = AccountDeletionRequest(
             email="test@example.com",
             password="password123",
@@ -578,7 +608,7 @@ class TestDeleteUserAccountEndpoint:
         )
         
         with pytest.raises(HTTPException) as exc_info:
-            asyncio.run(delete_user_account(deletion_request, mock_db))
+            asyncio.run(delete_user_account(deletion_request, mock_db, mock_current_user))
         
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
         assert "パスワードと確認用パスワードが一致しません" in str(exc_info.value.detail)
@@ -586,10 +616,15 @@ class TestDeleteUserAccountEndpoint:
     
     def test_delete_user_account_database_error(self, mock_db, valid_deletion_request):
         """データベースエラーの場合のテスト"""
+        # 認証されたユーザーのモック
+        mock_current_user = MagicMock()
+        mock_current_user.email = "test@example.com"
+        mock_current_user.id = 123
+        
         mock_db.query.side_effect = Exception("Database connection failed")
         
         with pytest.raises(HTTPException) as exc_info:
-            asyncio.run(delete_user_account(valid_deletion_request, mock_db))
+            asyncio.run(delete_user_account(valid_deletion_request, mock_db, mock_current_user))
         
         assert exc_info.value.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         assert "退会処理中に予期しないエラーが発生しました" in exc_info.value.detail

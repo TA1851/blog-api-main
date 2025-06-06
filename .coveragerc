@@ -1,13 +1,42 @@
 [run]
-omit = 
-    run_continuous_tests.py
-    generate_summary_report.py
-
-[report]
+source = .
 omit =
+    tests/*
+    test_runner_with_history.py
     run_continuous_tests.py
     generate_summary_report.py
     update_main_bug_history.py
+    */site-packages/*
+    */venv/*
+    */.venv/*
+    alembic/*
+    */migrations/*
+
+[report]
+omit =
+    tests/*
+    test_runner_with_history.py
+    run_continuous_tests.py
+    generate_summary_report.py
+    update_main_bug_history.py
+    */site-packages/*
+    */venv/*
+    */.venv/*
+    alembic/*
+    */migrations/*
 
 [html]
 directory = htmlcov
+title = Blog API Coverage Report
+show_missing = True
+omit =
+    tests/*
+    test_runner_with_history.py
+    run_continuous_tests.py
+    generate_summary_report.py
+    update_main_bug_history.py
+    */site-packages/*
+    */venv/*
+    */.venv/*
+    alembic/*
+    */migrations/*

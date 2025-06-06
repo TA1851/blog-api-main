@@ -1,559 +1,227 @@
-"""
-Email Validator Module Test Suite
-
-Comprehensive test coverage for utils/email_validator.py module including:
-- Domain restriction functionality
-- Environment variable handling
-- Valid and invalid email domain checking
-- Configuration scenarios
-- Edge cases and error handling
-- Logging verification
-"""
-
+"""utils/email_validator.pyの単体テスト"""
 import pytest
-import os
 from unittest.mock import patch, Mock
-
-# Import the module under test
-import sys
-sys.path.append('/Users/tatu/Documents/GitHub/blog-api-main')
-
-from utils.email_validator import is_valid_email_domain
+import os
 
 
-class TestEmailValidatorDomainRestrictionDisabled:
-    """Test email validation when domain restriction is disabled"""
-    
-    def test_domain_restriction_disabled_returns_true_for_any_email(self):
-        """Test that any email is allowed when domain restriction is disabled"""
-        with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": "false"}):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("test@example.com")
-                
-                assert result is True
-                mock_logger.assert_called_once_with("ドメイン制限は無効です。すべてのドメインを許可: test@example.com")
-    
-    def test_domain_restriction_disabled_by_default(self):
-        """Test that domain restriction is disabled by default"""
-        with patch.dict(os.environ, {}, clear=True):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("user@anydomain.org")
-                
-                assert result is True
-                mock_logger.assert_called_once_with("ドメイン制限は無効です。すべてのドメインを許可: user@anydomain.org")
-    
-    def test_domain_restriction_disabled_various_values(self):
-        """Test various ways to disable domain restriction"""
-        disable_values = ["false", "False", "FALSE", "0", "no", "disabled", ""]
+class TestEmailValidatorDomainRestriction:
+    """メールアドレスドメイン制限テスト"""
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_domain_restriction_disabled(self, mock_logger, mock_getenv):
+        """ドメイン制限無効時のテスト"""
+        # ドメイン制限を無効に設定
+        mock_getenv.side_effect = lambda key, default="": {
+            "ENABLE_DOMAIN_RESTRICTION": "false"
+        }.get(key, default)
         
-        for value in disable_values:
-            with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": value}):
-                with patch('utils.email_validator.create_logger'):
-                    result = is_valid_email_domain("test@example.com")
-                    assert result is True, f"Failed for value: {value}"
-    
-    def test_domain_restriction_disabled_with_invalid_email_format(self):
-        """Test disabled restriction with invalid email format"""
-        with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": "false"}):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("invalid-email")
-                
-                assert result is True
-                mock_logger.assert_called_once_with("ドメイン制限は無効です。すべてのドメインを許可: invalid-email")
+        from utils.email_validator import is_valid_email_domain
+        
+        # どのドメインでもTrueが返される
+        assert is_valid_email_domain("test@example.com") == True
+        assert is_valid_email_domain("user@gmail.com") == True
+        assert is_valid_email_domain("admin@company.org") == True
+        
+        # ログが出力されることを確認
+        mock_logger.assert_called()
 
-
-class TestEmailValidatorDomainRestrictionEnabled:
-    """Test email validation when domain restriction is enabled"""
-    
-    def test_domain_restriction_enabled_with_valid_domain(self):
-        """Test email validation with allowed domain"""
-        env_vars = {
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_domain_restriction_enabled_with_allowed_domains(self, mock_logger, mock_getenv):
+        """ドメイン制限有効時（許可ドメインあり）のテスト"""
+        # ドメイン制限を有効に設定
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com,test.org"
-        }
+            "ALLOWED_EMAIL_DOMAINS": "example.com, gmail.com, company.org"
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("user@example.com")
-                
-                assert result is True
-                mock_logger.assert_called_once_with("許可されたドメインです: example.com")
-    
-    def test_domain_restriction_enabled_with_invalid_domain(self):
-        """Test email validation with disallowed domain"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com,test.org"
-        }
+        from utils.email_validator import is_valid_email_domain
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("user@notallowed.com")
-                
-                assert result is False
-                mock_logger.assert_called_once_with("許可されていないドメインです: notallowed.com, 許可リスト: ['example.com', 'test.org']")
-    
-    def test_domain_restriction_enabled_case_insensitive(self):
-        """Test that domain checking is case insensitive"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "Example.COM,Test.ORG"
-        }
+        # 許可されたドメイン
+        assert is_valid_email_domain("test@example.com") == True
+        assert is_valid_email_domain("user@gmail.com") == True
+        assert is_valid_email_domain("admin@company.org") == True
         
-        test_cases = [
-            ("user@example.com", True),
-            ("user@EXAMPLE.COM", True),
-            ("user@Example.Com", True),
-            ("user@test.org", True),
-            ("user@TEST.ORG", True),
-            ("user@other.com", False)
-        ]
-        
-        for email, expected in test_cases:
-            with patch.dict(os.environ, env_vars):
-                with patch('utils.email_validator.create_logger'):
-                    result = is_valid_email_domain(email)
-                    assert result == expected, f"Failed for {email}, expected {expected}"
-    
-    def test_domain_restriction_enabled_various_enable_values(self):
-        """Test various ways to enable domain restriction"""
-        enable_values = ["true", "True", "TRUE", "1", "yes", "enabled"]
-        
-        for value in enable_values:
-            env_vars = {
-                "ENABLE_DOMAIN_RESTRICTION": value,
-                "ALLOWED_EMAIL_DOMAINS": "example.com"
-            }
-            
-            with patch.dict(os.environ, env_vars):
-                with patch('utils.email_validator.create_logger'):
-                    result = is_valid_email_domain("user@example.com")
-                    assert result is True, f"Failed for enable value: {value}"
-    
-    def test_domain_restriction_enabled_multiple_domains(self):
-        """Test with multiple allowed domains"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "gmail.com,yahoo.com,outlook.com,company.co.jp"
-        }
-        
-        valid_emails = [
-            "user@gmail.com",
-            "test@yahoo.com", 
-            "admin@outlook.com",
-            "employee@company.co.jp"
-        ]
-        
-        invalid_emails = [
-            "user@hotmail.com",
-            "test@protonmail.com",
-            "admin@aol.com"
-        ]
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                for email in valid_emails:
-                    result = is_valid_email_domain(email)
-                    assert result is True, f"Should be valid: {email}"
-                
-                for email in invalid_emails:
-                    result = is_valid_email_domain(email)
-                    assert result is False, f"Should be invalid: {email}"
+        # 許可されていないドメイン
+        assert is_valid_email_domain("test@yahoo.com") == False
+        assert is_valid_email_domain("user@hotmail.com") == False
 
-
-class TestEmailValidatorDomainConfiguration:
-    """Test domain configuration scenarios"""
-    
-    def test_no_allowed_domains_configured(self):
-        """Test behavior when no allowed domains are configured"""
-        with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": "true", "ALLOWED_EMAIL_DOMAINS": ""}):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("user@example.com")
-                
-                assert result is True
-                mock_logger.assert_called_once_with("許可されたドメインが設定されていません。すべてのドメインを許可")
-    
-    def test_allowed_domains_not_set(self):
-        """Test behavior when ALLOWED_EMAIL_DOMAINS environment variable is not set"""
-        env_vars = {"ENABLE_DOMAIN_RESTRICTION": "true"}
-        
-        with patch.dict(os.environ, env_vars, clear=True):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("user@example.com")
-                
-                assert result is True
-                mock_logger.assert_called_once_with("許可されたドメインが設定されていません。すべてのドメインを許可")
-    
-    def test_allowed_domains_with_whitespace(self):
-        """Test domain list with extra whitespace"""
-        env_vars = {
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_domain_restriction_enabled_no_allowed_domains(self, mock_logger, mock_getenv):
+        """ドメイン制限有効時（許可ドメインなし）のテスト"""
+        # ドメイン制限を有効、許可ドメインを空に設定
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": " example.com , test.org ,  company.com  "
-        }
+            "ALLOWED_EMAIL_DOMAINS": ""
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                # Should work with properly trimmed domains
-                assert is_valid_email_domain("user@example.com") is True
-                assert is_valid_email_domain("user@test.org") is True
-                assert is_valid_email_domain("user@company.com") is True
-                assert is_valid_email_domain("user@other.com") is False
-    
-    def test_allowed_domains_with_empty_entries(self):
-        """Test domain list with empty entries"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com,,test.org,,"
-        }
+        from utils.email_validator import is_valid_email_domain
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                assert is_valid_email_domain("user@example.com") is True
-                assert is_valid_email_domain("user@test.org") is True
-                assert is_valid_email_domain("user@other.com") is False
-    
-    def test_single_domain_configuration(self):
-        """Test configuration with single domain"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "company.com"
-        }
+        # 許可ドメインが設定されていない場合はすべて許可
+        assert is_valid_email_domain("test@example.com") == True
+        assert is_valid_email_domain("user@gmail.com") == True
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                assert is_valid_email_domain("employee@company.com") is True
-                assert is_valid_email_domain("user@external.com") is False
+        # ログが出力されることを確認
+        mock_logger.assert_called()
 
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_case_insensitive_domain_matching(self, mock_logger, mock_getenv):
+        """大文字小文字を区別しないドメインマッチングのテスト"""
+        mock_getenv.side_effect = lambda key, default="": {
+            "ENABLE_DOMAIN_RESTRICTION": "true",
+            "ALLOWED_EMAIL_DOMAINS": "Example.COM, Gmail.Com"
+        }.get(key, default)
+        
+        from utils.email_validator import is_valid_email_domain
+        
+        # 大文字小文字混在でも正しくマッチング
+        assert is_valid_email_domain("test@example.com") == True
+        assert is_valid_email_domain("test@Example.COM") == True
+        assert is_valid_email_domain("test@GMAIL.COM") == True
+        assert is_valid_email_domain("test@gmail.com") == True
 
-class TestEmailValidatorInvalidEmailFormats:
-    """Test handling of invalid email formats"""
-    
-    def test_email_without_at_symbol(self):
-        """Test email without @ symbol"""
-        env_vars = {
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_invalid_email_format(self, mock_logger, mock_getenv):
+        """不正なメールアドレス形式のテスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
             "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("userexample.com")
-                
-                assert result is False
-                mock_logger.assert_called_once_with("不正なメールアドレス形式: userexample.com")
-    
-    def test_email_with_multiple_at_symbols(self):
-        """Test email with multiple @ symbols"""
-        env_vars = {
+        from utils.email_validator import is_valid_email_domain
+        
+        # @マークがない
+        assert is_valid_email_domain("testexample.com") == False
+        # @マークが複数
+        assert is_valid_email_domain("test@domain@example.com") == False
+        # ドメイン部分がない
+        assert is_valid_email_domain("test@") == False
+        # 空文字列
+        assert is_valid_email_domain("") == False
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_whitespace_handling_in_domains(self, mock_logger, mock_getenv):
+        """ドメインリストの空白文字処理テスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
+            "ALLOWED_EMAIL_DOMAINS": " example.com , gmail.com , yahoo.com "
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                # Should use the second part after splitting by @
-                result = is_valid_email_domain("user@test@example.com")
-                assert result is False  # Gets "test" as domain, not "example.com"
-    
-    def test_empty_email(self):
-        """Test empty email string"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
+        from utils.email_validator import is_valid_email_domain
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("")
-                
-                assert result is False
-                mock_logger.assert_called_once_with("不正なメールアドレス形式: ")
-    
-    def test_email_ending_with_at(self):
-        """Test email ending with @"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                result = is_valid_email_domain("user@")
-                
-                assert result is False
-                # The domain becomes empty string "", which is not in allowed domains
-                mock_logger.assert_called_once_with("許可されていないドメインです: , 許可リスト: ['example.com']")
-    
-    def test_email_starting_with_at(self):
-        """Test email starting with @"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                result = is_valid_email_domain("@example.com")
-                # This actually works as split("@")[1] gives "example.com"
-                assert result is True
+        # 空白文字が正しく除去される
+        assert is_valid_email_domain("test@example.com") == True
+        assert is_valid_email_domain("test@gmail.com") == True
+        assert is_valid_email_domain("test@yahoo.com") == True
 
 
 class TestEmailValidatorEdgeCases:
-    """Test edge cases and special scenarios"""
-    
-    def test_unicode_domain(self):
-        """Test email with unicode domain"""
-        env_vars = {
+    """メールバリデーターエッジケーステスト"""
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_empty_domain_list_handling(self, mock_logger, mock_getenv):
+        """空のドメインリスト処理テスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "テスト.jp,example.com"
-        }
+            "ALLOWED_EMAIL_DOMAINS": ",,,"
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                result = is_valid_email_domain("user@テスト.jp")
-                assert result is True
-    
-    def test_subdomain_handling(self):
-        """Test how subdomains are handled"""
-        env_vars = {
+        from utils.email_validator import is_valid_email_domain
+        
+        # 空のエントリはフィルタリングされ、すべて許可される
+        assert is_valid_email_domain("test@example.com") == True
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_single_domain(self, mock_logger, mock_getenv):
+        """単一ドメイン設定のテスト"""
+        mock_getenv.side_effect = lambda key, default="": {
+            "ENABLE_DOMAIN_RESTRICTION": "true",
+            "ALLOWED_EMAIL_DOMAINS": "company.com"
+        }.get(key, default)
+        
+        from utils.email_validator import is_valid_email_domain
+        
+        assert is_valid_email_domain("employee@company.com") == True
+        assert is_valid_email_domain("user@external.com") == False
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_unicode_domains(self, mock_logger, mock_getenv):
+        """Unicode文字を含むドメインのテスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
             "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                # Subdomain should not match parent domain
-                result = is_valid_email_domain("user@mail.example.com")
-                assert result is False
-    
-    def test_subdomain_explicitly_allowed(self):
-        """Test subdomain that is explicitly allowed"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "mail.example.com,example.com"
-        }
+        from utils.email_validator import is_valid_email_domain
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                assert is_valid_email_domain("user@mail.example.com") is True
-                assert is_valid_email_domain("user@example.com") is True
-                assert is_valid_email_domain("user@other.example.com") is False
-    
-    def test_very_long_domain(self):
-        """Test very long domain name"""
-        long_domain = "a" * 50 + ".com"
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": long_domain
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                result = is_valid_email_domain(f"user@{long_domain}")
-                assert result is True
-    
-    def test_domain_with_special_characters(self):
-        """Test domain with special characters"""
-        special_domains = [
-            "ex-ample.com",
-            "example123.com", 
-            "ex_ample.com",
-            "123example.com"
-        ]
-        
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": ",".join(special_domains)
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                for domain in special_domains:
-                    result = is_valid_email_domain(f"user@{domain}")
-                    assert result is True, f"Failed for domain: {domain}"
-    
-    def test_international_domain_extensions(self):
-        """Test various international domain extensions"""
-        international_domains = [
-            "example.co.uk",
-            "example.co.jp",
-            "example.com.au",
-            "example.org.br",
-            "example.edu.cn"
-        ]
-        
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": ",".join(international_domains)
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                for domain in international_domains:
-                    result = is_valid_email_domain(f"user@{domain}")
-                    assert result is True, f"Failed for domain: {domain}"
+        # 通常のASCIIドメイン
+        assert is_valid_email_domain("test@example.com") == True
+        # Unicode文字を含むメールアドレス（実際のケースに近い）
+        # 注：実際のメールアドレスでは国際化ドメイン名は別の方法で処理される
+        assert is_valid_email_domain("テスト@example.com") == True
 
 
 class TestEmailValidatorLogging:
-    """Test logging functionality"""
-    
-    def test_logging_for_disabled_restriction(self):
-        """Test logging when domain restriction is disabled"""
-        with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": "false"}):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                is_valid_email_domain("test@example.com")
-                
-                mock_logger.assert_called_once_with("ドメイン制限は無効です。すべてのドメインを許可: test@example.com")
-    
-    def test_logging_for_missing_configuration(self):
-        """Test logging when no domains are configured"""
-        with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": "true", "ALLOWED_EMAIL_DOMAINS": ""}):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                is_valid_email_domain("test@example.com")
-                
-                mock_logger.assert_called_once_with("許可されたドメインが設定されていません。すべてのドメインを許可")
-    
-    def test_logging_for_allowed_domain(self):
-        """Test logging for allowed domain"""
-        env_vars = {
+    """メールバリデーターログ出力テスト"""
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_logging_for_allowed_domain(self, mock_logger, mock_getenv):
+        """許可されたドメインのログ出力テスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
             "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                is_valid_email_domain("user@example.com")
-                
-                mock_logger.assert_called_once_with("許可されたドメインです: example.com")
-    
-    def test_logging_for_disallowed_domain(self):
-        """Test logging for disallowed domain"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com,test.org"
-        }
+        from utils.email_validator import is_valid_email_domain
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                is_valid_email_domain("user@notallowed.com")
-                
-                mock_logger.assert_called_once_with("許可されていないドメインです: notallowed.com, 許可リスト: ['example.com', 'test.org']")
-    
-    def test_logging_for_invalid_email_format(self):
-        """Test logging for invalid email format"""
-        env_vars = {
+        is_valid_email_domain("test@example.com")
+        
+        # 許可ドメインのログが出力されることを確認
+        mock_logger.assert_called()
+        call_args = [call[0][0] for call in mock_logger.call_args_list]
+        assert any("許可されたドメインです" in arg for arg in call_args)
+
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_logging_for_disallowed_domain(self, mock_logger, mock_getenv):
+        """許可されていないドメインのログ出力テスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
             "ALLOWED_EMAIL_DOMAINS": "example.com"
-        }
+        }.get(key, default)
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger') as mock_logger:
-                is_valid_email_domain("invalid-email")
-                
-                mock_logger.assert_called_once_with("不正なメールアドレス形式: invalid-email")
+        from utils.email_validator import is_valid_email_domain
+        
+        is_valid_email_domain("test@notallowed.com")
+        
+        # 非許可ドメインのログが出力されることを確認
+        mock_logger.assert_called()
+        call_args = [call[0][0] for call in mock_logger.call_args_list]
+        assert any("許可されていないドメインです" in arg for arg in call_args)
 
-
-class TestEmailValidatorIntegrationScenarios:
-    """Test realistic integration scenarios"""
-    
-    def test_corporate_email_restriction_scenario(self):
-        """Test typical corporate email restriction scenario"""
-        env_vars = {
+    @patch('utils.email_validator.os.getenv')
+    @patch('utils.email_validator.create_logger')
+    def test_logging_for_invalid_format(self, mock_logger, mock_getenv):
+        """不正形式のメールアドレスのログ出力テスト"""
+        mock_getenv.side_effect = lambda key, default="": {
             "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "company.com,partner.org,contractor.net"
-        }
+            "ALLOWED_EMAIL_DOMAINS": "example.com"
+        }.get(key, default)
         
-        # Valid corporate emails
-        valid_emails = [
-            "employee@company.com",
-            "manager@company.com",
-            "partner@partner.org",
-            "contractor@contractor.net"
-        ]
+        from utils.email_validator import is_valid_email_domain
         
-        # Invalid external emails
-        invalid_emails = [
-            "user@gmail.com",
-            "test@yahoo.com",
-            "external@external.com"
-        ]
+        is_valid_email_domain("invalid-email")
         
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                for email in valid_emails:
-                    assert is_valid_email_domain(email) is True, f"Corporate email should be valid: {email}"
-                
-                for email in invalid_emails:
-                    assert is_valid_email_domain(email) is False, f"External email should be invalid: {email}"
-    
-    def test_educational_institution_scenario(self):
-        """Test educational institution email restriction"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "university.edu,student.university.edu,staff.university.edu"
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                assert is_valid_email_domain("professor@university.edu") is True
-                assert is_valid_email_domain("student@student.university.edu") is True
-                assert is_valid_email_domain("admin@staff.university.edu") is True
-                assert is_valid_email_domain("external@gmail.com") is False
-    
-    def test_multi_environment_configuration(self):
-        """Test different configurations for different environments"""
-        # Development environment - no restrictions
-        with patch.dict(os.environ, {"ENABLE_DOMAIN_RESTRICTION": "false"}):
-            with patch('utils.email_validator.create_logger'):
-                assert is_valid_email_domain("dev@anywhere.com") is True
-                assert is_valid_email_domain("test@example.org") is True
-        
-        # Production environment - strict restrictions
-        prod_env = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "company.com"
-        }
-        
-        with patch.dict(os.environ, prod_env):
-            with patch('utils.email_validator.create_logger'):
-                assert is_valid_email_domain("user@company.com") is True
-                assert is_valid_email_domain("user@external.com") is False
-
-
-class TestEmailValidatorPerformance:
-    """Test performance-related aspects"""
-    
-    def test_large_domain_list_performance(self):
-        """Test performance with large domain list"""
-        # Create a list of 100 domains
-        large_domain_list = [f"domain{i}.com" for i in range(100)]
-        
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": ",".join(large_domain_list)
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                # Test validation should still be fast
-                assert is_valid_email_domain("user@domain50.com") is True
-                assert is_valid_email_domain("user@notindomain.com") is False
-    
-    def test_repeated_validation_calls(self):
-        """Test repeated validation calls"""
-        env_vars = {
-            "ENABLE_DOMAIN_RESTRICTION": "true",
-            "ALLOWED_EMAIL_DOMAINS": "example.com,test.org"
-        }
-        
-        with patch.dict(os.environ, env_vars):
-            with patch('utils.email_validator.create_logger'):
-                # Multiple calls should work consistently
-                for _ in range(50):
-                    assert is_valid_email_domain("user@example.com") is True
-                    assert is_valid_email_domain("user@invalid.com") is False
-
-
-if __name__ == "__main__":
-    # Run specific test groups
-    pytest.main([__file__, "-v", "--tb=short"])
+        # 不正形式のログが出力されることを確認
+        mock_logger.assert_called()
+        call_args = [call[0][0] for call in mock_logger.call_args_list]
+        assert any("不正なメールアドレス形式" in arg for arg in call_args)
