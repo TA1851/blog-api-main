@@ -29,11 +29,12 @@ tests/report/
 ```
 
 > **注意**: 最新のカバレッジレポートはプロジェクトルートの `htmlcov/` ディレクトリおよび `Coverage_Report_20250603.html` ファイルに格納されています。
-```
+
 
 ## 🎯 主要成果サマリー
 
 ### テスト統計
+
 | 項目 | 値 |
 |------|-----|
 | **総テスト数** | 217 |
@@ -70,15 +71,5 @@ cat tests/report/markdown_reports/CUSTOM_TOKEN_TEST_REPORT.md
 jq '.' tests/report/bug_tracking/final_bug_tracking_report.json
 ```
 
-## 📅 更新履歴
 
-- **v2024.12.20-report-organized-updated** (2025年6月3日) - カバレッジレポート情報更新
-- **v2024.12.20-report-organized** (2025年6月2日) - レポート整理完了
-- **v2024.12.20-complete-test-suite** - 217テスト完了
-- **v2024.12.20-custom-token-tests** - custom_token: 47テスト追加
-
----
-
-詳細な情報については、各サブディレクトリのREADME.mdを参照してください。
-
-*Last organized: 2025年6月3日*
+*最終更新日: 2025年6月5日*

@@ -1,21 +1,23 @@
 """認証機能を実装するためのルーターモジュール"""
-from typing import List, Set, Dict, Generator
+from typing import List, Set, Dict, Generator, Optional
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+import logging
+from typing import Optional
 
 from schemas import ShowArticle, PasswordChange
-from database import session
+from database import session, get_db
 from hashing import Hash
 from custom_token import create_access_token
 from models import User, Article
-from logger.custom_logger import create_logger, create_error_logger
 from utils.email_sender import send_registration_complete_email
 
 
 # 認証レスポンスの型定義
 from typing_extensions import TypedDict
+
 
 class LoginResponse(TypedDict):
     """ログインレスポンスの型定義"""
@@ -34,27 +36,6 @@ router = APIRouter(
     prefix="/api/v1",
     tags=["auth"],
 )
-
-
-def get_db() -> Generator[Session, None, None]:
-    """データベースセッションを取得するための依存関数"""
-
-    db = session()
-    try:
-        yield db
-        create_logger(
-            "DBセッションをコミットしました"
-            )
-    except Exception as e:
-        create_error_logger(
-            f"DBセッションのコミットに失敗しました。: {str(e)}"
-            )
-        raise
-    finally:
-        db.close()
-        create_logger(
-            "DBセッションをクローズしました"
-        )
 
 
 @router.post('/login')
@@ -98,7 +79,7 @@ async def login(
 
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
-        create_error_logger(
+        print(
             f"無効なユーザー名です: {request.username}"
             )
         raise HTTPException(
@@ -109,8 +90,7 @@ async def login(
         request.password,
         user.password
     ):
-        # print("Password verification failed")
-        create_error_logger(
+        print(
             f"無効なパスワードです: {request.password}"
         )
         raise HTTPException(
@@ -120,7 +100,7 @@ async def login(
     access_token = create_access_token(
         data={"sub": user.email or "", "id": user.id}
     )
-    create_logger(
+    print(
         f"ログインに成功しました: {user.email or 'unknown'}"
         )
     return {"access_token": access_token, "token_type": "bearer"}
@@ -158,7 +138,7 @@ def verify_token(
     try:
         # トークンの検証ロジックを実装
         payload = jwt.decode(
-            token, "your-secret-key", algorithms=["HS256"]
+            token, "SECRET_KEY", algorithms=["HS256"]
             )
         email = payload.get("sub")
         if email is None:
@@ -215,8 +195,7 @@ async def logout(
     """
     # トークンをブラックリストに追加して無効化
     token_blacklist.add(token)
-    # print(f"ログアウトしました。")
-    create_logger("ログアウトに成功しました")
+    print("ログアウトに成功しました")
     return {"message": "ログアウトしました"}
 
 
@@ -248,10 +227,14 @@ async def get_all_blogs(
 
 
 # パスワード変更レスポンス型
-class PasswordChangeResponse(TypedDict):
+class PasswordChangeResponse(TypedDict, total=False):
     """パスワード変更レスポンスの型定義"""
     message: str
     user_id: str
+    access_token: str
+    token_type: str
+    email_sent: bool
+    email_error: Optional[str]  # オプショナルフィールド
 
 
 @router.post('/change-password')
@@ -259,43 +242,15 @@ async def change_password(
     request: PasswordChange,
     db: Session = Depends(get_db)
 ) -> PasswordChangeResponse:
-    """仮パスワードから新パスワードへの変更を行うエンドポイント
-
-    パスワード変更エンドポイント：
-    ```
-    http://127.0.0.1:8080/api/v1/change-password
-    ```
-
-    パラメータ::
-
-        username: ユーザー名（メールアドレス）
-        temp_password: 現在の仮パスワード
-        new_password: 新しいパスワード
-
-    レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request)::
-
-        {
-            "message": "パスワードが正常に変更されました。",
-            "user_id": "ユーザーID"
-        }
-
-    注意：パスワード変更成功後、登録完了メールが自動的に送信されます。
-
-    :param request: PasswordChange
-    :type request: PasswordChange
-    :param db: データベースセッション
-    :type db: Session
-    :return: パスワード変更結果とユーザーIDを返します
-    :rtype: dict
-    :raises HTTPException: ユーザー名または仮パスワードが無効な場合
-    """
+    """仮パスワードから新パスワードへの変更を行うエンドポイント"""
     print(f"Password change attempt for username: {request.username}")
-    create_logger(f"パスワード変更試行: {request.username}")
 
     # ユーザーの存在確認
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
-        create_error_logger(f"無効なユーザー名です: {request.username}")
+        print(
+            f"User not found: {request.username}"
+            )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="無効なユーザー名です"
@@ -303,7 +258,9 @@ async def change_password(
 
     # 仮パスワードの検証
     if not user.password or not Hash.verify(request.temp_password, user.password):
-        create_error_logger(f"無効な仮パスワードです: {request.username}")
+        print(
+            f"Invalid temporary password for user: {request.username}"
+            )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="無効な仮パスワードです"
@@ -315,30 +272,84 @@ async def change_password(
 
     try:
         db.commit()
-        create_logger(f"パスワード変更成功: {request.username}")
-
-        # 登録完了メールを送信
-        try:
-            if user.email:
-                # user.nameがNoneの場合はメールアドレスのローカル部分を使用
-                user_name = user.name if user.name else user.email.split('@')[0]
-                await send_registration_complete_email(user.email, user_name)
-                create_logger(f"登録完了メールを送信しました: {user.email}")
-        except Exception as email_error:
-            create_error_logger(f"登録完了メール送信に失敗しました: {user.email}, エラー: {str(email_error)}")
+        print(f"Password changed successfully for user: {request.username}")
 
         # 新しいアクセストークンを生成
         access_token = create_access_token(
             data={"sub": user.email or "", "id": user.id}
         )
-        return {
+        print(f"New access token created for user: {request.username}")
+
+        # レスポンスデータの初期化
+        response_data: PasswordChangeResponse = {
             "message": "パスワードが正常に変更されました。",
-            "user_id": str(user.id)
+            "user_id": str(user.id),
+            "access_token": access_token,
+            "token_type": "bearer",
+            "email_sent": False
         }
-    except Exception as e:
+        # メール送信処理（改善されたエラーハンドリング）
+        email_error_details: Optional[str] = None
+        if user.email:
+            try:
+                user_name = user.name if user.name else user.email.split('@')[0]
+                await send_registration_complete_email(user.email, user_name)
+                print(
+                    f"Registration complete email sent successfully to: {user.email}"
+                    )
+                response_data["email_sent"] = True
+            except ConnectionError as conn_error:
+                error_msg = "メールサーバーに接続できませんでした"
+                email_error_details = f"Connection error: {str(conn_error)}"
+                print(
+                    f"Email connection error for {user.email}: {conn_error}"
+                    )
+            except TimeoutError as timeout_error:
+                error_msg = "メール送信がタイムアウトしました"
+                email_error_details = f"Timeout error: {str(timeout_error)}"
+                print(
+                    f"Email timeout error for {user.email}: {timeout_error}"
+                    )
+            except ValueError as value_error:
+                error_msg = "無効なメールアドレスです"
+                email_error_details = f"Invalid email format: {str(value_error)}"
+                print(
+                    f"Invalid email format for {user.email}: {value_error}"
+                    )
+            except Exception as email_error:
+                error_msg = "メール送信中に予期しないエラーが発生しました"
+                email_error_details = f"Unexpected error: {str(email_error)}"
+                print(f"Unexpected email error for {user.email}: {email_error}")
+
+            # メール送信エラーの場合の処理
+            if email_error_details:
+                response_data["email_sent"] = False
+                response_data["email_error"] = error_msg
+                # 詳細なエラー情報はログに記録し、ユーザーには一般的なメッセージを返す
+                print(
+                    f"Email sending failed for {user.email}: {email_error_details}"
+                    )
+        else:
+            print(f"No email address for user: {request.username}")
+            response_data["email_error"] = "ユーザーにメールアドレスが設定されていません"
+        return response_data
+    except Exception as db_error:
         db.rollback()
-        create_error_logger(f"パスワード変更失敗: {request.username}, エラー: {str(e)}")
+        print(
+            f"Database error during password change for {request.username}: {str(db_error)}"
+            )
+
+        # データベースエラーの種類に応じた詳細なエラーハンドリング
+        if "constraint" in str(db_error).lower():
+            error_detail = "データベース制約違反が発生しました"
+            status_code = status.HTTP_409_CONFLICT
+        elif "connection" in str(db_error).lower():
+            error_detail = "データベース接続エラーが発生しました"
+            status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        else:
+            error_detail = "パスワード変更中にエラーが発生しました"
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="パスワード変更中にエラーが発生しました"
+            status_code=status_code,
+            detail=error_detail
         )

@@ -25,8 +25,8 @@ cd /Users/tatu/Documents/GitHub/blog-api-main && python test_runner_with_history
 # 履歴サマリー確認
 ./quick_test_update.sh history
 
-# カバレッジをブラウザで確認
-open htmlcov_core_only/index.html
+coverage report -m
+coverage html
 ```
 
 ---

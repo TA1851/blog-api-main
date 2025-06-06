@@ -7,7 +7,7 @@
 ```
 tests/report/
 ├── markdown_reports/     # Markdownレポート
-├── bug_tracking/        # バグトラッキングレポート  
+├── bug_tracking/        # バグトラッキングレポート
 ├── coverage/           # コードカバレッジレポート
 ├── test_results/       # テスト実行結果
 └── README.md          # このファイル

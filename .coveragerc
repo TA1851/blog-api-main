@@ -6,6 +6,7 @@ omit =
     run_continuous_tests.py
     generate_summary_report.py
     update_main_bug_history.py
+    update_final_success.py
     */site-packages/*
     */venv/*
     */.venv/*
@@ -19,6 +20,7 @@ omit =
     run_continuous_tests.py
     generate_summary_report.py
     update_main_bug_history.py
+    update_final_success.py
     */site-packages/*
     */venv/*
     */.venv/*
@@ -35,6 +37,7 @@ omit =
     run_continuous_tests.py
     generate_summary_report.py
     update_main_bug_history.py
+    update_final_success.py
     */site-packages/*
     */venv/*
     */.venv/*

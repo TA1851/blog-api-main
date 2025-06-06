@@ -24,8 +24,8 @@ python test_runner_with_history.py
 # 履歴サマリー表示
 ./quick_test_update.sh history
 
-# カバレッジレポートをブラウザで確認
-open htmlcov_core_only/index.html
+coverage report -m
+coverage html
 ```
 
 ---

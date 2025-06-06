@@ -9724,5 +9724,395 @@
         "excluded_lines": 0
       }
     }
+  },
+  {
+    "timestamp": "2025-06-06T11:30:02.669250",
+    "test_id": "20250606_113002",
+    "test_name": "all_tests",
+    "overall_coverage": 85.71428571428571,
+    "total_statements": 1043,
+    "covered_statements": 894,
+    "missing_statements": 149,
+    "files_coverage": {
+      "custom_token.py": {
+        "covered_lines": 94,
+        "num_statements": 94,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "database.py": {
+        "covered_lines": 85,
+        "num_statements": 89,
+        "percent_covered": 95.50561797752809,
+        "missing_lines": 4,
+        "excluded_lines": 0
+      },
+      "exceptions.py": {
+        "covered_lines": 12,
+        "num_statements": 12,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "hashing.py": {
+        "covered_lines": 7,
+        "num_statements": 9,
+        "percent_covered": 77.77777777777777,
+        "missing_lines": 2,
+        "excluded_lines": 0
+      },
+      "logger/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "logger/custom_logger.py": {
+        "covered_lines": 21,
+        "num_statements": 21,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "main.py": {
+        "covered_lines": 39,
+        "num_statements": 42,
+        "percent_covered": 92.85714285714286,
+        "missing_lines": 3,
+        "excluded_lines": 0
+      },
+      "models.py": {
+        "covered_lines": 36,
+        "num_statements": 37,
+        "percent_covered": 97.29729729729729,
+        "missing_lines": 1,
+        "excluded_lines": 0
+      },
+      "oauth2.py": {
+        "covered_lines": 37,
+        "num_statements": 37,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/article.py": {
+        "covered_lines": 56,
+        "num_statements": 152,
+        "percent_covered": 36.8421052631579,
+        "missing_lines": 96,
+        "excluded_lines": 0
+      },
+      "routers/auth.py": {
+        "covered_lines": 124,
+        "num_statements": 124,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/user.py": {
+        "covered_lines": 199,
+        "num_statements": 201,
+        "percent_covered": 99.0049751243781,
+        "missing_lines": 2,
+        "excluded_lines": 0
+      },
+      "schemas.py": {
+        "covered_lines": 89,
+        "num_statements": 89,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "utils/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "utils/email_sender.py": {
+        "covered_lines": 72,
+        "num_statements": 113,
+        "percent_covered": 63.716814159292035,
+        "missing_lines": 41,
+        "excluded_lines": 0
+      },
+      "utils/email_validator.py": {
+        "covered_lines": 23,
+        "num_statements": 23,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2025-06-06T11:35:22.724108",
+    "test_id": "20250606_113522",
+    "test_name": "all_tests",
+    "overall_coverage": 85.71428571428571,
+    "total_statements": 1043,
+    "covered_statements": 894,
+    "missing_statements": 149,
+    "files_coverage": {
+      "custom_token.py": {
+        "covered_lines": 94,
+        "num_statements": 94,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "database.py": {
+        "covered_lines": 85,
+        "num_statements": 89,
+        "percent_covered": 95.50561797752809,
+        "missing_lines": 4,
+        "excluded_lines": 0
+      },
+      "exceptions.py": {
+        "covered_lines": 12,
+        "num_statements": 12,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "hashing.py": {
+        "covered_lines": 7,
+        "num_statements": 9,
+        "percent_covered": 77.77777777777777,
+        "missing_lines": 2,
+        "excluded_lines": 0
+      },
+      "logger/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "logger/custom_logger.py": {
+        "covered_lines": 21,
+        "num_statements": 21,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "main.py": {
+        "covered_lines": 39,
+        "num_statements": 42,
+        "percent_covered": 92.85714285714286,
+        "missing_lines": 3,
+        "excluded_lines": 0
+      },
+      "models.py": {
+        "covered_lines": 36,
+        "num_statements": 37,
+        "percent_covered": 97.29729729729729,
+        "missing_lines": 1,
+        "excluded_lines": 0
+      },
+      "oauth2.py": {
+        "covered_lines": 37,
+        "num_statements": 37,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/article.py": {
+        "covered_lines": 56,
+        "num_statements": 152,
+        "percent_covered": 36.8421052631579,
+        "missing_lines": 96,
+        "excluded_lines": 0
+      },
+      "routers/auth.py": {
+        "covered_lines": 124,
+        "num_statements": 124,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/user.py": {
+        "covered_lines": 199,
+        "num_statements": 201,
+        "percent_covered": 99.0049751243781,
+        "missing_lines": 2,
+        "excluded_lines": 0
+      },
+      "schemas.py": {
+        "covered_lines": 89,
+        "num_statements": 89,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "utils/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "utils/email_sender.py": {
+        "covered_lines": 72,
+        "num_statements": 113,
+        "percent_covered": 63.716814159292035,
+        "missing_lines": 41,
+        "excluded_lines": 0
+      },
+      "utils/email_validator.py": {
+        "covered_lines": 23,
+        "num_statements": 23,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      }
+    }
+  },
+  {
+    "timestamp": "2025-06-06T11:37:31.275850",
+    "test_id": "20250606_113731",
+    "test_name": "all_tests",
+    "overall_coverage": 85.71428571428571,
+    "total_statements": 1043,
+    "covered_statements": 894,
+    "missing_statements": 149,
+    "files_coverage": {
+      "custom_token.py": {
+        "covered_lines": 94,
+        "num_statements": 94,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "database.py": {
+        "covered_lines": 85,
+        "num_statements": 89,
+        "percent_covered": 95.50561797752809,
+        "missing_lines": 4,
+        "excluded_lines": 0
+      },
+      "exceptions.py": {
+        "covered_lines": 12,
+        "num_statements": 12,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "hashing.py": {
+        "covered_lines": 7,
+        "num_statements": 9,
+        "percent_covered": 77.77777777777777,
+        "missing_lines": 2,
+        "excluded_lines": 0
+      },
+      "logger/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "logger/custom_logger.py": {
+        "covered_lines": 21,
+        "num_statements": 21,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "main.py": {
+        "covered_lines": 39,
+        "num_statements": 42,
+        "percent_covered": 92.85714285714286,
+        "missing_lines": 3,
+        "excluded_lines": 0
+      },
+      "models.py": {
+        "covered_lines": 36,
+        "num_statements": 37,
+        "percent_covered": 97.29729729729729,
+        "missing_lines": 1,
+        "excluded_lines": 0
+      },
+      "oauth2.py": {
+        "covered_lines": 37,
+        "num_statements": 37,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/article.py": {
+        "covered_lines": 56,
+        "num_statements": 152,
+        "percent_covered": 36.8421052631579,
+        "missing_lines": 96,
+        "excluded_lines": 0
+      },
+      "routers/auth.py": {
+        "covered_lines": 124,
+        "num_statements": 124,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "routers/user.py": {
+        "covered_lines": 199,
+        "num_statements": 201,
+        "percent_covered": 99.0049751243781,
+        "missing_lines": 2,
+        "excluded_lines": 0
+      },
+      "schemas.py": {
+        "covered_lines": 89,
+        "num_statements": 89,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "utils/__init__.py": {
+        "covered_lines": 0,
+        "num_statements": 0,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      },
+      "utils/email_sender.py": {
+        "covered_lines": 72,
+        "num_statements": 113,
+        "percent_covered": 63.716814159292035,
+        "missing_lines": 41,
+        "excluded_lines": 0
+      },
+      "utils/email_validator.py": {
+        "covered_lines": 23,
+        "num_statements": 23,
+        "percent_covered": 100.0,
+        "missing_lines": 0,
+        "excluded_lines": 0
+      }
+    }
   }
 ]
