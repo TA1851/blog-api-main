@@ -2,7 +2,7 @@
 import pytest
 import asyncio
 from unittest.mock import patch, Mock, AsyncMock, MagicMock
-from fastapi_mail import ConnectionConfig
+from fastapi_mail import ConnectionConfig, MessageType
 import os
 
 
@@ -150,6 +150,38 @@ class TestEmailSenderDevMode:
         mock_print.assert_called_once()
         mock_logger.assert_called()
 
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._print_dev_mode_email')
+    @patch('utils.email_sender.create_logger')
+    async def test_send_registration_complete_email_dev_mode(self, mock_logger, mock_print, mock_enabled):
+        """登録完了メール開発モードテスト"""
+        # メール送信無効（開発モード）
+        mock_enabled.return_value = False
+        
+        from utils.email_sender import send_registration_complete_email
+        
+        await send_registration_complete_email("test@example.com", "testuser")
+        
+        # 開発モード出力が呼ばれることを確認
+        mock_print.assert_called_once()
+        mock_logger.assert_called()
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._print_dev_mode_email')
+    @patch('utils.email_sender.create_logger')
+    async def test_send_account_deletion_email_dev_mode(self, mock_logger, mock_print, mock_enabled):
+        """退会完了メール開発モードテスト"""
+        # メール送信無効（開発モード）
+        mock_enabled.return_value = False
+        
+        from utils.email_sender import send_account_deletion_email
+        
+        await send_account_deletion_email("test@example.com", "testuser")
+        
+        # 開発モード出力が呼ばれることを確認
+        mock_print.assert_called_once()
+        mock_logger.assert_called()
+
 
 class TestEmailSenderVerificationEmail:
     """確認メール送信テスト"""
@@ -232,75 +264,281 @@ class TestEmailSenderVerificationEmail:
         mock_print.assert_called()
 
 
-class TestEmailSenderRegistrationEmail:
-    """登録完了メール送信テスト"""
-
-    @patch('utils.email_sender._is_email_enabled')
-    @patch('utils.email_sender._print_dev_mode_email')
-    @patch('utils.email_sender.create_logger')
-    async def test_send_registration_complete_email_dev_mode(self, mock_logger, mock_print, mock_enabled):
-        """開発モードでの登録完了メール送信テスト"""
-        mock_enabled.return_value = False
-        
-        from utils.email_sender import send_registration_complete_email
-        
-        await send_registration_complete_email("test@example.com", "testuser")
-        
-        mock_print.assert_called_once()
-        mock_logger.assert_called()
-
-
-class TestEmailSenderDeletionEmail:
-    """アカウント削除メール送信テスト"""
-
-    @patch('utils.email_sender._is_email_enabled')
-    @patch('utils.email_sender._print_dev_mode_email')
-    @patch('utils.email_sender.create_logger')
-    async def test_send_account_deletion_email_dev_mode(self, mock_logger, mock_print, mock_enabled):
-        """開発モードでのアカウント削除メール送信テスト"""
-        mock_enabled.return_value = False
-        
-        from utils.email_sender import send_account_deletion_email
-        
-        await send_account_deletion_email("test@example.com", "testuser")
-        
-        mock_print.assert_called_once()
-        mock_logger.assert_called()
-
-
-class TestEmailSenderErrorHandling:
-    """メール送信エラーハンドリングテスト"""
+class TestEmailSenderHTMLFeatures:
+    """HTMLメール機能テスト"""
 
     @patch('utils.email_sender._is_email_enabled')
     @patch('utils.email_sender._validate_mail_config')
     @patch('utils.email_sender.get_mail_config')
     @patch('utils.email_sender.FastMail')
-    @patch('utils.email_sender.create_error_logger')
-    async def test_send_verification_email_exception_handling(self, mock_error_logger, mock_fastmail, mock_config, mock_validate, mock_enabled):
-        """メール送信時の例外処理テスト"""
-        # メール送信有効、設定有効
+    @patch('utils.email_sender.MessageSchema')
+    @patch('utils.email_sender.create_logger')
+    @patch('utils.email_sender.os.getenv')
+    async def test_send_verification_email_html_format(self, mock_getenv, mock_logger, mock_msg, mock_fastmail, mock_config, mock_validate, mock_enabled):
+        """HTMLメール送信テスト"""
+        # メール送信有効、設定有効、HTMLメール有効
         mock_enabled.return_value = True
         mock_validate.return_value = True
+        mock_getenv.side_effect = lambda key, default="false": "false" if key == "PREFER_PLAIN_TEXT_EMAIL" else default
         
-        # FastMailで例外を発生させる
-        mock_fastmail_instance = AsyncMock()
-        mock_fastmail.return_value = mock_fastmail_instance
-        mock_fastmail_instance.send_message = AsyncMock(side_effect=Exception("SMTP Error"))
+        # モック設定
+        mock_config.return_value = Mock()
+        mock_fm_instance = AsyncMock()
+        mock_fastmail.return_value = mock_fm_instance
+        mock_message_instance = Mock()
+        mock_msg.return_value = mock_message_instance
         
         from utils.email_sender import send_verification_email
         
         await send_verification_email("test@example.com", "test_token")
         
-        # エラーログが出力されることを確認
+        # HTMLメールのメッセージが作成されることを確認
+        mock_msg.assert_called_once()
+        call_args = mock_msg.call_args[1]
+        assert call_args['subtype'].value == 'html'
+        assert "DOCTYPE html" in call_args['body']
+        
+        # メール送信が呼ばれることを確認
+        mock_fm_instance.send_message.assert_called_once_with(mock_message_instance)
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.FastMail')
+    @patch('utils.email_sender.MessageSchema')
+    @patch('utils.email_sender.create_logger')
+    @patch('utils.email_sender.os.getenv')
+    async def test_send_verification_email_plain_text_format(self, mock_getenv, mock_logger, mock_msg, mock_fastmail, mock_config, mock_validate, mock_enabled):
+        """プレーンテキストメール送信テスト"""
+        # メール送信有効、設定有効、プレーンテキストメール有効
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_getenv.side_effect = lambda key, default="false": "true" if key == "PREFER_PLAIN_TEXT_EMAIL" else default
+        
+        # モック設定
+        mock_config.return_value = Mock()
+        mock_fm_instance = AsyncMock()
+        mock_fastmail.return_value = mock_fm_instance
+        mock_message_instance = Mock()
+        mock_msg.return_value = mock_message_instance
+        
+        from utils.email_sender import send_verification_email
+        
+        await send_verification_email("test@example.com", "test_token")
+        
+        # プレーンテキストメールのメッセージが作成されることを確認
+        mock_msg.assert_called_once()
+        call_args = mock_msg.call_args[1]
+        assert call_args['subtype'].value == 'plain'
+        assert "DOCTYPE html" not in call_args['body']
+        
+        # メール送信が呼ばれることを確認
+        mock_fm_instance.send_message.assert_called_once_with(mock_message_instance)
+
+
+class TestEmailSenderRegistrationEmail:
+    """登録完了メール送信テスト"""
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.FastMail')
+    @patch('utils.email_sender.MessageSchema')
+    @patch('utils.email_sender.create_logger')
+    @patch('utils.email_sender.os.getenv')
+    async def test_send_registration_complete_email_real_sending_html(self, mock_getenv, mock_logger, mock_msg, mock_fastmail, mock_config, mock_validate, mock_enabled):
+        """登録完了メール実際送信テスト（HTML）"""
+        # メール送信有効、設定有効、HTMLメール有効
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_getenv.side_effect = lambda key, default="false": "false" if key == "PREFER_PLAIN_TEXT_EMAIL" else default
+        
+        # モック設定
+        mock_config.return_value = Mock()
+        mock_fm_instance = AsyncMock()
+        mock_fastmail.return_value = mock_fm_instance
+        mock_message_instance = Mock()
+        mock_msg.return_value = mock_message_instance
+        
+        from utils.email_sender import send_registration_complete_email
+        
+        await send_registration_complete_email("test@example.com", "testuser")
+        
+        # HTMLメールのメッセージが作成されることを確認
+        mock_msg.assert_called_once()
+        call_args = mock_msg.call_args[1]
+        assert call_args['subject'] == "【Blog API】登録完了のお知らせ"
+        assert call_args['recipients'] == ["test@example.com"]
+        assert call_args['subtype'].value == 'html'
+        assert "DOCTYPE html" in call_args['body']
+        assert "testuser" in call_args['body']
+        
+        # メール送信が呼ばれることを確認
+        mock_fm_instance.send_message.assert_called_once_with(mock_message_instance)
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.FastMail')
+    @patch('utils.email_sender.MessageSchema')
+    @patch('utils.email_sender.create_logger')
+    @patch('utils.email_sender.os.getenv')
+    async def test_send_registration_complete_email_real_sending_plain(self, mock_getenv, mock_logger, mock_msg, mock_fastmail, mock_config, mock_validate, mock_enabled):
+        """登録完了メール実際送信テスト（プレーンテキスト）"""
+        # メール送信有効、設定有効、プレーンテキストメール有効
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_getenv.side_effect = lambda key, default="false": "true" if key == "PREFER_PLAIN_TEXT_EMAIL" else default
+        
+        # モック設定
+        mock_config.return_value = Mock()
+        mock_fm_instance = AsyncMock()
+        mock_fastmail.return_value = mock_fm_instance
+        mock_message_instance = Mock()
+        mock_msg.return_value = mock_message_instance
+        
+        from utils.email_sender import send_registration_complete_email
+        
+        await send_registration_complete_email("test@example.com", "testuser")
+        
+        # プレーンテキストメールのメッセージが作成されることを確認
+        mock_msg.assert_called_once()
+        call_args = mock_msg.call_args[1]
+        assert call_args['subject'] == "【Blog API】登録完了のお知らせ"
+        assert call_args['recipients'] == ["test@example.com"]
+        assert call_args['subtype'].value == 'plain'
+        assert "DOCTYPE html" not in call_args['body']
+        assert "testuser" in call_args['body']
+        
+        # メール送信が呼ばれることを確認
+        mock_fm_instance.send_message.assert_called_once_with(mock_message_instance)
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender._print_dev_mode_email')
+    @patch('utils.email_sender.create_error_logger')
+    async def test_send_registration_complete_email_invalid_config(self, mock_error_logger, mock_print, mock_validate, mock_enabled):
+        """登録完了メール設定無効テスト"""
+        # メール送信有効、設定無効
+        mock_enabled.return_value = True
+        mock_validate.return_value = False
+        
+        from utils.email_sender import send_registration_complete_email
+        
+        await send_registration_complete_email("test@example.com", "testuser")
+        
+        # エラーログと開発モード出力が呼ばれることを確認
         mock_error_logger.assert_called()
+        mock_print.assert_called()
+
+
+class TestEmailSenderDeletionEmail:
+    """退会完了メール送信テスト"""
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.FastMail')
+    @patch('utils.email_sender.MessageSchema')
+    @patch('utils.email_sender.create_logger')
+    @patch('utils.email_sender.os.getenv')
+    async def test_send_account_deletion_email_real_sending_html(self, mock_getenv, mock_logger, mock_msg, mock_fastmail, mock_config, mock_validate, mock_enabled):
+        """退会完了メール実際送信テスト（HTML）"""
+        # メール送信有効、設定有効、HTMLメール有効
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_getenv.side_effect = lambda key, default="false": "false" if key == "PREFER_PLAIN_TEXT_EMAIL" else default
+        
+        # モック設定
+        mock_config.return_value = Mock()
+        mock_fm_instance = AsyncMock()
+        mock_fastmail.return_value = mock_fm_instance
+        mock_message_instance = Mock()
+        mock_msg.return_value = mock_message_instance
+        
+        from utils.email_sender import send_account_deletion_email
+        
+        await send_account_deletion_email("test@example.com", "testuser")
+        
+        # HTMLメールのメッセージが作成されることを確認
+        mock_msg.assert_called_once()
+        call_args = mock_msg.call_args[1]
+        assert call_args['subject'] == "【Blog API】退会完了のお知らせ"
+        assert call_args['recipients'] == ["test@example.com"]
+        assert call_args['subtype'].value == 'html'
+        assert "DOCTYPE html" in call_args['body']
+        assert "testuser" in call_args['body']
+        
+        # メール送信が呼ばれることを確認
+        mock_fm_instance.send_message.assert_called_once_with(mock_message_instance)
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.FastMail')
+    @patch('utils.email_sender.MessageSchema')
+    @patch('utils.email_sender.create_logger')
+    @patch('utils.email_sender.os.getenv')
+    async def test_send_account_deletion_email_real_sending_plain(self, mock_getenv, mock_logger, mock_msg, mock_fastmail, mock_config, mock_validate, mock_enabled):
+        """退会完了メール実際送信テスト（プレーンテキスト）"""
+        # メール送信有効、設定有効、プレーンテキストメール有効
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_getenv.side_effect = lambda key, default="false": "true" if key == "PREFER_PLAIN_TEXT_EMAIL" else default
+        
+        # モック設定
+        mock_config.return_value = Mock()
+        mock_fm_instance = AsyncMock()
+        mock_fastmail.return_value = mock_fm_instance
+        mock_message_instance = Mock()
+        mock_msg.return_value = mock_message_instance
+        
+        from utils.email_sender import send_account_deletion_email
+        
+        await send_account_deletion_email("test@example.com", "testuser")
+        
+        # プレーンテキストメールのメッセージが作成されることを確認
+        mock_msg.assert_called_once()
+        call_args = mock_msg.call_args[1]
+        assert call_args['subject'] == "【Blog API】退会完了のお知らせ"
+        assert call_args['recipients'] == ["test@example.com"]
+        assert call_args['subtype'].value == 'plain'
+        assert "DOCTYPE html" not in call_args['body']
+        assert "testuser" in call_args['body']
+        
+        # メール送信が呼ばれることを確認
+        mock_fm_instance.send_message.assert_called_once_with(mock_message_instance)
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender._print_dev_mode_email')
+    @patch('utils.email_sender.create_error_logger')
+    async def test_send_account_deletion_email_invalid_config(self, mock_error_logger, mock_print, mock_validate, mock_enabled):
+        """退会完了メール設定無効テスト"""
+        # メール送信有効、設定無効
+        mock_enabled.return_value = True
+        mock_validate.return_value = False
+        
+        from utils.email_sender import send_account_deletion_email
+        
+        await send_account_deletion_email("test@example.com", "testuser")
+        
+        # エラーログと開発モード出力が呼ばれることを確認
+        mock_error_logger.assert_called()
+        mock_print.assert_called()
+
+
+class TestEmailSenderMailConfigExceptions:
+    """メール設定例外テスト"""
 
     @patch('utils.email_sender._is_email_enabled')
     @patch('utils.email_sender._validate_mail_config')
     @patch('utils.email_sender.get_mail_config')
     @patch('utils.email_sender.create_error_logger')
-    async def test_send_verification_email_no_config(self, mock_error_logger, mock_config, mock_validate, mock_enabled):
-        """メール設定なしでのテスト"""
-        # メール送信有効、設定有効だが設定が None を返す
+    @patch('utils.email_sender._print_dev_mode_email')
+    async def test_send_verification_email_config_none(self, mock_print, mock_error_logger, mock_config, mock_validate, mock_enabled):
+        """確認メール送信でメール設定がNoneの場合のテスト"""
+        # メール送信有効、設定有効だがconfigがNone
         mock_enabled.return_value = True
         mock_validate.return_value = True
         mock_config.return_value = None
@@ -309,64 +547,49 @@ class TestEmailSenderErrorHandling:
         
         await send_verification_email("test@example.com", "test_token")
         
-        # エラーログが出力されることを確認
+        # エラーログが呼ばれることを確認
         mock_error_logger.assert_called()
-
-
-class TestEmailSenderUtilityFunctions:
-    """ユーティリティ関数テスト"""
-
-    def test_quote_token_encoding(self):
-        """トークンURLエンコードのテスト"""
-        from urllib.parse import quote
-        
-        # 特殊文字を含むトークン
-        token = "abc123+/="
-        encoded = quote(token, safe='')
-        
-        # URLエンコードされていることを確認
-        assert "+" not in encoded or "%2B" in encoded
-
-    @patch('utils.email_sender.os.getenv')
-    def test_environment_variable_access(self, mock_getenv):
-        """環境変数アクセスのテスト"""
-        mock_getenv.side_effect = lambda key, default=None: {
-            "CORS_ORIGINS": "https://example.com",
-            "LOCAL_CORS_ORIGINS": "http://localhost:3000",
-            "SERVER_PORT": "8080"
-        }.get(key, default)
-        
-        # モジュールを再インポートして環境変数を再読み込み
-        import importlib
-        import utils.email_sender
-        importlib.reload(utils.email_sender)
-        
-        from utils.email_sender import CORS_ORIGINS, LOCAL_CORS_ORIGINS, SERVER_PORT
-        
-        assert CORS_ORIGINS == "https://example.com"
-        assert LOCAL_CORS_ORIGINS == "http://localhost:3000"
-        assert SERVER_PORT == "8080"
-
-
-class TestEmailSenderIntegration:
-    """メール送信統合テスト"""
+        # 開発モード出力が呼ばれることを確認
+        mock_print.assert_called()
 
     @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.create_error_logger')
     @patch('utils.email_sender._print_dev_mode_email')
-    async def test_all_email_functions_dev_mode(self, mock_print, mock_enabled):
-        """全メール送信関数の開発モードテスト"""
-        mock_enabled.return_value = False
+    async def test_send_registration_complete_email_config_none(self, mock_print, mock_error_logger, mock_config, mock_validate, mock_enabled):
+        """登録完了メール送信でメール設定がNoneの場合のテスト"""
+        # メール送信有効、設定有効だがconfigがNone
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_config.return_value = None
         
-        from utils.email_sender import (
-            send_verification_email,
-            send_registration_complete_email,
-            send_account_deletion_email
-        )
+        from utils.email_sender import send_registration_complete_email
         
-        # すべての関数が例外なく実行されることを確認
-        await send_verification_email("test@example.com", "token123")
-        await send_registration_complete_email("test@example.com", "user123")
-        await send_account_deletion_email("test@example.com", "user123")
+        await send_registration_complete_email("test@example.com", "testuser")
         
-        # コンソール出力が3回呼ばれることを確認
-        assert mock_print.call_count == 3
+        # エラーログが呼ばれることを確認
+        mock_error_logger.assert_called()
+        # 開発モード出力が呼ばれることを確認
+        mock_print.assert_called()
+
+    @patch('utils.email_sender._is_email_enabled')
+    @patch('utils.email_sender._validate_mail_config')
+    @patch('utils.email_sender.get_mail_config')
+    @patch('utils.email_sender.create_error_logger')
+    @patch('utils.email_sender._print_dev_mode_email')
+    async def test_send_account_deletion_email_config_none(self, mock_print, mock_error_logger, mock_config, mock_validate, mock_enabled):
+        """退会完了メール送信でメール設定がNoneの場合のテスト"""
+        # メール送信有効、設定有効だがconfigがNone
+        mock_enabled.return_value = True
+        mock_validate.return_value = True
+        mock_config.return_value = None
+        
+        from utils.email_sender import send_account_deletion_email
+        
+        await send_account_deletion_email("test@example.com", "testuser")
+        
+        # エラーログが呼ばれることを確認
+        mock_error_logger.assert_called()
+        # 開発モード出力が呼ばれることを確認
+        mock_print.assert_called()

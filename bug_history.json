@@ -848,5 +848,156 @@
     "success_rate": 100.0,
     "execution_time": 1.779,
     "failed_tests": []
+  },
+  {
+    "timestamp": "2025-06-06T11:53:03.091792",
+    "test_id": "20250606_115303",
+    "test_name": "all_tests",
+    "total_tests": 282,
+    "passed": 282,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": 100.0,
+    "execution_time": 1.818,
+    "failed_tests": []
+  },
+  {
+    "timestamp": "2025-06-06T12:23:29.032770",
+    "test_id": "20250606_122329",
+    "test_name": "all_tests",
+    "total_tests": 300,
+    "passed": 294,
+    "failed": 6,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": 98.0,
+    "execution_time": 2.305,
+    "failed_tests": [
+      {
+        "name": "test_get_public_articles_success",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:633: in test_get_public_articles_success\n    result = await get_public_articles(mock_db)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_get_public_articles_with_limit",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:660: in test_get_public_articles_with_limit\n    result = await get_public_articles(mock_db, limit=3)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_get_public_articles_with_skip",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:685: in test_get_public_articles_with_skip\n    result = await get_public_articles(mock_db, skip=2)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_search_public_articles_success",
+        "classname": "tests.test_article_router.TestSearchPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事検索に失敗しました",
+        "failure_text": "routers/article.py:504: in search_public_articles\n    for article in search_results:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:742: in test_search_public_articles_success\n    result = await search_public_articles(\"検索\", mock_db)\nrouters/article.py:519: in search_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事検索に失敗しました"
+      },
+      {
+        "name": "test_search_public_articles_japanese_keywords",
+        "classname": "tests.test_article_router.TestSearchPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事検索に失敗しました",
+        "failure_text": "routers/article.py:504: in search_public_articles\n    for article in search_results:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:770: in test_search_public_articles_japanese_keywords\n    result = await search_public_articles(\"%E6%A4%9C%E7%B4%A2\", mock_db)\nrouters/article.py:519: in search_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事検索に失敗しました"
+      },
+      {
+        "name": "test_search_public_articles_multiple_keywords",
+        "classname": "tests.test_article_router.TestSearchPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事検索に失敗しました",
+        "failure_text": "routers/article.py:504: in search_public_articles\n    for article in search_results:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:795: in test_search_public_articles_multiple_keywords\n    result = await search_public_articles(\"検索 キーワード\", mock_db)\nrouters/article.py:519: in search_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事検索に失敗しました"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-06T12:45:53.490434",
+    "test_id": "20250606_124553",
+    "test_name": "all_tests",
+    "total_tests": 296,
+    "passed": 293,
+    "failed": 3,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": 98.98648648648648,
+    "execution_time": 2.031,
+    "failed_tests": [
+      {
+        "name": "test_get_public_articles_success",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:633: in test_get_public_articles_success\n    result = await get_public_articles(mock_db)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_get_public_articles_with_limit",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:660: in test_get_public_articles_with_limit\n    result = await get_public_articles(mock_db, limit=3)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_get_public_articles_with_skip",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:685: in test_get_public_articles_with_skip\n    result = await get_public_articles(mock_db, skip=2)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-06-06T12:49:46.830192",
+    "test_id": "20250606_124946",
+    "test_name": "all_tests",
+    "total_tests": 296,
+    "passed": 293,
+    "failed": 3,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": 98.98648648648648,
+    "execution_time": 2.029,
+    "failed_tests": [
+      {
+        "name": "test_get_public_articles_success",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:633: in test_get_public_articles_success\n    result = await get_public_articles(mock_db)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_get_public_articles_with_limit",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:660: in test_get_public_articles_with_limit\n    result = await get_public_articles(mock_db, limit=3)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      },
+      {
+        "name": "test_get_public_articles_with_skip",
+        "classname": "tests.test_article_router.TestPublicArticlesEndpoint",
+        "time": 0.003,
+        "status": "failed",
+        "failure_message": "fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました",
+        "failure_text": "routers/article.py:408: in get_public_articles\n    for article in public_articles:\nE   TypeError: 'Mock' object is not iterable\n\nDuring handling of the above exception, another exception occurred:\ntests/test_article_router.py:685: in test_get_public_articles_with_skip\n    result = await get_public_articles(mock_db, skip=2)\nrouters/article.py:428: in get_public_articles\n    raise HTTPException(\nE   fastapi.exceptions.HTTPException: 500: 記事の取得に失敗しました"
+      }
+    ]
   }
 ]
