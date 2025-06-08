@@ -2,7 +2,7 @@
 # import pprint
 import os
 from enum import Enum
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Union
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from fastapi import APIRouter, Depends, status, HTTPException
@@ -10,17 +10,14 @@ from sqlalchemy.orm import Session
 
 from database import db_env, get_db
 from models import User
-from logger.custom_logger import create_logger, create_error_logger
 
 
 # JWTペイロードの型定義
 JWTPayload = Dict[str, Union[str, int, float, datetime]]
 
-
 router = APIRouter(
     tags=["Auth"]
 )
-
 
 SECRET_KEY = db_env.get("secret_key")
 ALGORITHM: str = db_env.get("algo") or "HS256"
@@ -89,8 +86,8 @@ def create_access_token(
         # トークンタイプと有効期限を追加
         to_encode.update({
             "exp": expire,
-            "iat": datetime.now(timezone.utc),  # 発行時刻
-            "type": token_type.value  # トークンタイプ
+            "iat": datetime.now(timezone.utc),
+            "type": token_type.value
         })
 
         # 環境変数の検証
@@ -99,22 +96,20 @@ def create_access_token(
 
         if not secret_key:
             raise RuntimeError("SECRET_KEYが設定されていません")
-
-        # JWTトークンの生成
-        encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=algorithm)
-
-        # 開発環境でのみログ出力
-        if os.getenv("ENVIRONMENT") == "development":
-            create_logger(f"トークン生成成功 - タイプ: {token_type.value}, 有効期限: {expire}")
-
-        return encoded_jwt
-
     except JWTError as e:
-        create_error_logger(f"JWTトークン生成エラー: {str(e)}")
-        raise RuntimeError(f"トークン生成に失敗しました: {str(e)}")
+        print(
+            f"JWTトークン生成エラー: {str(e)}"
+            )
+        raise RuntimeError(
+            f"トークン生成に失敗しました: {str(e)}"
+            )
     except Exception as e:
-        create_error_logger(f"予期しないエラー: {str(e)}")
-        raise RuntimeError(f"トークン生成中に予期しないエラーが発生しました: {str(e)}")
+        print(
+            f"トークン生成中に予期しないエラーが発生しました: {str(e)}"
+            )
+        raise RuntimeError(
+            f"トークン生成中に予期しないエラーが発生しました: {str(e)}"
+            )
 
 
 def verify_token_with_type(
@@ -137,23 +132,28 @@ def verify_token_with_type(
     try:
         secret_key = os.getenv("SECRET_KEY")
         if secret_key is None:
-            create_error_logger("SECRET_KEYが設定されていません")
-            raise ValueError("SECRET_KEYが設定されていません")
-        
+            print(
+                "SECRET_KEYが設定されていません"
+                )
+            raise ValueError(
+                "SECRET_KEYが設定されていません"
+                )
         algorithm = os.getenv("ALGORITHM", "HS256")
-
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
 
         # トークンタイプの検証
         token_type = payload.get("type")
         if token_type != expected_type.value:
-            create_error_logger(f"無効なトークンタイプ: 期待={expected_type.value}, 実際={token_type}")
+            print(
+                f"無効なトークンタイプ: 期待={expected_type.value}, \
+                実際={token_type}"
+                )
             raise credentials_exception
-
         return payload
-
     except JWTError as e:
-        create_error_logger(f"トークン検証エラー: {str(e)}")
+        print(
+            f"トークン検証エラー: {str(e)}"
+            )
         raise credentials_exception
 
 
@@ -175,31 +175,34 @@ def verify_token(
     """
     try:
         if SECRET_KEY is None:
-            create_error_logger("SECRET_KEYが設定されていません")
+            print("SECRET_KEYが設定されていません")
             raise credentials_exception
-        
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email_raw = payload.get("sub")
         id_raw = payload.get("id")
 
         if email_raw is None:
-            create_error_logger("トークンからemailが取得できませんでした")
+            print(
+                "トークンからemailが取得できませんでした"
+                )
             raise credentials_exception
-        
         if id_raw is None:
-            create_error_logger("トークンからidが取得できませんでした")
+            print(
+                "トークンからidが取得できませんでした"
+                )
             raise credentials_exception
-
         email: str = str(email_raw)
         user_id: int = int(id_raw)
 
         from schemas import TokenData
         token_data = TokenData(email=email)
-        print(f"token_data: {token_data}")
-        create_logger(f"token_data: {token_data}")
+        print(
+            f"token_data: {token_data}"
+            )
     except JWTError:
-        print("JWTErrorが発生しました。")
-        create_error_logger("JWTError occurred during token verification")
+        print(
+            "JWTErrorが発生しました。"
+            )
         raise credentials_exception
     user = get_user_by_id(user_id, db)
     return user
