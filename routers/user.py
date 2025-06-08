@@ -17,6 +17,7 @@ from oauth2 import get_current_user
 from logger.custom_logger import create_logger, create_error_logger
 from utils.email_sender import send_verification_email, send_account_deletion_email
 from utils.email_validator import is_valid_email_domain
+from exceptions import UserNotFoundError, EmailVerificationError, DatabaseError
 
 
 # APIレスポンスの型定義
@@ -208,9 +209,8 @@ async def create_user(
         create_error_logger(
             f"不明なエラーが発生しました: {error_detail}"
             )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="予期しないエラーが発生しました。"
+        raise DatabaseError(
+            message="データベースで予期しないエラーが発生しました。"
         )
     finally:
         create_logger(
@@ -300,32 +300,6 @@ async def verify_email(
     }
 
 
-# カスタム例外クラス（ユーザ関連）
-class UserNotFoundError(Exception):
-    """ユーザーが見つからない場合の例外"""
-    def __init__(self, user_id: Optional[int] = None, email: Optional[str] = None):
-        if user_id:
-            self.message = f"User with id {user_id} not found"
-        elif email:
-            self.message = f"User with email {email} not found"
-        else:
-            self.message = "User not found"
-        super().__init__(self.message)
-
-
-class EmailVerificationError(Exception):
-    """メール確認に関する例外"""
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(self.message)
-
-
-class DatabaseError(Exception):
-    """データベース関連の例外"""
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(self.message)
-
 
 @router.get(
     "/user/{user_id}",
@@ -406,9 +380,8 @@ async def resend_verification_email(
     ).first()
 
     if not verification:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="確認待ちのメールアドレスが見つかりません。"
+        raise EmailVerificationError(
+            message="確認待ちのメールアドレスが見つかりません。"
         )
     # 新しいトークンを生成
     verification.token = str(uuid4())
@@ -485,9 +458,9 @@ async def delete_user_account(
             create_error_logger(
                 f"退会対象ユーザーが見つかりません: {deletion_request.email}"
                 )
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="指定されたメールアドレスのユーザーが見つかりません"
+            raise UserNotFoundError(
+                user_id=user.id,
+                email=deletion_request.email
             )
         # パスワード検証
         if user.password is None:

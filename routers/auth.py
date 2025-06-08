@@ -47,12 +47,12 @@ async def login(
 
     ログインエンドポイント：
     ```
-    http://127.0.0.1:8080/api/v1/login
+    http://<環境のURL>/api/v1/login
     ```
 
     注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください::
 
-        http://127.0.0.1:8080/api/v1/change-password
+        http://<環境のURL>/api/v1/change-password
 
     パラメータ::
 
@@ -74,7 +74,6 @@ async def login(
     :rtype: dict
     :raises HTTPException: ユーザー名またはパスワードが無効な場合
     """
-    print(f"Login attempt with username: {request.username}")
 
 
     user = db.query(User).filter(User.email == request.username).first()
@@ -100,8 +99,16 @@ async def login(
     access_token = create_access_token(
         data={"sub": user.email or "", "id": user.id}
     )
+    if not access_token:
+        print(
+            "アクセストークンの生成に失敗しました"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="アクセストークンの生成に失敗しました"
+        )
     print(
-        f"ログインに成功しました: {user.email or 'unknown'}"
+        f"ログインに成功しました: {user.email}"
         )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -162,7 +169,7 @@ async def logout(
         oauth2_scheme
         )
     ) -> Dict[str, str]:
-    """ログアウトエンドポイント:https://127.0.0.1:8000/api/v1/logout
+    """ログアウトエンドポイント:http://<環境のURL>/api/v1/logout
 
     リクエストヘッダー::
 

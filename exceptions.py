@@ -1,8 +1,5 @@
-"""カスタム例外クラスの定義モジュール
-
-このモジュールは、アプリケーション全体で使用される
-カスタム例外クラスを定義しています。
-"""
+"""カスタム例外クラスの定義モジュール"""
+from typing import Optional
 
 
 class DatabaseConnectionError(Exception):
@@ -63,5 +60,32 @@ class ValidationError(Exception):
         Args:
             message (str): エラーメッセージ
         """
+        self.message = message
+        super().__init__(self.message)
+
+
+# カスタム例外クラス（ユーザ関連）
+class UserNotFoundError(Exception):
+    """ユーザーが見つからない場合の例外"""
+    def __init__(self, user_id: Optional[int] = None, email: Optional[str] = None):
+        if user_id:
+            self.message = f"User with id {user_id} not found"
+        elif email:
+            self.message = f"User with email {email} not found"
+        else:
+            self.message = "User not found"
+        super().__init__(self.message)
+
+
+class EmailVerificationError(Exception):
+    """メール確認に関する例外"""
+    def __init__(self, message: str):
+        self.message = message
+        super().__init__(self.message)
+
+
+class DatabaseError(Exception):
+    """データベース関連の例外"""
+    def __init__(self, message: str):
         self.message = message
         super().__init__(self.message)
