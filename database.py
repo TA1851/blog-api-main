@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
+from fastapi import HTTPException
 from exceptions import DatabaseConnectionError
 
 
@@ -208,6 +209,9 @@ def get_db() -> Generator[Session, None, None]:
     db = session()
     try:
         yield db
+    except HTTPException:
+        # HTTPExceptionは正常な処理フローの一部なので、ログ出力せずに再スロー
+        raise
     except Exception as e:
         print(
             f"DBセッションのコミットに失敗しました。: {str(e)}"

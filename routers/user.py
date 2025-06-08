@@ -125,7 +125,7 @@ async def create_user(
             print(
                 f"既存のメールアドレスが検出されました: {user.email}"
                 )
-            raise IntegrityError(
+            raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="このメールアドレスは既に使用されています。"
             )
@@ -138,7 +138,7 @@ async def create_user(
 
             if existing_verification:
                 if existing_verification.is_verified:
-                    raise IntegrityError(
+                    raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
                         detail="このメールアドレスは既に確認済みです。"
                     )
@@ -194,6 +194,9 @@ async def create_user(
                 "id": str(new_user.id),
                 "is_active": str(new_user.is_active)
             }
+    except HTTPException:
+        db.rollback()
+        raise
     except DatabaseError as e:
         db.rollback()
         error_detail = traceback.format_exc()
@@ -202,6 +205,16 @@ async def create_user(
             )
         raise DatabaseError(
             message="データベースで予期しないエラーが発生しました。"
+        )
+    except Exception as e:
+        db.rollback()
+        error_detail = traceback.format_exc()
+        print(
+            f"予期しないエラーが発生しました: {error_detail}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="ユーザー作成中に予期しないエラーが発生しました"
         )
     finally:
         print(
