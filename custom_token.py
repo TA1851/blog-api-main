@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from database import db_env, get_db
 from models import User
+from exceptions import UserNotFoundError
 
 
 # JWTペイロードの型定義
@@ -91,22 +92,19 @@ def create_access_token(
         })
 
         # 環境変数の検証
-        secret_key = os.getenv("SECRET_KEY")
-        algorithm = os.getenv("ALGORITHM", "HS256")
+        secret_key = SECRET_KEY
+        algorithm = ALGORITHM
 
         if not secret_key:
             raise RuntimeError("SECRET_KEYが設定されていません")
+        # JWTトークンをエンコード
+        encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=algorithm)
+        return encoded_jwt
     except JWTError as e:
-        print(
-            f"JWTトークン生成エラー: {str(e)}"
-            )
         raise RuntimeError(
             f"トークン生成に失敗しました: {str(e)}"
             )
     except Exception as e:
-        print(
-            f"トークン生成中に予期しないエラーが発生しました: {str(e)}"
-            )
         raise RuntimeError(
             f"トークン生成中に予期しないエラーが発生しました: {str(e)}"
             )
@@ -130,7 +128,7 @@ def verify_token_with_type(
     :raises Exception: トークンが無効または期待と異なるタイプの場合
     """
     try:
-        secret_key = os.getenv("SECRET_KEY")
+        secret_key = SECRET_KEY
         if secret_key is None:
             print(
                 "SECRET_KEYが設定されていません"
@@ -138,7 +136,7 @@ def verify_token_with_type(
             raise ValueError(
                 "SECRET_KEYが設定されていません"
                 )
-        algorithm = os.getenv("ALGORITHM", "HS256")
+        algorithm = ALGORITHM
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
 
         # トークンタイプの検証
@@ -196,9 +194,6 @@ def verify_token(
 
         from schemas import TokenData
         token_data = TokenData(email=email)
-        print(
-            f"token_data: {token_data}"
-            )
     except JWTError:
         print(
             "JWTErrorが発生しました。"
@@ -222,7 +217,7 @@ def get_user_by_id(
     """
     user = db.query(User).filter(User.id == id).first()
     if not user:
-        raise HTTPException(
+        raise UserNotFoundError(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {id} not found"
         )

@@ -97,12 +97,21 @@ async def login(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="無効なパスワードです"
         )
-    access_token = create_access_token(
-        data={"sub": user.email or "", "id": user.id}
-    )
-    if not access_token:
+    try:
+        access_token = create_access_token(
+            data={"sub": user.email or "", "id": user.id}
+        )
+    except RuntimeError as token_error:
         print(
-            "アクセストークンの生成に失敗しました"
+            f"アクセストークンの生成に失敗しました: {str(token_error)}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="アクセストークンの生成に失敗しました"
+        )
+    except Exception as unexpected_error:
+        print(
+            f"予期しないエラーが発生しました: {str(unexpected_error)}"
             )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
