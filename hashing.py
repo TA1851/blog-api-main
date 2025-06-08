@@ -3,9 +3,8 @@ from passlib.context import CryptContext
 
 password_context = CryptContext(
     schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__default_rounds=12,
-    )
+    deprecated="auto"
+)
 
 
 class Hash:
