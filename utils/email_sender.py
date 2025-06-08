@@ -23,25 +23,20 @@ def get_mail_config() -> ConnectionConfig:
     )
 
 
-# def _is_email_enabled() -> bool:
-#     """メール送信が有効かどうかを判定"""
-#     return os.getenv("ENABLE_EMAIL_SENDING", "false").lower() == "true"
-
-
-# def _validate_mail_config() -> bool:
-#     """メール設定の妥当性をチェック"""
-#     mail_username = os.getenv("MAIL_USERNAME")
-#     mail_password = os.getenv("MAIL_PASSWORD")
-#     mail_from = os.getenv("MAIL_FROM")
-#     return all([mail_username, mail_password, mail_from])
-
-
 async def send_verification_email(email: str, token: str) -> None:
     """確認メールを送信する"""
-    print(f"メール送信開始 - 宛先: {email}, トークン: {token}")
+    print(
+        f"メール送信開始 - 宛先: {email}, トークン: {token}"
+        )
     encoded_token = quote(token, safe='')
+    # 検証URLを構築
     if LOCAL_CORS_ORIGINS:
-        verification_url = f"{CORS_ORIGINS}/api/v1/verify-email?token={encoded_token}"
+        base_url = LOCAL_CORS_ORIGINS
+    elif CORS_ORIGINS:
+        base_url = CORS_ORIGINS
+    else:
+        raise ValueError("CORS_ORIGINSが設定されていません")
+    verification_url = f"{base_url}/api/v1/verify-email?token={encoded_token}"
     content = (
         "こんにちは！\n\n"
         "メールアドレスの確認をお願いします。\n\n"
@@ -112,14 +107,18 @@ async def send_verification_email(email: str, token: str) -> None:
         )
         fm = FastMail(conf)
         await fm.send_message(message)
-        print(f"確認メールを送信しました: {email}")
+        print(
+            f"確認メールを送信しました: {email}"
+            )
     except Exception as e:
         print(f"メール送信エラー: {str(e)}")
 
 
 async def send_registration_complete_email(email: str, username: str) -> None:
     """登録完了メールを送信する"""
-    print(f"登録完了メール送信開始 - 宛先: {email}, ユーザー名: {username}")
+    print(
+        f"登録完了メール送信開始 - 宛先: {email}, ユーザー名: {username}"
+        )
     content = (
         f"こんにちは、{username}さん！\n\n"
         "Blog APIへのご登録が完了しました。🎉\n\n"
@@ -191,7 +190,9 @@ async def send_registration_complete_email(email: str, username: str) -> None:
 
 async def send_account_deletion_email(email: str, username: str) -> None:
     """退会完了メールを送信する"""
-    print(f"退会完了メール送信開始 - 宛先: {email}, ユーザー名: {username}")
+    print(
+        f"退会完了メール送信開始 - 宛先: {email}, ユーザー名: {username}"
+        )
     content = (
         f"こんにちは、{username}さん\n\n"
         "Blog APIからの退会手続きが完了いたしました。\n\n"
@@ -261,6 +262,10 @@ async def send_account_deletion_email(email: str, username: str) -> None:
         )
         fm = FastMail(conf)
         await fm.send_message(message)
-        print(f"退会完了メールを送信しました: {email}")
+        print(
+            f"退会完了メールを送信しました: {email}"
+            )
     except Exception as e:
-        print(f"退会完了メール送信エラー: {str(e)}")
+        print(
+            f"退会完了メール送信エラー: {str(e)}"
+            )

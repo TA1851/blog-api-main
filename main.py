@@ -38,8 +38,12 @@ if "pytest" in sys.modules:
 # デフォルト値の設定
 if not allowed_origins:
     create_error_logger("CORS_ORIGINSとLOCAL_ORIGINの両方が取得できませんでした。")
-    # テスト実行時のフォールバック
-    allowed_origins = test_origins
+    # テスト実行時のみフォールバック
+    if "pytest" in sys.modules:
+        allowed_origins = test_origins
+    else:
+        # 本番環境では環境変数が必須
+        raise ValueError("本番環境ではCORS_ORIGINSまたはLOCAL_ORIGIN環境変数の設定が必要です")
 else:
     create_logger(f"CORS_ORIGIN -> OK")
 

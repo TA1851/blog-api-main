@@ -19,6 +19,16 @@ from utils.email_validator import is_valid_email_domain
 from exceptions import UserNotFoundError, EmailVerificationError, DatabaseError
 
 
+class IntegrityError(Exception):
+    """主にユニーク制約違反（メールアドレスが既に使用されている場合など）を示すエラー"""
+    pass
+
+
+class SQLAlchemyError(Exception):
+    """データベース関連のエラー"""
+    pass
+
+
 # APIレスポンスの型定義
 UserCreateResponse = Dict[str, str]
 UserDeleteResponse = Dict[str, str]
@@ -64,16 +74,6 @@ def check_db_url() -> None:
 
 check_db_url()
 get_db()
-
-
-class IntegrityError(Exception):
-    """主にユニーク制約違反（メールアドレスが既に使用されている場合など）を示すエラー"""
-    pass
-
-
-class SQLAlchemyError(Exception):
-    """データベース関連のエラー"""
-    pass
 
 
 # 環境変数の読み込む
@@ -125,7 +125,7 @@ async def create_user(
             print(
                 f"既存のメールアドレスが検出されました: {user.email}"
                 )
-            raise HTTPException(
+            raise IntegrityError(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="このメールアドレスは既に使用されています。"
             )
@@ -138,7 +138,7 @@ async def create_user(
 
             if existing_verification:
                 if existing_verification.is_verified:
-                    raise HTTPException(
+                    raise IntegrityError(
                         status_code=status.HTTP_409_CONFLICT,
                         detail="このメールアドレスは既に確認済みです。"
                     )
@@ -194,16 +194,11 @@ async def create_user(
                 "id": str(new_user.id),
                 "is_active": str(new_user.is_active)
             }
-
-    except HTTPException:
-        db.rollback()
-        raise
-
-    except Exception as e:
+    except DatabaseError as e:
         db.rollback()
         error_detail = traceback.format_exc()
         print(
-            f"不明なエラーが発生しました: {error_detail}"
+            f"データベースエラーが発生しました: {error_detail}"
             )
         raise DatabaseError(
             message="データベースで予期しないエラーが発生しました。"
