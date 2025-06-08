@@ -543,7 +543,7 @@ async def delete_user_account(
                 f"退会完了メールを送信しました: {user_email}"
                 )
             return {
-                "message": "退会処理が完了しました。退会完了メールをお送りしました。",
+                "message": "退会完了メールをお送りしました。",
                 "deleted_articles_count": str(article_count),
                 "email": user_email
             }
