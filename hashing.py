@@ -5,7 +5,6 @@ password_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto",
     bcrypt__default_rounds=12,
-    bcrypt__ident="2b" # 明示的に bcrypt バージョンを指定
     )
 
 
