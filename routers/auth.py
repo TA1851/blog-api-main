@@ -346,8 +346,9 @@ async def change_password(
             except Exception as email_error:
                 error_msg = "メール送信中に予期しないエラーが発生しました"
                 email_error_details = f"Unexpected error: {str(email_error)}"
-                print(f"Unexpected email error for {user.email}: {email_error}")
-
+                print(
+                    f"Unexpected email error for {user.email}: {email_error}"
+                    )
             # メール送信エラーの場合の処理
             if email_error_details:
                 response_data["email_sent"] = False
@@ -357,7 +358,9 @@ async def change_password(
                     f"Email sending failed for {user.email}: {email_error_details}"
                     )
         else:
-            print(f"No email address for user: {request.username}")
+            print(
+                f"No email address for user: {request.username}"
+                )
             response_data["email_error"] = "ユーザーにメールアドレスが設定されていません"
         return response_data
     except Exception as db_error:
@@ -365,7 +368,6 @@ async def change_password(
         print(
             f"Database error during password change for {request.username}: {str(db_error)}"
             )
-
         # データベースエラーの種類に応じた詳細なエラーハンドリング
         if "constraint" in str(db_error).lower():
             error_detail = "データベース制約違反が発生しました"
