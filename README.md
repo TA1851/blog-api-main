@@ -8,6 +8,7 @@
 - データベース: SQLite3
 - ORM: SQLAlchemy
 - 認証: JWT (JSON Web Token)
+- bcrypt==3.2.2
 - テスト：Pytest
 - カバレッジ測定：Coverage.py
 - ドキュメント: Sphinx
