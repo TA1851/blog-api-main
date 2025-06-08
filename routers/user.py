@@ -162,7 +162,8 @@ async def create_user(
                 user.email, verification.token
                 )
             return {
-                "message": "ユーザー登録を受け付けました。確認メールをお送りしましたので、メール内のリンクをクリックして登録を完了してください。",
+                "message": "ユーザー登録を受け付けました。確認メールをお送りしましたので、 \
+                メール内のリンクをクリックして登録を完了してください。",
                 "email": user.email
             }
         else:
@@ -187,7 +188,8 @@ async def create_user(
                 f"ユーザーを直接作成しました: {user.email}"
                 )
             return {
-                "message": "ユーザー登録が完了しました。仮パスワード 'temp_password_123' でログインして、パスワードを変更してください。",
+                "message": "ユーザー登録が完了しました。 \
+                仮パスワード 'temp_password_123' でログインして、パスワードを変更してください。",
                 "email": user.email,
                 "id": str(new_user.id),
                 "is_active": str(new_user.is_active)
@@ -269,10 +271,8 @@ async def verify_email(
             status_code=400,
             detail="トークンの有効期限が切れています。"
         )
-    # 初期パスワード
-    user_password = verification.password_hash if hasattr(
-        verification, 'password_hash') and verification.password_hash \
-        else Hash.bcrypt("temp_password_123")
+    # 初期パスワード（固定値を使用）
+    user_password = Hash.bcrypt("temp_password_123")
 
     # ユーザーの作成
     new_user = UserModel(

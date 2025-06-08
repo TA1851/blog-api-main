@@ -243,7 +243,6 @@ class TestEmailVerificationModel(TestDatabaseModels):
         verification = EmailVerification(
             email="verify@example.com",
             token="test-token-123",
-            password_hash="hashed_password",
             is_verified=False,
             created_at=now,
             expires_at=now + timedelta(hours=24)
@@ -256,7 +255,6 @@ class TestEmailVerificationModel(TestDatabaseModels):
         assert verification.id is not None
         assert verification.email == "verify@example.com"
         assert verification.token == "test-token-123"
-        assert verification.password_hash == "hashed_password"
         assert verification.is_verified is False
         assert verification.created_at == now
         assert verification.expires_at == now + timedelta(hours=24)
@@ -274,7 +272,6 @@ class TestEmailVerificationModel(TestDatabaseModels):
         
         assert verification.email == "default@example.com"
         assert verification.token == "default-token"
-        assert verification.password_hash is None
         assert verification.is_verified is False  # デフォルト値
         assert verification.created_at is not None
         assert isinstance(verification.created_at, datetime)

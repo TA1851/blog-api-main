@@ -316,7 +316,6 @@ class TestVerifyEmailEndpoint:
         mock_verification.is_verified = False
         mock_verification.expires_at = datetime.utcnow() + timedelta(hours=1)  # まだ有効
         mock_verification.email = "test@example.com"
-        mock_verification.password_hash = None
         
         mock_db.query.return_value.filter.return_value.first.return_value = mock_verification
         
@@ -342,12 +341,11 @@ class TestVerifyEmailEndpoint:
     
     @patch('routers.user.Hash.bcrypt')
     def test_verify_email_success_with_custom_password(self, mock_hash, mock_db):
-        """カスタムパスワードありでの認証成功テスト"""
+        """固定パスワードでの認証成功テスト"""
         mock_verification = MagicMock()
         mock_verification.is_verified = False
         mock_verification.expires_at = datetime.utcnow() + timedelta(hours=1)
         mock_verification.email = "test@example.com"
-        mock_verification.password_hash = "custom_hashed_password"
         
         mock_db.query.return_value.filter.return_value.first.return_value = mock_verification
         
@@ -361,8 +359,8 @@ class TestVerifyEmailEndpoint:
             result = asyncio.run(verify_email("valid-token-12345", mock_db))
             
             assert "メールアドレスの確認が完了しました" in result["message"]
-            # カスタムパスワードが使用されることを確認（Hashが呼ばれない）
-            mock_hash.assert_not_called()
+            # 固定パスワードが使用されることを確認（Hashが呼ばれる）
+            mock_hash.assert_called_once_with('temp_password_123')
     
     def test_verify_email_url_decoding(self, mock_db):
         """URLエンコードされたトークンのデコードテスト"""
