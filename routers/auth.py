@@ -13,6 +13,7 @@ from hashing import Hash
 from custom_token import create_access_token
 from models import User, Article
 from utils.email_sender import send_registration_complete_email
+from exceptions import DatabaseConnectionError
 
 
 # 認証レスポンスの型定義
@@ -106,6 +107,16 @@ async def login(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="アクセストークンの生成に失敗しました"
+        )
+    try:
+        db.commit()
+    except Exception as db_error:
+        db.rollback()
+        print(
+            f"DBセッションのコミットに失敗しました: {str(db_error)}"
+            )
+        raise DatabaseConnectionError(
+            message="データベースエラーが発生しました"
         )
     print(
         f"ログインに成功しました: {user.email}"
