@@ -268,23 +268,12 @@ async def get_all_blogs(
 @router.post('/change-password')
 async def change_password(
     request: PasswordChange,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ) -> PasswordChangeResponse:
-    """仮パスワードから新パスワードへの変更を行うエンドポイント（認証必須）"""
+    """仮パスワードから新パスワードへの変更を行うエンドポイント（認証不要）"""
     print(f"Password change attempt for username: {request.username}")
 
-    # 認証されたユーザーが自分のパスワードのみ変更できるようにチェック
-    if current_user.email != request.username:
-        print(
-            f"Unauthorized attempt: User {current_user.email} tried to change password for {request.username}"
-            )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="自分のパスワードのみ変更できます"
-        )
-
-    # ユーザーの存在確認（認証されたユーザーなので基本的には存在するはず）
+    # ユーザーの存在確認
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
         print(
