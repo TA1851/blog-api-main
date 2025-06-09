@@ -29,6 +29,10 @@ class SQLAlchemyError(Exception):
     """データベース関連のエラー"""
     pass
 
+class ResendVerificationRequest(BaseModel):
+    """再送信確認メールのリクエストスキーマ"""
+    email: str
+
 
 # APIレスポンスの型定義
 UserCreateResponse = Dict[str, str]
@@ -40,41 +44,6 @@ router = APIRouter(
     prefix="/api/v1",
     tags=["user"],
 )
-
-
-# def check_environment_variable() -> None:
-#     """環境変数を取得する
-
-#     :param key08: user.pyの環境変数
-
-#     :type key08: str
-
-#     :return: 環境変数の値
-
-#     :rtype: str
-#     """
-
-# check_environment_variable()
-
-
-# def check_db_url() -> None:
-#     """データベースURLを取得する
-
-#     :param key03: user.pyの環境変数
-
-#     :type key03: str
-
-#     :param db_url: user.pyの環境変数
-
-#     :type db_url: str
-
-#     :return: 環境変数の値
-
-#     :rtype: str
-#     """
-
-# check_db_url()
-# get_db()
 
 
 # 環境変数の読み込む
@@ -113,10 +82,8 @@ async def create_user(
             print(f"ドメイン検証失敗 - メール: {user.email}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"このメールアドレスのドメインは許可されていません。許可されたドメイン: \
-                {', '.join(ALLOWED_EMAIL_DOMAINS)}"
+                detail=f"このメールアドレスのドメインは許可されていません。"
             )
-
         # メールアドレスの重複チェック
         existing_user = db.query(UserModel).filter(
             UserModel.email == user.email
@@ -130,9 +97,8 @@ async def create_user(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="このメールアドレスは既に使用されています。"
             )
-
+        # メール認証が有効な場合の従来の処理
         if ENABLE_EMAIL_VERIFICATION:
-            # メール認証が有効な場合の従来の処理
             existing_verification = db.query(EmailVerification).filter(
                 EmailVerification.email == user.email
             ).first()
@@ -195,9 +161,6 @@ async def create_user(
                 "id": str(new_user.id),
                 "is_active": str(new_user.is_active)
             }
-    except HTTPException:
-        db.rollback()
-        raise
     except DatabaseError as e:
         db.rollback()
         error_detail = traceback.format_exc()
@@ -233,28 +196,23 @@ async def verify_email(
     token: str = Query(...),
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
-    # デバッグログを追加
     print(f"メール認証リクエスト受信 - 元のトークン: {token}")
-
     # URLデコード処理（安全性を確保）
     decoded_token = unquote(token)
     print(
         f"メール認証リクエスト受信 - デコード後トークン: {decoded_token}"
         )
-    # トークンの形式チェック
     if not decoded_token or len(decoded_token) < 10:
         print(f"無効なトークン形式: {decoded_token}")
         raise HTTPException(
             status_code=400,
             detail="無効なトークン形式です。"
         )
-
     verification = db.query(EmailVerification).filter(
         EmailVerification.token == decoded_token
     ).first()
-
+    # データベース内の全トークンを確認
     if not verification:
-        # データベース内の全トークンを確認
         all_verifications = db.query(EmailVerification).all()
         print(
             f"データベース内のトークン数: {len(all_verifications)}"
@@ -303,7 +261,6 @@ async def verify_email(
     }
 
 
-
 @router.get(
     "/user/{user_id}",
     response_model=UserSchema,
@@ -318,21 +275,13 @@ async def show_user(
     """ユーザー情報を取得する関数（認証が必要）
 
     :param user_id: ユーザーID
-
     :type user_id: int
-
     :param db: データベースセッション
-
     :type db: Session
-
     :param current_user: 現在ログインしているユーザー
-
     :type current_user: UserModel
-
     :return: ユーザー情報
-
     :rtype: UserSchema
-
     :raises HTTPException: ユーザーが見つからない場合
     """
     # 認証されたユーザーが自分以外の情報にアクセスしようとしていないかチェック
@@ -367,35 +316,28 @@ async def show_user(
     )
 
 
-class ResendVerificationRequest(BaseModel):
-    email: str
-
-
 @router.post(
 "/resend-verification",
 summary="Resend Verification Email",
 description="登録確認メールを送信するエンドポイント（認証必須）"
 )
 async def resend_verification_email(
-    email: str = None,  # テスト用のパラメータを最初に配置
+    email: str = None,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
     request: ResendVerificationRequest = None
 ) -> Dict[str, str]:
     """登録確認メールを送信する（認証が必要）"""
-    
-    # テスト用の処理: emailパラメータが直接渡された場合
     if email is not None and request is None:
-        # テスト環境での直接呼び出し用
         target_email = email
-        # テスト環境では認証チェックをスキップ
     elif request is not None:
-        # 通常のAPI呼び出し用
         target_email = request.email
-        
         # 認証されたユーザーが自分のメールアドレスでのみリクエスト可能にする
         if hasattr(current_user, 'email') and current_user.email != request.email:
-            print(f"権限なし: 認証ユーザー({current_user.email}) が他のユーザー({request.email})の確認メール再送信を試行")
+            print(
+                f"権限なし: 認証ユーザー({current_user.email}) \
+                が他のユーザー({request.email})の確認メール再送信を試行"
+                )
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="自分のメールアドレスのみ確認メール再送信が可能です"
@@ -405,7 +347,6 @@ async def resend_verification_email(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="メールアドレスまたはリクエストボディが必要です"
         )
-    
     verification = db.query(EmailVerification).filter(
         EmailVerification.email == target_email,
         EmailVerification.is_verified == False
@@ -442,27 +383,16 @@ async def delete_user_account(
     ユーザーは自分のアカウントのみ削除できます。
 
     :param deletion_request: 退会リクエストデータ
-
     :type deletion_request: アカウント削除リクエスト
-
     :deletion_request.validate_passwords_match
-
     :パスワードの一致を検証するメソッド
-
     :type deletion_request.validate_passwords_match: method
-
     :param db: データベースセッション
-
     :type db: Session
-
     :param current_user: 現在の認証されたユーザー
-
     :type current_user: UserModel
-
     :return: 退会完了メッセージ
-
     :rtype: dict
-
     :raises HTTPException: ユーザーが見つからない場合
     """
     try:
@@ -471,7 +401,6 @@ async def delete_user_account(
             {deletion_request.email}, \
             認証ユーザー: {current_user.email}"
             )
-        # パスワード一致チェック
         deletion_request.validate_passwords_match()
         # 認証されたユーザーが削除対象のユーザーと同じかチェック
         if current_user.email != deletion_request.email:
@@ -483,7 +412,7 @@ async def delete_user_account(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="自分のアカウントのみ削除できます"
             )
-        # ユーザーの存在確認（認証されたユーザーと同じなので基本的には存在するはず）
+        # ユーザーの存在確認
         user = db.query(UserModel).filter(
             UserModel.email == deletion_request.email
         ).first()
@@ -596,33 +525,28 @@ async def delete_user_account(
                 "deleted_articles_count": str(article_count),
                 "email": user_email
             }
-    except HTTPException:
-        db.rollback()
-        raise
     except UserNotFoundError as e:
         db.rollback()
-        print(
-            f"ユーザーが見つかりません: {str(e)}"
-            )
+        print(f"ユーザーが見つかりません: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="指定されたメールアドレスのユーザーが見つかりません"
         )
     except ValueError as e:
         db.rollback()
-        print(
-            f"バリデーションエラー: {str(e)}"
-            )
+        print(f"バリデーションエラー: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+    # パスワードが設定されていないケースと不一致のケースを明示的に処理
+    except HTTPException:
+        db.rollback()
+        raise
     except Exception as e:
         db.rollback()
         error_detail = traceback.format_exc()
-        print(
-            f"退会処理で予期しないエラーが発生しました: {error_detail}"
-            )
+        print(f"退会処理で予期しないエラーが発生しました: {error_detail}, {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="退会処理中に予期しないエラーが発生しました"
