@@ -174,7 +174,7 @@ async def create_user(
         db.rollback()
         error_detail = traceback.format_exc()
         print(
-            f"予期しないエラーが発生しました: {error_detail}"
+            f"登録済みのメールアドレスでエラーが入力されました。: {error_detail}"
             )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
