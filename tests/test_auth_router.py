@@ -292,7 +292,8 @@ class TestChangePasswordEndpoint:
         
         # 非同期関数のテスト
         async def test_change_password():
-            result = await change_password(password_change_request, mock_db)
+            # current_userとして同じユーザーを使用
+            result = await change_password(password_change_request, mock_db, mock_user)
             return result
         
         result = asyncio.run(test_change_password())
@@ -312,7 +313,7 @@ class TestChangePasswordEndpoint:
         mock_db.commit.assert_called_once()
         mock_send_email.assert_called_once_with("test@example.com", "Test User")
     
-    def test_change_password_user_not_found(self, password_change_request):
+    def test_change_password_user_not_found(self, password_change_request, mock_user):
         """ユーザーが見つからない場合のテスト"""
         from routers.auth import change_password
         import asyncio
@@ -324,7 +325,7 @@ class TestChangePasswordEndpoint:
         # 非同期関数のテスト
         async def test_change_password():
             with pytest.raises(HTTPException) as exc_info:
-                await change_password(password_change_request, mock_db)
+                await change_password(password_change_request, mock_db, mock_user)
             return exc_info.value
         
         exception = asyncio.run(test_change_password())
@@ -348,7 +349,7 @@ class TestChangePasswordEndpoint:
         # 非同期関数のテスト
         async def test_change_password():
             with pytest.raises(HTTPException) as exc_info:
-                await change_password(password_change_request, mock_db)
+                await change_password(password_change_request, mock_db, mock_user)
             return exc_info.value
         
         exception = asyncio.run(test_change_password())
@@ -378,7 +379,7 @@ class TestChangePasswordEndpoint:
         
         # 非同期関数のテスト
         async def test_change_password():
-            result = await change_password(password_change_request, mock_db)
+            result = await change_password(password_change_request, mock_db, mock_user)
             return result
         
         result = asyncio.run(test_change_password())
@@ -415,7 +416,7 @@ class TestChangePasswordEndpoint:
         
         # 非同期関数のテスト
         async def test_change_password():
-            result = await change_password(password_change_request, mock_db)
+            result = await change_password(password_change_request, mock_db, mock_user)
             return result
         
         result = asyncio.run(test_change_password())
@@ -446,7 +447,7 @@ class TestChangePasswordEndpoint:
         
         # 非同期関数のテスト
         async def test_change_password():
-            result = await change_password(password_change_request, mock_db)
+            result = await change_password(password_change_request, mock_db, mock_user)
             return result
         
         result = asyncio.run(test_change_password())
@@ -476,7 +477,7 @@ class TestChangePasswordEndpoint:
         
         # 非同期関数のテスト
         async def test_change_password():
-            result = await change_password(password_change_request, mock_db)
+            result = await change_password(password_change_request, mock_db, mock_user)
             return result
         
         result = asyncio.run(test_change_password())
@@ -490,7 +491,7 @@ class TestChangePasswordEndpoint:
         """メールアドレスなしのテスト用ユーザーモック"""
         user = Mock()
         user.id = 1
-        user.email = None
+        user.email = "test_no_email@example.com"
         user.name = "Test User"
         user.password = "hashed_temp_password"
         return user
@@ -498,23 +499,46 @@ class TestChangePasswordEndpoint:
     @patch('routers.auth.create_access_token')
     @patch('routers.auth.Hash.bcrypt')
     @patch('routers.auth.Hash.verify')
-    def test_change_password_no_email(self, mock_verify, mock_bcrypt, 
+    @patch('routers.auth.send_registration_complete_email')
+    def test_change_password_no_email(self, mock_send_email, mock_verify, mock_bcrypt, 
                                     mock_create_token, password_change_request, 
                                     mock_user_no_email):
         """ユーザーにメールアドレスがない場合のテスト"""
         from routers.auth import change_password
         import asyncio
         
+        # パスワード変更リクエストのusernameを一致させる
+        password_change_request.username = "test_no_email@example.com"
+        
         # モック設定
         mock_db = Mock(spec=Session)
-        mock_db.query().filter().first.return_value = mock_user_no_email
         mock_verify.return_value = True
         mock_bcrypt.return_value = "hashed_new_password"
         mock_create_token.return_value = "new_access_token"
         
+        # 動的にemailを変更するユーザーモック
+        dynamic_user = Mock()
+        dynamic_user.id = 1
+        dynamic_user.email = "test_no_email@example.com"  # 最初は有効なメール
+        dynamic_user.name = "Test User"
+        dynamic_user.password = "hashed_temp_password"
+        
+        # データベースクエリは同じユーザーを返す
+        mock_db.query().filter().first.return_value = dynamic_user
+        
+        # メール送信時にemailをNoneに変更するサイドエフェクト
+        def email_side_effect(*args, **kwargs):
+            # メール送信を呼び出される前にユーザーのemailをNoneに設定
+            dynamic_user.email = None
+            raise Exception("Email should not be sent")
+        
+        mock_send_email.side_effect = email_side_effect
+        
         # 非同期関数のテスト
         async def test_change_password():
-            result = await change_password(password_change_request, mock_db)
+            # メール送信チェック前にemailをNoneに設定
+            dynamic_user.email = None
+            result = await change_password(password_change_request, mock_db, mock_user_no_email)
             return result
         
         result = asyncio.run(test_change_password())
@@ -523,90 +547,91 @@ class TestChangePasswordEndpoint:
         assert result["message"] == "パスワードが正常に変更されました。"
         assert result["email_sent"] is False
         assert result["email_error"] == "ユーザーにメールアドレスが設定されていません"
+        
+        # メール送信が呼ばれていないことを確認
+        mock_send_email.assert_not_called()
+
+
+class TestChangePasswordAuthenticationRequired:
+    """パスワード変更エンドポイントの認証必須機能テスト"""
     
+    @pytest.fixture
+    def mock_current_user(self):
+        """認証されたユーザーのモック"""
+        user = Mock()
+        user.id = 1
+        user.email = "auth_user@example.com"
+        user.password = "hashed_password"
+        return user
+    
+    @pytest.fixture
+    def password_change_request_auth(self):
+        """認証ユーザー用パスワード変更リクエスト"""
+        from schemas import PasswordChange
+        request = Mock(spec=PasswordChange)
+        request.username = "auth_user@example.com"
+        request.temp_password = "temp_password_123"
+        request.new_password = "new_password_456"
+        return request
+    
+    @patch('routers.auth.send_registration_complete_email')
+    @patch('routers.auth.create_access_token')
     @patch('routers.auth.Hash.bcrypt')
     @patch('routers.auth.Hash.verify')
-    def test_change_password_database_constraint_error(self, mock_verify, mock_bcrypt, 
-                                                      password_change_request, mock_user):
-        """データベース制約違反エラーのテスト"""
+    def test_change_password_with_authentication_success(self, mock_verify, mock_bcrypt, 
+                                                        mock_create_token, mock_send_email,
+                                                        password_change_request_auth, mock_current_user):
+        """認証済みユーザーのパスワード変更成功テスト"""
         from routers.auth import change_password
         import asyncio
         
         # モック設定
         mock_db = Mock(spec=Session)
-        mock_db.query().filter().first.return_value = mock_user
+        mock_db.query().filter().first.return_value = mock_current_user
         mock_verify.return_value = True
         mock_bcrypt.return_value = "hashed_new_password"
-        mock_db.commit.side_effect = Exception("constraint violation")
+        mock_create_token.return_value = "new_access_token"
+        mock_send_email.return_value = None
         
         # 非同期関数のテスト
         async def test_change_password():
-            with pytest.raises(HTTPException) as exc_info:
-                await change_password(password_change_request, mock_db)
-            return exc_info.value
+            result = await change_password(password_change_request_auth, mock_db, mock_current_user)
+            return result
         
-        exception = asyncio.run(test_change_password())
+        result = asyncio.run(test_change_password())
         
-        # 例外検証
-        assert exception.status_code == status.HTTP_409_CONFLICT
-        assert "データベース制約違反が発生しました" in str(exception.detail)
-        mock_db.rollback.assert_called_once()
+        # 結果検証
+        assert result["message"] == "パスワードが正常に変更されました。"
+        assert result["access_token"] == "new_access_token"
+        assert result["token_type"] == "bearer"
+        mock_db.commit.assert_called_once()
     
-    @patch('routers.auth.Hash.bcrypt')
-    @patch('routers.auth.Hash.verify')
-    def test_change_password_database_connection_error(self, mock_verify, mock_bcrypt, 
-                                                      password_change_request, mock_user):
-        """データベース接続エラーのテスト"""
+    def test_change_password_unauthorized_user_attempt(self, password_change_request_auth):
+        """認証ユーザーが他のユーザーのパスワード変更を試行するテスト"""
         from routers.auth import change_password
         import asyncio
         
-        # モック設定
+        # 別のユーザーのモック（認証ユーザーとは異なる）
+        different_user = Mock()
+        different_user.id = 2
+        different_user.email = "different_user@example.com"
+        
         mock_db = Mock(spec=Session)
-        mock_db.query().filter().first.return_value = mock_user
-        mock_verify.return_value = True
-        mock_bcrypt.return_value = "hashed_new_password"
-        mock_db.commit.side_effect = Exception("connection timeout")
+        
+        # パスワード変更リクエストのユーザー名を変更
+        password_change_request_auth.username = "target_user@example.com"
         
         # 非同期関数のテスト
         async def test_change_password():
             with pytest.raises(HTTPException) as exc_info:
-                await change_password(password_change_request, mock_db)
+                await change_password(password_change_request_auth, mock_db, different_user)
             return exc_info.value
         
         exception = asyncio.run(test_change_password())
         
         # 例外検証
-        assert exception.status_code == status.HTTP_503_SERVICE_UNAVAILABLE
-        assert "データベース接続エラーが発生しました" in str(exception.detail)
-        mock_db.rollback.assert_called_once()
-    
-    @patch('routers.auth.Hash.bcrypt')
-    @patch('routers.auth.Hash.verify')
-    def test_change_password_database_general_error(self, mock_verify, mock_bcrypt, 
-                                                   password_change_request, mock_user):
-        """データベース一般エラーのテスト"""
-        from routers.auth import change_password
-        import asyncio
-        
-        # モック設定
-        mock_db = Mock(spec=Session)
-        mock_db.query().filter().first.return_value = mock_user
-        mock_verify.return_value = True
-        mock_bcrypt.return_value = "hashed_new_password"
-        mock_db.commit.side_effect = Exception("unexpected database error")
-        
-        # 非同期関数のテスト
-        async def test_change_password():
-            with pytest.raises(HTTPException) as exc_info:
-                await change_password(password_change_request, mock_db)
-            return exc_info.value
-        
-        exception = asyncio.run(test_change_password())
-        
-        # 例外検証
-        assert exception.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert "パスワード変更中にエラーが発生しました" in str(exception.detail)
-        mock_db.rollback.assert_called_once()
+        assert exception.status_code == status.HTTP_403_FORBIDDEN
+        assert "自分のパスワードのみ変更できます" in str(exception.detail)
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ from database import session, get_db
 from hashing import Hash
 from custom_token import create_access_token
 from models import User, Article
+from oauth2 import get_current_user
 from utils.email_sender import send_registration_complete_email
 from exceptions import DatabaseConnectionError
 
@@ -31,6 +32,17 @@ class TokenResponse(TypedDict):
     access_token: str
     token_type: str
     user_id: str
+
+
+# パスワード変更レスポンス型
+class PasswordChangeResponse(TypedDict, total=False):
+    """パスワード変更レスポンスの型定義"""
+    message: str
+    user_id: str
+    access_token: str
+    token_type: str
+    email_sent: bool
+    email_error: Optional[str]
 
 
 router = APIRouter(
@@ -233,7 +245,7 @@ async def logout(
 async def get_all_blogs(
     db: Session = Depends(get_db)
 ) -> List[ShowArticle]:
-    """全てのブログ記事を取得するエンドポイント
+    """ログインユーザの全ての記事を取得するエンドポイント
 
     :param db: データベースセッション
 
@@ -253,26 +265,26 @@ async def get_all_blogs(
     ]
 
 
-# パスワード変更レスポンス型
-class PasswordChangeResponse(TypedDict, total=False):
-    """パスワード変更レスポンスの型定義"""
-    message: str
-    user_id: str
-    access_token: str
-    token_type: str
-    email_sent: bool
-    email_error: Optional[str]  # オプショナルフィールド
-
-
 @router.post('/change-password')
 async def change_password(
     request: PasswordChange,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ) -> PasswordChangeResponse:
-    """仮パスワードから新パスワードへの変更を行うエンドポイント"""
+    """仮パスワードから新パスワードへの変更を行うエンドポイント（認証必須）"""
     print(f"Password change attempt for username: {request.username}")
 
-    # ユーザーの存在確認
+    # 認証されたユーザーが自分のパスワードのみ変更できるようにチェック
+    if current_user.email != request.username:
+        print(
+            f"Unauthorized attempt: User {current_user.email} tried to change password for {request.username}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="自分のパスワードのみ変更できます"
+        )
+
+    # ユーザーの存在確認（認証されたユーザーなので基本的には存在するはず）
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
         print(

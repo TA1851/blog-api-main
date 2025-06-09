@@ -41,39 +41,39 @@ router = APIRouter(
 )
 
 
-def check_environment_variable() -> None:
-    """環境変数を取得する
+# def check_environment_variable() -> None:
+#     """環境変数を取得する
 
-    :param key08: user.pyの環境変数
+#     :param key08: user.pyの環境変数
 
-    :type key08: str
+#     :type key08: str
 
-    :return: 環境変数の値
+#     :return: 環境変数の値
 
-    :rtype: str
-    """
+#     :rtype: str
+#     """
 
-check_environment_variable()
+# check_environment_variable()
 
 
-def check_db_url() -> None:
-    """データベースURLを取得する
+# def check_db_url() -> None:
+#     """データベースURLを取得する
 
-    :param key03: user.pyの環境変数
+#     :param key03: user.pyの環境変数
 
-    :type key03: str
+#     :type key03: str
 
-    :param db_url: user.pyの環境変数
+#     :param db_url: user.pyの環境変数
 
-    :type db_url: str
+#     :type db_url: str
 
-    :return: 環境変数の値
+#     :return: 環境変数の値
 
-    :rtype: str
-    """
+#     :rtype: str
+#     """
 
-check_db_url()
-get_db()
+# check_db_url()
+# get_db()
 
 
 # 環境変数の読み込む
