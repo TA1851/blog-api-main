@@ -178,7 +178,7 @@ async def create_user(
             )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="ユーザー作成中に予期しないエラーが発生しました"
+            detail="このメールアドレスは既に登録済です。"
         )
     finally:
         print(
