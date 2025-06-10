@@ -48,7 +48,7 @@ router = APIRouter(
 
 # 環境変数の読み込む
 ALLOWED_EMAIL_DOMAINS_RAW = os.getenv("ALLOWED_EMAIL_DOMAINS", "")
-ALLOWED_EMAIL_DOMAINS = [domain.strip() for domain in ALLOWED_EMAIL_DOMAINS_RAW.split(",") if domain.strip()]
+ALLOWED_EMAIL_DOMAINS = [email.strip() for email in ALLOWED_EMAIL_DOMAINS_RAW.split(",") if email.strip()]
 ENABLE_DOMAIN_RESTRICTION = os.getenv("ENABLE_DOMAIN_RESTRICTION", "true").lower() == "true"
 ENABLE_EMAIL_VERIFICATION = os.getenv("ENABLE_EMAIL_VERIFICATION", "true").lower() == "true"
 
@@ -77,12 +77,12 @@ async def create_user(
             )
         print(f"ユーザー作成開始 - メール: {user.email}")
 
-        # ドメイン制限チェック
+        # メールアドレス制限チェック
         if ENABLE_DOMAIN_RESTRICTION and not is_valid_email_domain(user.email):
-            print(f"ドメイン検証失敗 - メール: {user.email}")
+            print(f"メールアドレス検証失敗 - メール: {user.email}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"このメールアドレスのドメインは許可されていません。"
+                detail=f"このメールアドレスは許可されていません。"
             )
         # メールアドレスの重複チェック
         existing_user = db.query(UserModel).filter(
