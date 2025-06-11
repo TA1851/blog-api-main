@@ -3,7 +3,7 @@ import os
 
 
 def is_valid_email_domain(email: str) -> bool:
-    """特定のメールアドレスが許可されているかチェック
+    """メールアドレスのドメインが許可されているかチェック
 
     :param email: チェックするメールアドレス
     :type email: str
@@ -19,28 +19,31 @@ def is_valid_email_domain(email: str) -> bool:
             f"ドメイン制限は無効です。すべてのドメインを許可: {email}"
             )
         return True
-    # 許可されたメールアドレスのリストを取得
-    allowed_emails = os.getenv(
+    # 許可されたドメインのリストを取得
+    allowed_domains = os.getenv(
         "ALLOWED_EMAIL_DOMAINS", ""
         ).split(",")
-    allowed_emails = [email_addr.strip() for email_addr in allowed_emails if email_addr.strip()]
-    if not allowed_emails:
+    allowed_domains = [domain.strip() for domain in allowed_domains if domain.strip()]
+    if not allowed_domains:
         print(
-            "許可されたメールアドレスが設定されていません。すべてのメールアドレスを許可"
+            "許可されたドメインが設定されていません。すべてのドメインを許可"
             )
         return True
-    
-    # メールアドレスが許可リストに含まれているかチェック
-    email_lower = email.lower()
-    is_allowed = email_lower in [e.lower() for e in allowed_emails]
-    
-    if is_allowed:
+    # メールアドレスからドメイン部分を抽出
+    try:
+        domain = email.split("@")[1].lower()
+        is_allowed = domain in [d.lower() for d in allowed_domains]
+        if is_allowed:
+            print(
+                f"許可されたドメインです: {domain}"
+                )
+        else:
+            print(
+                f"許可されていないドメインです: {domain}, 許可リスト: {allowed_domains}"
+                )
+        return is_allowed
+    except IndexError:
         print(
-            f"許可されたメールアドレスです: {email}"
+            f"不正なメールアドレス形式: {email}"
             )
-    else:
-        print(
-            f"許可されていないメールアドレスです: {email}, 許可リスト: {allowed_emails}"
-            )
-    
-    return is_allowed
+        return False

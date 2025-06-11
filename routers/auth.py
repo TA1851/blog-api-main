@@ -14,6 +14,7 @@ from custom_token import create_access_token
 from models import User, Article
 from oauth2 import get_current_user
 from utils.email_sender import send_registration_complete_email
+from utils.email_validator import is_valid_email_domain
 from exceptions import DatabaseConnectionError
 
 
@@ -88,6 +89,16 @@ async def login(
     :raises HTTPException: ユーザー名またはパスワードが無効な場合
     """
 
+
+    # メールドメインの検証
+    if not is_valid_email_domain(request.username):
+        print(
+            f"許可されていないドメインです: {request.username}"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"無効なユーザー名です"
+        )
 
     user = db.query(User).filter(User.email == request.username).first()
     if not user:
