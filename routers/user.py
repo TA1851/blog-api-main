@@ -81,7 +81,7 @@ async def create_user(
         if ENABLE_DOMAIN_RESTRICTION and not is_valid_email_domain(user.email):
             print(f"ドメイン検証失敗 - メール: {user.email}")
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"このメールアドレスのドメインは許可されていません。"
             )
         # メールアドレスの重複チェック
@@ -177,7 +177,7 @@ async def create_user(
             f"登録済みのメールアドレスでエラーが入力されました。: {error_detail}"
             )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_409_CONFLICT,
             detail="このメールアドレスは既に登録済です。"
         )
     finally:
@@ -230,12 +230,12 @@ async def verify_email(
         )
     if verification.is_verified:
         raise HTTPException(
-            status_code=400,
+            status_code=409,
             detail="このメールアドレスは既に確認済みです。"
         )
     if verification.expires_at is not None and datetime.utcnow() > verification.expires_at:
         raise HTTPException(
-            status_code=400,
+            status_code=401,
             detail="トークンの有効期限が切れています。"
         )
     # 初期パスワード（固定値を使用）
@@ -435,13 +435,13 @@ async def delete_user_account(
                 f"パスワード検証失敗: {deletion_request.email}"
                 )
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="パスワードが正しくありません"
             )
         # ユーザー名を保存（メール送信用）
         if user.email is None:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_404_NOT_FOUND,
                 detail="ユーザーのメールアドレスが見つかりません。"
             )
         username = user.email.split('@')[0]
@@ -546,7 +546,10 @@ async def delete_user_account(
     except Exception as e:
         db.rollback()
         error_detail = traceback.format_exc()
-        print(f"退会処理で予期しないエラーが発生しました: {error_detail}, {str(e)}")
+        print(
+            f"退会処理で予期しないエラーが発生しました: \
+            {error_detail}, {str(e)}"
+            )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="退会処理中に予期しないエラーが発生しました"

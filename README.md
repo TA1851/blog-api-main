@@ -5,7 +5,7 @@
 ### 技術スタック
 - 言語: Python 3.11.11
 - Webフレームワーク: FastAPI 0.115.12
-- データベース: SQLite3
+- データベース: SQLite3（開発時）、PostgresSQL（本番用）
 - ORM: SQLAlchemy
 - 認証: JWT (JSON Web Token)
 - bcrypt==3.2.2
@@ -116,7 +116,7 @@
 詳細なテストレポートは [`tests/report/`](tests/report/) ディレクトリで確認できます：
 - 📝 **Markdownレポート**: 包括的なテスト結果とカバレッジ分析
 - 🐛 **バグトラッキング**: 継続的な品質監視レポート
-- 📈 **カバレッジレポート**: 
+- 📈 **カバレッジレポート**:
   - [`test_reports/test_report_20250605_213356.html`](test_reports/test_report_20250605_213356.html): 最新のHTMLテストレポート
 - 📋 **テスト結果**: XML形式の詳細結果（最新：2025-06-05）
 - 🗂️ **アーカイブ**: [`archives/`](archives/) - 過去のテスト結果とカバレッジファイル

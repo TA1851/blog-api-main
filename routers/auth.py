@@ -96,7 +96,7 @@ async def login(
             f"許可されていないドメインです: {request.username}"
             )
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=f"無効なユーザー名です"
         )
 
@@ -106,7 +106,7 @@ async def login(
             f"無効なユーザー名です: {request.username}"
             )
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=f"無効なユーザー名です"
         )
     if not user.password or not Hash.verify(
@@ -117,7 +117,7 @@ async def login(
             f"無効なパスワードです: {request.password}"
         )
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="無効なパスワードです"
         )
     try:
@@ -129,7 +129,7 @@ async def login(
             f"アクセストークンの生成に失敗しました: {str(token_error)}"
             )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
             detail="アクセストークンの生成に失敗しました"
         )
     except Exception as unexpected_error:
@@ -292,7 +292,7 @@ async def change_password(
             )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="無効なユーザー名です"
+            detail="ユーザーが見つかりません"
         )
 
     # 仮パスワードの検証
@@ -301,8 +301,8 @@ async def change_password(
             f"Invalid temporary password for user: {request.username}"
             )
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="無効な仮パスワードです"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="仮パスワードが無効です"
         )
 
     # 新しいパスワードのハッシュ化と更新
@@ -383,7 +383,7 @@ async def change_password(
         # データベースエラーの種類に応じた詳細なエラーハンドリング
         if "constraint" in str(db_error).lower():
             error_detail = "データベース制約違反が発生しました"
-            status_code = status.HTTP_409_CONFLICT
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         elif "connection" in str(db_error).lower():
             error_detail = "データベース接続エラーが発生しました"
             status_code = status.HTTP_503_SERVICE_UNAVAILABLE

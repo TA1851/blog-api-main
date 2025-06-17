@@ -9,7 +9,6 @@ import markdown
 from models import Article, User as UserModel
 from schemas import ArticleBase, PublicArticle
 from database import get_db
-from logger.custom_logger import create_logger, create_error_logger
 from oauth2 import get_current_user
 
 
@@ -66,17 +65,17 @@ async def all_fetch(
         # 記事数を指定する場合
         if limit:
             user_blogs = query.limit(limit).all()
-            create_logger(
+            print(
                 f"ユーザーID: {current_user.id} のブログ記事を取得しました。 \
                 全{total_count}件中{len(user_blogs)}件表示")
         else:
             # 全件取得
             user_blogs = query.all()
-            create_logger(
+            print(
                 f"ユーザーID: {current_user.id}  \
                 のブログ記事を全件取得しました。全{total_count}件")
     except ValueError as e:
-        create_error_logger(f"ブログ記事の取得に失敗しました。")
+        print(f"ブログ記事の取得に失敗しました。")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Articles not found"
@@ -84,19 +83,19 @@ async def all_fetch(
 
     # 記事が見つからない場合は空のリストを返す
     if not user_blogs:
-        create_error_logger(
+        print(
             f"ユーザーID: {current_user.id} のブログ記事が見つかりませんでした。"
             )
         return []
 
     # ログメッセージを条件によって変更
     if limit:
-        create_logger(
+        print(
             f"ユーザーID: {current_user.id} のブログ記事 \
             {len(user_blogs)}件を取得しました。(制限: {limit}, 総数: {total_count})"
             )
     else:
-        create_logger(
+        print(
             f"ユーザーID: {current_user.id} のブログ記事 \
             全{len(user_blogs)}件を取得しました。(総数: {total_count})"
             )
@@ -139,9 +138,9 @@ async def get_article(
     try:
         id_blog = db.query(Article).filter(Article.article_id == id).first()
         print(id_blog)
-        create_logger("指定したIDのブログ記事を取得しました。")
+        print("指定したIDのブログ記事を取得しました。")
     except ValueError as e:
-        create_error_logger(f"指定したIDのブログ記事に失敗しました。")
+        print(f"指定したIDのブログ記事に失敗しました。")
         # エラー発生時に明示的な404を返す
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, \
@@ -220,9 +219,9 @@ async def create_article(
     )
 
 
-@router.put(
+@router.post(
     "/articles",
-    status_code=status.HTTP_202_ACCEPTED,
+    status_code=status.HTTP_201_CREATED,
     response_model=ArticleBase
 )
 async def update_article(
@@ -267,7 +266,7 @@ async def update_article(
         if not update_blog:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Article not found or you do not have permission \
+                detail=f"Article not found \
                 -> Article_id:{article_id}"
             )
         # タイトルと本文が空の場合は400エラーを返す
@@ -285,11 +284,11 @@ async def update_article(
         update_blog.body = blog.body
         db.commit()
         db.refresh(update_blog)
-        create_logger(
+        print(
             f"記事を更新しました。article_id: {article_id}, \
             user_id: {current_user.id}")
     except ValueError as e:
-        create_error_logger(
+        print(
             f"記事の更新に失敗しました。 \
             article_id: {article_id}")
         raise HTTPException(
@@ -343,9 +342,9 @@ async def delete_article(
         db.delete(delete_blog)
         db.commit()
         print(f"記事を削除しました。article_id: {article_id}")
-        create_logger(f"記事を削除しました。article_id: {article_id}")
+        print(f"記事を削除しました。article_id: {article_id}")
     except ValueError as e:
-        create_error_logger(
+        print(
             f"記事の削除に失敗しました。article_id: {article_id}"
         )
         raise HTTPException(
@@ -414,18 +413,18 @@ async def get_public_articles(
                 body_html=body_html
             ))
         if limit:
-            create_logger(
+            print(
                 f"パブリック記事を取得しました。 \
                 全{total_count}件中{len(result_articles)}件表示 "
                 f"(skip: {skip}, limit: {limit})"
             )
         else:
-            create_logger(
+            print(
                 f"パブリック記事を全件取得しました。 \
                 全{total_count}件 (skip: {skip})"
             )
     except Exception as e:
-        create_error_logger(f"パブリック記事の取得に失敗しました: {str(e)}")
+        print(f"パブリック記事の取得に失敗しました: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="記事の取得に失敗しました"
@@ -509,14 +508,14 @@ async def search_public_articles(
                 title=article.title,
                 body_html=body_html
             ))
-        create_logger(
+        print(
             f"記事検索を実行しました。キーワード: '{decoded_query}' "
             f"(キーワード数: {len(keywords)}), "
             f"検索結果: {len(result_articles)}件/{total_count}件 "
             f"(skip: {skip}, limit: {limit})"
         )
     except Exception as e:
-        create_error_logger(f"記事検索に失敗しました。キーワード: '{q}', エラー: {str(e)}")
+        print(f"記事検索に失敗しました。キーワード: '{q}', エラー: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="記事検索に失敗しました"
@@ -554,7 +553,7 @@ async def get_public_article_by_id(
         article = db.query(Article).filter \
         (Article.article_id == article_id).first()
         if not article:
-            create_error_logger(
+            print(
                 f"記事が見つかりません。ID: {article_id}"
                 )
             raise HTTPException(
@@ -569,12 +568,12 @@ async def get_public_article_by_id(
             title=article.title,
             body_html=body_html
         )
-        create_logger(
+        print(
             f"記事詳細を取得しました。ID: {article_id}, \
             タイトル: {article.title}"
             )
     except Exception as e:
-        create_error_logger(
+        print(
             f"記事詳細の取得に失敗しました。 \
             ID: {article_id}, エラー: {str(e)}"
             )
