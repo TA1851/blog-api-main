@@ -1,24 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tests.test_custom_token module &mdash; blog-api-main  documentation</title>
+  <title>tests.test_custom_token module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
     <link rel="next" title="tests.test_database module" href="tests.test_database.html" />
     <link rel="prev" title="tests.test_auth_router module" href="tests.test_auth_router.html" /> 
 </head>
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,31 +43,42 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tests.test_auth_router.html">tests.test_auth_router module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_custom_token module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestConstants"><code class="docutils literal notranslate"><span class="pre">TestConstants</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestCreateAccessToken"><code class="docutils literal notranslate"><span class="pre">TestCreateAccessToken</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestErrorHandling"><code class="docutils literal notranslate"><span class="pre">TestErrorHandling</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestGetUserById"><code class="docutils literal notranslate"><span class="pre">TestGetUserById</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestIntegrationScenarios"><code class="docutils literal notranslate"><span class="pre">TestIntegrationScenarios</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestIntegration"><code class="docutils literal notranslate"><span class="pre">TestIntegration</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestTokenConfig"><code class="docutils literal notranslate"><span class="pre">TestTokenConfig</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestTokenType"><code class="docutils literal notranslate"><span class="pre">TestTokenType</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_custom_token.TestVerifyToken"><code class="docutils literal notranslate"><span class="pre">TestVerifyToken</span></code></a></li>
@@ -100,7 +112,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -121,436 +133,178 @@
              
   <section id="module-tests.test_custom_token">
 <span id="tests-test-custom-token-module"></span><h1>tests.test_custom_token module<a class="headerlink" href="#module-tests.test_custom_token" title="Link to this heading"></a></h1>
-<p>custom_tokenモジュールの包括的テストスイート</p>
-<p>このテストスイートは以下をカバーします：
-- TokenType Enumの検証
-- TokenConfigクラスの設定テスト
-- create_access_token関数の全機能テスト
-- verify_token_with_type関数のテスト
-- verify_token関数のテスト
-- get_user_by_id関数のテスト
-- エラーハンドリングのテスト
-- 環境変数設定のテスト
-- JWTセキュリティシナリオのテスト</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestConstants">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestConstants</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestConstants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestConstants" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>定数のテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestConstants.test_access_token_expire_minutes_constant">
-<span class="sig-name descname"><span class="pre">test_access_token_expire_minutes_constant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestConstants.test_access_token_expire_minutes_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestConstants.test_access_token_expire_minutes_constant" title="Link to this definition"></a></dt>
-<dd><p>ACCESS_TOKEN_EXPIRE_MINUTESの定数テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestConstants.test_algorithm_constant">
-<span class="sig-name descname"><span class="pre">test_algorithm_constant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestConstants.test_algorithm_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestConstants.test_algorithm_constant" title="Link to this definition"></a></dt>
-<dd><p>ALGORITHMの定数テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestConstants.test_jwt_payload_type_hint">
-<span class="sig-name descname"><span class="pre">test_jwt_payload_type_hint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestConstants.test_jwt_payload_type_hint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestConstants.test_jwt_payload_type_hint" title="Link to this definition"></a></dt>
-<dd><p>JWTPayload型ヒントのテスト</p>
-</dd></dl>
-
-</dd></dl>
-
+<p>custom_token.pyの単体テスト</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestCreateAccessToken</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>create_access_token関数のテストクラス</p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestCreateAccessToken</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>create_access_token関数のテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.mock_env_vars">
-<span class="sig-name descname"><span class="pre">mock_env_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.mock_env_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.mock_env_vars" title="Link to this definition"></a></dt>
-<dd><p>環境変数のモック</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_different_types">
+<span class="sig-name descname"><span class="pre">test_create_access_token_different_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_different_types"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_different_types" title="Link to this definition"></a></dt>
+<dd><p>異なるトークンタイプでの生成テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_basic">
-<span class="sig-name descname"><span class="pre">test_create_access_token_basic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_basic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_basic" title="Link to this definition"></a></dt>
-<dd><p>基本的なアクセストークン作成テスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_empty_data">
+<span class="sig-name descname"><span class="pre">test_create_access_token_empty_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_empty_data"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_empty_data" title="Link to this definition"></a></dt>
+<dd><p>空のデータでの例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_development_logging">
-<span class="sig-name descname"><span class="pre">test_create_access_token_development_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_development_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_development_logging" title="Link to this definition"></a></dt>
-<dd><p>開発環境でのログ出力テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_empty_data_error">
-<span class="sig-name descname"><span class="pre">test_create_access_token_empty_data_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_empty_data_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_empty_data_error" title="Link to this definition"></a></dt>
-<dd><p>空データでのエラーテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_invalid_data_type_error">
-<span class="sig-name descname"><span class="pre">test_create_access_token_invalid_data_type_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_invalid_data_type_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_invalid_data_type_error" title="Link to this definition"></a></dt>
-<dd><p>無効なデータ型でのエラーテスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_invalid_data_type">
+<span class="sig-name descname"><span class="pre">test_create_access_token_invalid_data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_invalid_data_type"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_invalid_data_type" title="Link to this definition"></a></dt>
+<dd><p>無効なデータ型での例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_jwt_error">
-<span class="sig-name descname"><span class="pre">test_create_access_token_jwt_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_encode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_jwt_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_jwt_error" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">test_create_access_token_jwt_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_encode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_jwt_error"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_jwt_error" title="Link to this definition"></a></dt>
 <dd><p>JWT生成エラーのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_missing_secret_key_error">
-<span class="sig-name descname"><span class="pre">test_create_access_token_missing_secret_key_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_missing_secret_key_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_missing_secret_key_error" title="Link to this definition"></a></dt>
-<dd><p>SECRET_KEY未設定でのエラーテスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_missing_secret_key">
+<span class="sig-name descname"><span class="pre">test_create_access_token_missing_secret_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_missing_secret_key"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_missing_secret_key" title="Link to this definition"></a></dt>
+<dd><p>SECRET_KEYが未設定の場合の例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_token_structure">
-<span class="sig-name descname"><span class="pre">test_create_access_token_token_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_token_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_token_structure" title="Link to this definition"></a></dt>
-<dd><p>生成されたトークンの構造テスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_success">
+<span class="sig-name descname"><span class="pre">test_create_access_token_success</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_success" title="Link to this definition"></a></dt>
+<dd><p>正常なトークン生成のテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_unexpected_error">
-<span class="sig-name descname"><span class="pre">test_create_access_token_unexpected_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_encode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_unexpected_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_unexpected_error" title="Link to this definition"></a></dt>
-<dd><p>予期しないエラーのテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_custom_expiry">
-<span class="sig-name descname"><span class="pre">test_create_access_token_with_custom_expiry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_with_custom_expiry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_custom_expiry" title="Link to this definition"></a></dt>
-<dd><p>カスタム有効期限でのトークン作成テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_different_token_types">
-<span class="sig-name descname"><span class="pre">test_create_access_token_with_different_token_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_with_different_token_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_different_token_types" title="Link to this definition"></a></dt>
-<dd><p>異なるトークンタイプでの作成テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.valid_data">
-<span class="sig-name descname"><span class="pre">valid_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.valid_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.valid_data" title="Link to this definition"></a></dt>
-<dd><p>有効なテストデータ</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestErrorHandling">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestErrorHandling</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestErrorHandling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestErrorHandling" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>エラーハンドリングのテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestErrorHandling.test_comprehensive_error_logging">
-<span class="sig-name descname"><span class="pre">test_comprehensive_error_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestErrorHandling.test_comprehensive_error_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestErrorHandling.test_comprehensive_error_logging" title="Link to this definition"></a></dt>
-<dd><p>包括的なエラーログのテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestErrorHandling.test_environment_variable_edge_cases">
-<span class="sig-name descname"><span class="pre">test_environment_variable_edge_cases</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestErrorHandling.test_environment_variable_edge_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestErrorHandling.test_environment_variable_edge_cases" title="Link to this definition"></a></dt>
-<dd><p>環境変数のエッジケースのテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestErrorHandling.test_malformed_token_scenarios">
-<span class="sig-name descname"><span class="pre">test_malformed_token_scenarios</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestErrorHandling.test_malformed_token_scenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestErrorHandling.test_malformed_token_scenarios" title="Link to this definition"></a></dt>
-<dd><p>不正な形式のトークンのテスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_custom_expires">
+<span class="sig-name descname"><span class="pre">test_create_access_token_with_custom_expires</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestCreateAccessToken.test_create_access_token_with_custom_expires"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestCreateAccessToken.test_create_access_token_with_custom_expires" title="Link to this definition"></a></dt>
+<dd><p>カスタム有効期限でのトークン生成テスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestGetUserById</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>get_user_by_id関数のテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.mock_db_session">
-<span class="sig-name descname"><span class="pre">mock_db_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.mock_db_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.mock_db_session" title="Link to this definition"></a></dt>
-<dd><p>モックデータベースセッション</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.mock_user">
-<span class="sig-name descname"><span class="pre">mock_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.mock_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.mock_user" title="Link to this definition"></a></dt>
-<dd><p>モックユーザー</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.test_get_user_by_id_different_ids">
-<span class="sig-name descname"><span class="pre">test_get_user_by_id_different_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_different_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_different_ids" title="Link to this definition"></a></dt>
-<dd><p>異なるIDでのユーザー取得テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.test_get_user_by_id_negative_id">
-<span class="sig-name descname"><span class="pre">test_get_user_by_id_negative_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_negative_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_negative_id" title="Link to this definition"></a></dt>
-<dd><p>負のIDでのテスト</p>
-</dd></dl>
-
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestGetUserById</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>get_user_by_id関数のテスト</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.test_get_user_by_id_not_found">
-<span class="sig-name descname"><span class="pre">test_get_user_by_id_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_not_found" title="Link to this definition"></a></dt>
-<dd><p>ユーザーが見つからない場合のテスト</p>
+<span class="sig-name descname"><span class="pre">test_get_user_by_id_not_found</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_not_found"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_not_found" title="Link to this definition"></a></dt>
+<dd><p>ユーザーが見つからない場合の例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.test_get_user_by_id_success">
-<span class="sig-name descname"><span class="pre">test_get_user_by_id_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_success" title="Link to this definition"></a></dt>
-<dd><p>ユーザー取得成功テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestGetUserById.test_get_user_by_id_zero_id">
-<span class="sig-name descname"><span class="pre">test_get_user_by_id_zero_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_zero_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_zero_id" title="Link to this definition"></a></dt>
-<dd><p>ID=0でのテスト</p>
+<span class="sig-name descname"><span class="pre">test_get_user_by_id_success</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestGetUserById.test_get_user_by_id_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestGetUserById.test_get_user_by_id_success" title="Link to this definition"></a></dt>
+<dd><p>正常なユーザー取得のテスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestIntegrationScenarios</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>統合テストシナリオ</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestIntegration</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegration"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegration" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>統合テスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios.credentials_exception">
-<span class="sig-name descname"><span class="pre">credentials_exception</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios.credentials_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios.credentials_exception" title="Link to this definition"></a></dt>
-<dd><p>認証例外</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios.mock_env_vars">
-<span class="sig-name descname"><span class="pre">mock_env_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios.mock_env_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios.mock_env_vars" title="Link to this definition"></a></dt>
-<dd><p>環境変数のモック</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios.test_different_token_types_lifecycle">
-<span class="sig-name descname"><span class="pre">test_different_token_types_lifecycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios.test_different_token_types_lifecycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios.test_different_token_types_lifecycle" title="Link to this definition"></a></dt>
-<dd><p>異なるトークンタイプのライフサイクルテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios.test_full_token_lifecycle">
-<span class="sig-name descname"><span class="pre">test_full_token_lifecycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios.test_full_token_lifecycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios.test_full_token_lifecycle" title="Link to this definition"></a></dt>
-<dd><p>トークンの完全なライフサイクルテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios.test_security_scenarios">
-<span class="sig-name descname"><span class="pre">test_security_scenarios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios.test_security_scenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios.test_security_scenarios" title="Link to this definition"></a></dt>
-<dd><p>セキュリティシナリオのテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegrationScenarios.test_token_expiry_scenarios">
-<span class="sig-name descname"><span class="pre">test_token_expiry_scenarios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegrationScenarios.test_token_expiry_scenarios"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegrationScenarios.test_token_expiry_scenarios" title="Link to this definition"></a></dt>
-<dd><p>トークン有効期限のシナリオテスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestIntegration.test_token_creation_and_verification_flow">
+<span class="sig-name descname"><span class="pre">test_token_creation_and_verification_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestIntegration.test_token_creation_and_verification_flow"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestIntegration.test_token_creation_and_verification_flow" title="Link to this definition"></a></dt>
+<dd><p>トークン生成から検証までの一連の流れのテスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestTokenConfig</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>TokenConfigクラスのテストクラス</p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestTokenConfig</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TokenConfigクラスのテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig.test_access_token_default_expiry">
-<span class="sig-name descname"><span class="pre">test_access_token_default_expiry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig.test_access_token_default_expiry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig.test_access_token_default_expiry" title="Link to this definition"></a></dt>
-<dd><p>アクセストークンのデフォルト有効期限テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig.test_all_token_types_have_defaults">
-<span class="sig-name descname"><span class="pre">test_all_token_types_have_defaults</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig.test_all_token_types_have_defaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig.test_all_token_types_have_defaults" title="Link to this definition"></a></dt>
-<dd><p>すべてのトークンタイプにデフォルト設定があるかテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig.test_default_expires_structure">
-<span class="sig-name descname"><span class="pre">test_default_expires_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig.test_default_expires_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig.test_default_expires_structure" title="Link to this definition"></a></dt>
-<dd><p>DEFAULT_EXPIRESの構造が正しいかテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig.test_email_verification_token_default_expiry">
-<span class="sig-name descname"><span class="pre">test_email_verification_token_default_expiry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig.test_email_verification_token_default_expiry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig.test_email_verification_token_default_expiry" title="Link to this definition"></a></dt>
-<dd><p>メール確認トークンのデフォルト有効期限テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig.test_password_reset_token_default_expiry">
-<span class="sig-name descname"><span class="pre">test_password_reset_token_default_expiry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig.test_password_reset_token_default_expiry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig.test_password_reset_token_default_expiry" title="Link to this definition"></a></dt>
-<dd><p>パスワードリセットトークンのデフォルト有効期限テスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenConfig.test_default_expires_configuration">
+<span class="sig-name descname"><span class="pre">test_default_expires_configuration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenConfig.test_default_expires_configuration"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenConfig.test_default_expires_configuration" title="Link to this definition"></a></dt>
+<dd><p>デフォルトの有効期限設定が正しいことを確認</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestTokenType">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestTokenType</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>TokenType Enumのテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenType.test_token_type_comparison">
-<span class="sig-name descname"><span class="pre">test_token_type_comparison</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType.test_token_type_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType.test_token_type_comparison" title="Link to this definition"></a></dt>
-<dd><p>TokenTypeの比較テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenType.test_token_type_enum_members">
-<span class="sig-name descname"><span class="pre">test_token_type_enum_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType.test_token_type_enum_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType.test_token_type_enum_members" title="Link to this definition"></a></dt>
-<dd><p>TokenTypeのメンバーが期待通りかテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestTokenType.test_token_type_string_representation">
-<span class="sig-name descname"><span class="pre">test_token_type_string_representation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType.test_token_type_string_representation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType.test_token_type_string_representation" title="Link to this definition"></a></dt>
-<dd><p>TokenTypeの文字列表現テスト</p>
-</dd></dl>
-
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestTokenType</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TokenType enumのテスト</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestTokenType.test_token_type_values">
-<span class="sig-name descname"><span class="pre">test_token_type_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType.test_token_type_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType.test_token_type_values" title="Link to this definition"></a></dt>
-<dd><p>TokenTypeの値が正しく定義されているかテスト</p>
+<span class="sig-name descname"><span class="pre">test_token_type_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestTokenType.test_token_type_values"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestTokenType.test_token_type_values" title="Link to this definition"></a></dt>
+<dd><p>TokenTypeの値が正しいことを確認</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestVerifyToken</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>verify_token関数のテストクラス</p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestVerifyToken</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>verify_token関数のテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.credentials_exception">
-<span class="sig-name descname"><span class="pre">credentials_exception</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.credentials_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.credentials_exception" title="Link to this definition"></a></dt>
-<dd><p>認証例外</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.mock_db_session">
-<span class="sig-name descname"><span class="pre">mock_db_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.mock_db_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.mock_db_session" title="Link to this definition"></a></dt>
-<dd><p>モックデータベースセッション</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.mock_env_vars">
-<span class="sig-name descname"><span class="pre">mock_env_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.mock_env_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.mock_env_vars" title="Link to this definition"></a></dt>
-<dd><p>環境変数のモック</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.mock_user">
-<span class="sig-name descname"><span class="pre">mock_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.mock_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.mock_user" title="Link to this definition"></a></dt>
-<dd><p>モックユーザー</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_error_logging">
-<span class="sig-name descname"><span class="pre">test_verify_token_error_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_error_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_error_logging" title="Link to this definition"></a></dt>
-<dd><p>エラーログ出力のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_invalid_token">
-<span class="sig-name descname"><span class="pre">test_verify_token_invalid_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_invalid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_invalid_token" title="Link to this definition"></a></dt>
-<dd><p>無効なトークンでの検証失敗テスト</p>
+<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_invalid_jwt">
+<span class="sig-name descname"><span class="pre">test_verify_token_invalid_jwt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_invalid_jwt"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_invalid_jwt" title="Link to this definition"></a></dt>
+<dd><p>無効なJWTでの例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_missing_email">
-<span class="sig-name descname"><span class="pre">test_verify_token_missing_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_missing_email"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_email" title="Link to this definition"></a></dt>
-<dd><p>emailフィールドが欠けているトークンのテスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_missing_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_missing_email"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_email" title="Link to this definition"></a></dt>
+<dd><p>emailが含まれていないトークンでの例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_missing_id">
-<span class="sig-name descname"><span class="pre">test_verify_token_missing_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_missing_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_id" title="Link to this definition"></a></dt>
-<dd><p>idフィールドが欠けているトークンのテスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_missing_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_missing_id"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_id" title="Link to this definition"></a></dt>
+<dd><p>idが含まれていないトークンでの例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_missing_secret_key">
-<span class="sig-name descname"><span class="pre">test_verify_token_missing_secret_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_missing_secret_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_secret_key" title="Link to this definition"></a></dt>
-<dd><p>SECRET_KEY未設定でのエラーテスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_missing_secret_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_missing_secret_key"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_missing_secret_key" title="Link to this definition"></a></dt>
+<dd><p>SECRET_KEYが未設定の場合の例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyToken.test_verify_token_success">
-<span class="sig-name descname"><span class="pre">test_verify_token_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_token_data_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_get_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_success" title="Link to this definition"></a></dt>
-<dd><p>有効なトークンの検証成功テスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyToken.test_verify_token_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyToken.test_verify_token_success" title="Link to this definition"></a></dt>
+<dd><p>正常なトークン検証のテスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestVerifyTokenWithType</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>verify_token_with_type関数のテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.credentials_exception">
-<span class="sig-name descname"><span class="pre">credentials_exception</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.credentials_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.credentials_exception" title="Link to this definition"></a></dt>
-<dd><p>認証例外</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.mock_env_vars">
-<span class="sig-name descname"><span class="pre">mock_env_vars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.mock_env_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.mock_env_vars" title="Link to this definition"></a></dt>
-<dd><p>環境変数のモック</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_error_logging">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_error_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_error_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_error_logging" title="Link to this definition"></a></dt>
-<dd><p>エラーログ出力のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_expired_token">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_expired_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_expired_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_expired_token" title="Link to this definition"></a></dt>
-<dd><p>期限切れトークンでの検証失敗テスト</p>
-</dd></dl>
-
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_custom_token.</span></span><span class="sig-name descname"><span class="pre">TestVerifyTokenWithType</span></span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>verify_token_with_type関数のテスト</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_invalid_token">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_invalid_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_invalid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_invalid_token" title="Link to this definition"></a></dt>
-<dd><p>無効なトークンでの検証失敗テスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_with_type_invalid_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_invalid_token"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_invalid_token" title="Link to this definition"></a></dt>
+<dd><p>無効なトークンでの例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_missing_secret_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_token_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key" title="Link to this definition"></a></dt>
-<dd><p>SECRET_KEY未設定でのエラーテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_type_field">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_missing_type_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_missing_type_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_type_field" title="Link to this definition"></a></dt>
-<dd><p>typeフィールドが欠けているトークンのテスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_with_type_missing_secret_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_missing_secret_key" title="Link to this definition"></a></dt>
+<dd><p>SECRET_KEYが未設定の場合の例外テスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_success">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_token_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_success" title="Link to this definition"></a></dt>
-<dd><p>有効なトークンの検証成功テスト</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_with_type_success</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_success" title="Link to this definition"></a></dt>
+<dd><p>正常なトークン検証のテスト</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_wrong_type">
-<span class="sig-name descname"><span class="pre">test_verify_token_with_type_wrong_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_env_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_wrong_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_wrong_type" title="Link to this definition"></a></dt>
-<dd><p>間違ったトークンタイプでの検証失敗テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_custom_token.TestVerifyTokenWithType.valid_token_data">
-<span class="sig-name descname"><span class="pre">valid_token_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.valid_token_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.valid_token_data" title="Link to this definition"></a></dt>
-<dd><p>有効なトークンデータ</p>
+<span class="sig-name descname"><span class="pre">test_verify_token_with_type_wrong_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_custom_token.html#TestVerifyTokenWithType.test_verify_token_with_type_wrong_type"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_custom_token.TestVerifyTokenWithType.test_verify_token_with_type_wrong_type" title="Link to this definition"></a></dt>
+<dd><p>異なるトークンタイプでの例外テスト</p>
 </dd></dl>
 
 </dd></dl>
@@ -568,7 +322,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

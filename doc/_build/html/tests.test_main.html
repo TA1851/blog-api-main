@@ -1,24 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tests.test_main module &mdash; blog-api-main  documentation</title>
+  <title>tests.test_main module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
     <link rel="next" title="tests.test_models module" href="tests.test_models.html" />
     <link rel="prev" title="tests.test_integration module" href="tests.test_integration.html" /> 
 </head>
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,20 +43,33 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
@@ -68,17 +82,12 @@
 <li class="toctree-l3"><a class="reference internal" href="tests.test_hashing.html">tests.test_hashing module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tests.test_integration.html">tests.test_integration module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_main module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestApplicationConfiguration"><code class="docutils literal notranslate"><span class="pre">TestApplicationConfiguration</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestCORSConfiguration"><code class="docutils literal notranslate"><span class="pre">TestCORSConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestApplicationIntegration"><code class="docutils literal notranslate"><span class="pre">TestApplicationIntegration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestCORSMiddleware"><code class="docutils literal notranslate"><span class="pre">TestCORSMiddleware</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestDatabaseInitialization"><code class="docutils literal notranslate"><span class="pre">TestDatabaseInitialization</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestEdgeCases"><code class="docutils literal notranslate"><span class="pre">TestEdgeCases</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestEnvironmentVariables"><code class="docutils literal notranslate"><span class="pre">TestEnvironmentVariables</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestErrorLogging"><code class="docutils literal notranslate"><span class="pre">TestErrorLogging</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestExceptionHandling"><code class="docutils literal notranslate"><span class="pre">TestExceptionHandling</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestIntegrationWithTestClient"><code class="docutils literal notranslate"><span class="pre">TestIntegrationWithTestClient</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestMainApplication"><code class="docutils literal notranslate"><span class="pre">TestMainApplication</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestMiddlewareStack"><code class="docutils literal notranslate"><span class="pre">TestMiddlewareStack</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestPerformanceAndResourceUsage"><code class="docutils literal notranslate"><span class="pre">TestPerformanceAndResourceUsage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestExceptionHandler"><code class="docutils literal notranslate"><span class="pre">TestExceptionHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestMainAppConfiguration"><code class="docutils literal notranslate"><span class="pre">TestMainAppConfiguration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_main.TestRouterInclusion"><code class="docutils literal notranslate"><span class="pre">TestRouterInclusion</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tests.test_models.html">tests.test_models module</a></li>
@@ -102,7 +111,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -123,270 +132,123 @@
              
   <section id="module-tests.test_main">
 <span id="tests-test-main-module"></span><h1>tests.test_main module<a class="headerlink" href="#module-tests.test_main" title="Link to this heading"></a></h1>
-<p>main.py 包括的テストスイート
-FastAPIアプリケーション、CORS設定、例外ハンドリング、ミドルウェアなどの全機能をテスト</p>
-<p>テスト対象:
-1. FastAPIアプリケーション初期化
-2. CORS設定とミドルウェア
-3. 例外ハンドリング（RequestValidationError）
-4. ルーター統合（article, user, auth）
-5. データベース初期化
-6. ロギング機能
-7. 環境変数設定
-8. ミドルウェアチェーン</p>
+<p>main.pyの単体テスト（修正版）</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestApplicationConfiguration">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestApplicationConfiguration</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestApplicationConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestApplicationConfiguration" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>アプリケーション設定のテスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestApplicationIntegration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestApplicationIntegration</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestApplicationIntegration"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestApplicationIntegration" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>アプリケーション統合テスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestApplicationConfiguration.test_exception_handler_registration">
-<span class="sig-name descname"><span class="pre">test_exception_handler_registration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestApplicationConfiguration.test_exception_handler_registration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestApplicationConfiguration.test_exception_handler_registration" title="Link to this definition"></a></dt>
-<dd><p>例外ハンドラ登録テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestApplicationIntegration.test_app_startup_flow">
+<span class="sig-name descname"><span class="pre">test_app_startup_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestApplicationIntegration.test_app_startup_flow"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestApplicationIntegration.test_app_startup_flow" title="Link to this definition"></a></dt>
+<dd><p>アプリケーション起動フローの統合テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestApplicationConfiguration.test_fastapi_app_configuration">
-<span class="sig-name descname"><span class="pre">test_fastapi_app_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestApplicationConfiguration.test_fastapi_app_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestApplicationConfiguration.test_fastapi_app_configuration" title="Link to this definition"></a></dt>
-<dd><p>FastAPIアプリケーション設定テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestApplicationIntegration.test_environment_variable_handling">
+<span class="sig-name descname"><span class="pre">test_environment_variable_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestApplicationIntegration.test_environment_variable_handling"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestApplicationIntegration.test_environment_variable_handling" title="Link to this definition"></a></dt>
+<dd><p>環境変数処理の統合テスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestCORSConfiguration">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestCORSConfiguration</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestCORSConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestCORSConfiguration" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>CORS設定のテストクラス</p>
+<dt class="sig sig-object py" id="tests.test_main.TestCORSMiddleware">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestCORSMiddleware</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestCORSMiddleware"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestCORSMiddleware" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>CORSミドルウェアのテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestCORSConfiguration.test_cors_origins_empty_lists">
-<span class="sig-name descname"><span class="pre">test_cors_origins_empty_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestCORSConfiguration.test_cors_origins_empty_lists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestCORSConfiguration.test_cors_origins_empty_lists" title="Link to this definition"></a></dt>
-<dd><p>空リストのCORS origins設定テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestCORSConfiguration.test_cors_origins_non_list_type">
-<span class="sig-name descname"><span class="pre">test_cors_origins_non_list_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestCORSConfiguration.test_cors_origins_non_list_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestCORSConfiguration.test_cors_origins_non_list_type" title="Link to this definition"></a></dt>
-<dd><p>非リスト型のCORS origins設定テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestCORSConfiguration.test_cors_origins_parsing_list_format">
-<span class="sig-name descname"><span class="pre">test_cors_origins_parsing_list_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestCORSConfiguration.test_cors_origins_parsing_list_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestCORSConfiguration.test_cors_origins_parsing_list_format" title="Link to this definition"></a></dt>
-<dd><p>CORS origins リスト形式解析テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestCORSMiddleware.test_cors_middleware_configuration">
+<span class="sig-name descname"><span class="pre">test_cors_middleware_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestCORSMiddleware.test_cors_middleware_configuration"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestCORSMiddleware.test_cors_middleware_configuration" title="Link to this definition"></a></dt>
+<dd><p>CORSミドルウェアの設定確認テスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.test_main.TestDatabaseInitialization">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestDatabaseInitialization</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestDatabaseInitialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestDatabaseInitialization" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestDatabaseInitialization</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestDatabaseInitialization"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestDatabaseInitialization" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>データベース初期化のテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestDatabaseInitialization.test_database_initialization_with_exception">
-<span class="sig-name descname"><span class="pre">test_database_initialization_with_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestDatabaseInitialization.test_database_initialization_with_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestDatabaseInitialization.test_database_initialization_with_exception" title="Link to this definition"></a></dt>
-<dd><p>データベース初期化例外テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestDatabaseInitialization.test_database_metadata_creation">
-<span class="sig-name descname"><span class="pre">test_database_metadata_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestDatabaseInitialization.test_database_metadata_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestDatabaseInitialization.test_database_metadata_creation" title="Link to this definition"></a></dt>
-<dd><p>データベースメタデータ作成テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestDatabaseInitialization.test_database_tables_creation">
+<span class="sig-name descname"><span class="pre">test_database_tables_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestDatabaseInitialization.test_database_tables_creation"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestDatabaseInitialization.test_database_tables_creation" title="Link to this definition"></a></dt>
+<dd><p>データベーステーブル作成のテスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestEdgeCases">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestEdgeCases</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestEdgeCases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEdgeCases" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>エッジケースのテスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestExceptionHandler</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandler"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandler" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>例外ハンドラーのテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestEdgeCases.test_cors_origins_duplicate_handling">
-<span class="sig-name descname"><span class="pre">test_cors_origins_duplicate_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestEdgeCases.test_cors_origins_duplicate_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEdgeCases.test_cors_origins_duplicate_handling" title="Link to this definition"></a></dt>
-<dd><p>重複CORS origins処理テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandler.setup_app">
+<span class="sig-name descname"><span class="pre">setup_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandler.setup_app"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandler.setup_app" title="Link to this definition"></a></dt>
+<dd><p>テスト用アプリケーション設定</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestEdgeCases.test_exception_handler_with_complex_error_structure">
-<span class="sig-name descname"><span class="pre">test_exception_handler_with_complex_error_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestEdgeCases.test_exception_handler_with_complex_error_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEdgeCases.test_exception_handler_with_complex_error_structure" title="Link to this definition"></a></dt>
-<dd><p>複雑なエラー構造での例外ハンドラテスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandler.test_email_error_detection_logic">
+<span class="sig-name descname"><span class="pre">test_email_error_detection_logic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandler.test_email_error_detection_logic"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandler.test_email_error_detection_logic" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスエラー検出ロジックのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestEdgeCases.test_exception_handler_with_empty_errors">
-<span class="sig-name descname"><span class="pre">test_exception_handler_with_empty_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestEdgeCases.test_exception_handler_with_empty_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEdgeCases.test_exception_handler_with_empty_errors" title="Link to this definition"></a></dt>
-<dd><p>空エラーリストでの例外ハンドラテスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandler.test_email_validation_error_handler">
+<span class="sig-name descname"><span class="pre">test_email_validation_error_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandler.test_email_validation_error_handler"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandler.test_email_validation_error_handler" title="Link to this definition"></a></dt>
+<dd><p>メールアドレス検証エラーハンドラーのテスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandler.test_general_validation_error_handler">
+<span class="sig-name descname"><span class="pre">test_general_validation_error_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandler.test_general_validation_error_handler"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandler.test_general_validation_error_handler" title="Link to this definition"></a></dt>
+<dd><p>一般的なバリデーションエラーハンドラーのテスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestEnvironmentVariables">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestEnvironmentVariables</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestEnvironmentVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEnvironmentVariables" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>環境変数処理のテスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestMainAppConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestMainAppConfiguration</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestMainAppConfiguration"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainAppConfiguration" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>FastAPIアプリケーションの設定テスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestEnvironmentVariables.test_cors_origins_environment_parsing">
-<span class="sig-name descname"><span class="pre">test_cors_origins_environment_parsing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestEnvironmentVariables.test_cors_origins_environment_parsing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEnvironmentVariables.test_cors_origins_environment_parsing" title="Link to this definition"></a></dt>
-<dd><p>CORS origins環境変数解析テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestMainAppConfiguration.test_app_creation">
+<span class="sig-name descname"><span class="pre">test_app_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainAppConfiguration.test_app_creation"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainAppConfiguration.test_app_creation" title="Link to this definition"></a></dt>
+<dd><p>FastAPIアプリケーションの作成テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestEnvironmentVariables.test_environment_variable_none_values">
-<span class="sig-name descname"><span class="pre">test_environment_variable_none_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestEnvironmentVariables.test_environment_variable_none_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEnvironmentVariables.test_environment_variable_none_values" title="Link to this definition"></a></dt>
-<dd><p>環境変数None値テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestMainAppConfiguration.test_cors_fallback_when_no_origins">
+<span class="sig-name descname"><span class="pre">test_cors_fallback_when_no_origins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainAppConfiguration.test_cors_fallback_when_no_origins"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainAppConfiguration.test_cors_fallback_when_no_origins" title="Link to this definition"></a></dt>
+<dd><p>CORSオリジンが設定されていない場合のフォールバックテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestEnvironmentVariables.test_partial_cors_configuration">
-<span class="sig-name descname"><span class="pre">test_partial_cors_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestEnvironmentVariables.test_partial_cors_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestEnvironmentVariables.test_partial_cors_configuration" title="Link to this definition"></a></dt>
-<dd><p>部分的CORS設定テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestMainAppConfiguration.test_cors_origins_from_env">
+<span class="sig-name descname"><span class="pre">test_cors_origins_from_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainAppConfiguration.test_cors_origins_from_env"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainAppConfiguration.test_cors_origins_from_env" title="Link to this definition"></a></dt>
+<dd><p>環境変数からのCORSオリジン設定テスト</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_main.TestMainAppConfiguration.test_cors_with_pytest_environment">
+<span class="sig-name descname"><span class="pre">test_cors_with_pytest_environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainAppConfiguration.test_cors_with_pytest_environment"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainAppConfiguration.test_cors_with_pytest_environment" title="Link to this definition"></a></dt>
+<dd><p>pytest環境でのCORSオリジン設定テスト</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestErrorLogging">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestErrorLogging</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestErrorLogging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestErrorLogging" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>エラーロギングのテスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestRouterInclusion">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestRouterInclusion</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestRouterInclusion"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestRouterInclusion" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ルーター組み込みのテスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestErrorLogging.test_email_error_specific_logging">
-<span class="sig-name descname"><span class="pre">test_email_error_specific_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestErrorLogging.test_email_error_specific_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestErrorLogging.test_email_error_specific_logging" title="Link to this definition"></a></dt>
-<dd><p>メールエラー固有ログテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestErrorLogging.test_validation_error_logging">
-<span class="sig-name descname"><span class="pre">test_validation_error_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestErrorLogging.test_validation_error_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestErrorLogging.test_validation_error_logging" title="Link to this definition"></a></dt>
-<dd><p>バリデーションエラーログテスト</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandling">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestExceptionHandling</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandling" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>例外ハンドリングのテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandling.test_email_error_with_multiple_conditions">
-<span class="sig-name descname"><span class="pre">test_email_error_with_multiple_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandling.test_email_error_with_multiple_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandling.test_email_error_with_multiple_conditions" title="Link to this definition"></a></dt>
-<dd><p>複数条件でのメールエラー検出テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandling.test_email_error_with_valid_email_message">
-<span class="sig-name descname"><span class="pre">test_email_error_with_valid_email_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandling.test_email_error_with_valid_email_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandling.test_email_error_with_valid_email_message" title="Link to this definition"></a></dt>
-<dd><p>valid emailメッセージでのエラー検出テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandling.test_email_validation_error_detection">
-<span class="sig-name descname"><span class="pre">test_email_validation_error_detection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandling.test_email_validation_error_detection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandling.test_email_validation_error_detection" title="Link to this definition"></a></dt>
-<dd><p>メールアドレス形式エラー検出テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestExceptionHandling.test_general_validation_error_handling">
-<span class="sig-name descname"><span class="pre">test_general_validation_error_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestExceptionHandling.test_general_validation_error_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestExceptionHandling.test_general_validation_error_handling" title="Link to this definition"></a></dt>
-<dd><p>一般的なバリデーションエラーハンドリングテスト</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestIntegrationWithTestClient">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestIntegrationWithTestClient</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestIntegrationWithTestClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestIntegrationWithTestClient" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>TestClientを使用した統合テスト</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestIntegrationWithTestClient.test_app_startup_with_test_client">
-<span class="sig-name descname"><span class="pre">test_app_startup_with_test_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestIntegrationWithTestClient.test_app_startup_with_test_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestIntegrationWithTestClient.test_app_startup_with_test_client" title="Link to this definition"></a></dt>
-<dd><p>TestClientでのアプリ起動テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestIntegrationWithTestClient.test_cors_headers_in_response">
-<span class="sig-name descname"><span class="pre">test_cors_headers_in_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestIntegrationWithTestClient.test_cors_headers_in_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestIntegrationWithTestClient.test_cors_headers_in_response" title="Link to this definition"></a></dt>
-<dd><p>レスポンスにCORSヘッダーが含まれることのテスト</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestMainApplication">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestMainApplication</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestMainApplication"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainApplication" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>main.pyのメインテストクラス</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMainApplication.setup_method">
-<span class="sig-name descname"><span class="pre">setup_method</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainApplication.setup_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainApplication.setup_method" title="Link to this definition"></a></dt>
-<dd><p>各テスト前の初期化</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMainApplication.test_app_initialization_no_cors_origins">
-<span class="sig-name descname"><span class="pre">test_app_initialization_no_cors_origins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainApplication.test_app_initialization_no_cors_origins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainApplication.test_app_initialization_no_cors_origins" title="Link to this definition"></a></dt>
-<dd><p>CORS設定なしでの初期化テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMainApplication.test_app_initialization_success">
-<span class="sig-name descname"><span class="pre">test_app_initialization_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainApplication.test_app_initialization_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainApplication.test_app_initialization_success" title="Link to this definition"></a></dt>
-<dd><p>FastAPIアプリケーションの正常初期化テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMainApplication.test_cors_middleware_configuration">
-<span class="sig-name descname"><span class="pre">test_cors_middleware_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainApplication.test_cors_middleware_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainApplication.test_cors_middleware_configuration" title="Link to this definition"></a></dt>
-<dd><p>CORSミドルウェア設定テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMainApplication.test_routers_inclusion">
-<span class="sig-name descname"><span class="pre">test_routers_inclusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMainApplication.test_routers_inclusion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMainApplication.test_routers_inclusion" title="Link to this definition"></a></dt>
-<dd><p>ルーター統合テスト</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestMiddlewareStack">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestMiddlewareStack</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestMiddlewareStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMiddlewareStack" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>ミドルウェアスタックのテスト</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMiddlewareStack.test_cors_middleware_parameters">
-<span class="sig-name descname"><span class="pre">test_cors_middleware_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMiddlewareStack.test_cors_middleware_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMiddlewareStack.test_cors_middleware_parameters" title="Link to this definition"></a></dt>
-<dd><p>CORSミドルウェアパラメータテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestMiddlewareStack.test_middleware_order_and_configuration">
-<span class="sig-name descname"><span class="pre">test_middleware_order_and_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestMiddlewareStack.test_middleware_order_and_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestMiddlewareStack.test_middleware_order_and_configuration" title="Link to this definition"></a></dt>
-<dd><p>ミドルウェアの順序と設定テスト</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="tests.test_main.TestPerformanceAndResourceUsage">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_main.</span></span><span class="sig-name descname"><span class="pre">TestPerformanceAndResourceUsage</span></span><a class="reference internal" href="_modules/tests/test_main.html#TestPerformanceAndResourceUsage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestPerformanceAndResourceUsage" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>パフォーマンスとリソース使用量のテスト</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestPerformanceAndResourceUsage.test_app_initialization_performance">
-<span class="sig-name descname"><span class="pre">test_app_initialization_performance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestPerformanceAndResourceUsage.test_app_initialization_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestPerformanceAndResourceUsage.test_app_initialization_performance" title="Link to this definition"></a></dt>
-<dd><p>アプリ初期化パフォーマンステスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_main.TestPerformanceAndResourceUsage.test_large_cors_origins_list_handling">
-<span class="sig-name descname"><span class="pre">test_large_cors_origins_list_handling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_error_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestPerformanceAndResourceUsage.test_large_cors_origins_list_handling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_main.TestPerformanceAndResourceUsage.test_large_cors_origins_list_handling" title="Link to this definition"></a></dt>
-<dd><p>大きなCORS originsリスト処理テスト</p>
+<dt class="sig sig-object py" id="tests.test_main.TestRouterInclusion.test_routers_included">
+<span class="sig-name descname"><span class="pre">test_routers_included</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db_env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_main.html#TestRouterInclusion.test_routers_included"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_main.TestRouterInclusion.test_routers_included" title="Link to this definition"></a></dt>
+<dd><p>ルーターが正しく組み込まれているかのテスト</p>
 </dd></dl>
 
 </dd></dl>
@@ -404,7 +266,7 @@ FastAPIアプリケーション、CORS設定、例外ハンドリング、ミド
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

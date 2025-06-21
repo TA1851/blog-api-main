@@ -1,26 +1,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>routers.article module &mdash; blog-api-main  documentation</title>
+  <title>routers.article module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="routers.auth module" href="routers.auth.html" />
-    <link rel="prev" title="routers package" href="routers.html" /> 
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="routers package" href="routers.html" />
+    <link rel="prev" title="routers.user module" href="routers.user.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,17 +43,27 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">routers.article module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.all_fetch"><code class="docutils literal notranslate"><span class="pre">all_fetch()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.create_article"><code class="docutils literal notranslate"><span class="pre">create_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.delete_article"><code class="docutils literal notranslate"><span class="pre">delete_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.get_article"><code class="docutils literal notranslate"><span class="pre">get_article()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.get_public_article_by_id"><code class="docutils literal notranslate"><span class="pre">get_public_article_by_id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.get_public_articles"><code class="docutils literal notranslate"><span class="pre">get_public_articles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.search_public_articles"><code class="docutils literal notranslate"><span class="pre">search_public_articles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.article.update_article"><code class="docutils literal notranslate"><span class="pre">update_article()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="reference internal" href="routers.html">routers package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="routers.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">routers.article module</a><ul>
@@ -73,8 +84,21 @@
 <li class="toctree-l2"><a class="reference internal" href="routers.html#module-routers">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
@@ -86,7 +110,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -94,7 +118,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="routers.html">routers package</a></li>
       <li class="breadcrumb-item active">routers.article module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/routers.article.rst.txt" rel="nofollow"> View page source</a>
@@ -110,26 +133,26 @@
 <p>エンドポイントのルーティングを定義するモジュール</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.all_fetch">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">all_fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(None)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/article.html#all_fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.all_fetch" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">all_fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(None)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/article.html#all_fetch"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.all_fetch" title="Link to this definition"></a></dt>
 <dd><p>ログインユーザーが作成した記事のみを取得するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) – 現在のユーザー</p></li>
-<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – 取得する最大記事数（指定しない場合は全件取得）</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
+<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- 取得する最大記事数（指定しない場合は全件取得）</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>記事のリスト</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase">ArticleBase</a>]</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dt class="field-even">例外<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>HTTPException</strong> – 記事が見つからない場合</p></li>
-<li><p><strong>ValueError</strong> – データベースのクエリに失敗した場合</p></li>
+<li><p><strong>HTTPException</strong> -- 記事が見つからない場合</p></li>
+<li><p><strong>ValueError</strong> -- データベースのクエリに失敗した場合</p></li>
 </ul>
 </dd>
 </dl>
@@ -137,20 +160,20 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.create_article">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">create_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#create_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.create_article" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">create_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#create_article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.create_article" title="Link to this definition"></a></dt>
 <dd><p>新しい記事を作成するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>blog</strong> (<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><em>ArticleBase</em></a>) – 記事の内容</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) – 現在のユーザー</p></li>
+<li><p><strong>blog</strong> (<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><em>ArticleBase</em></a>) -- 記事の内容</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>作成された記事</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase">ArticleBase</a></p>
 </dd>
 </dl>
@@ -158,17 +181,17 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.delete_article">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">delete_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/routers/article.html#delete_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.delete_article" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">delete_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/routers/article.html#delete_article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.delete_article" title="Link to this definition"></a></dt>
 <dd><p>記事を削除するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>article_id</strong> (<em>int</em>) – 記事のID</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) – 現在のユーザー</p></li>
+<li><p><strong>article_id</strong> (<em>int</em>) -- 記事のID</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -176,122 +199,122 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.get_article">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#get_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.get_article" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#get_article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.get_article" title="Link to this definition"></a></dt>
 <dd><p>指定したIDのブログ記事を取得するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>id</strong> (<em>int</em>) – 記事のID</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
+<li><p><strong>id</strong> (<em>int</em>) -- 記事のID</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>記事の詳細</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase">ArticleBase</a></p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – 記事が見つからない場合</p>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- 記事が見つからない場合</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.get_public_article_by_id">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_public_article_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle"><span class="pre">PublicArticle</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#get_public_article_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.get_public_article_by_id" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_public_article_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle"><span class="pre">PublicArticle</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#get_public_article_by_id"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.get_public_article_by_id" title="Link to this definition"></a></dt>
 <dd><p>指定されたIDのパブリック記事を取得するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>article_id</strong> (<em>int</em>) – 取得する記事のID</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
+<li><p><strong>article_id</strong> (<em>int</em>) -- 取得する記事のID</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>指定されたIDの記事詳細</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle">PublicArticle</a></p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – 記事が見つからない場合や取得エラーが発生した場合</p>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- 記事が見つからない場合や取得エラーが発生した場合</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.get_public_articles">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle"><span class="pre">PublicArticle</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/article.html#get_public_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.get_public_articles" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">get_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle"><span class="pre">PublicArticle</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/article.html#get_public_articles"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.get_public_articles" title="Link to this definition"></a></dt>
 <dd><p>認証なしでパブリック記事を取得するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – 取得する最大記事数</p></li>
-<li><p><strong>skip</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – スキップする記事数</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- 取得する最大記事数</p></li>
+<li><p><strong>skip</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- スキップする記事数</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>パブリック記事のリスト</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle">PublicArticle</a>]</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – データベースエラーが発生した場合</p>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- データベースエラーが発生した場合</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.search_public_articles">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">search_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle"><span class="pre">PublicArticle</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/article.html#search_public_articles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.search_public_articles" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">search_public_articles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(PydanticUndefined)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(10)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Query(0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle"><span class="pre">PublicArticle</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/article.html#search_public_articles"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.search_public_articles" title="Link to this definition"></a></dt>
 <dd><p>キーワードでパブリック記事を検索するエンドポイント（日本語対応）</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>q</strong> (<em>str</em>) – 検索キーワード（日本語・英語対応）</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – 取得する最大記事数</p></li>
-<li><p><strong>skip</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – スキップする記事数</p></li>
+<li><p><strong>q</strong> (<em>str</em>) -- 検索キーワード（日本語・英語対応）</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>limit</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- 取得する最大記事数</p></li>
+<li><p><strong>skip</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) -- スキップする記事数</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>検索結果の記事リスト</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="schemas.html#schemas.PublicArticle" title="schemas.PublicArticle">PublicArticle</a>]</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – データベースエラーが発生した場合</p>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- データベースエラーが発生した場合</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.article.update_article">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">update_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#update_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.article.update_article" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.article.</span></span><span class="sig-name descname"><span class="pre">update_article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">article_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blog</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models.html#models.User" title="models.User"><span class="pre">User</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_current_user)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><span class="pre">ArticleBase</span></a></span></span><a class="reference internal" href="_modules/routers/article.html#update_article"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.article.update_article" title="Link to this definition"></a></dt>
 <dd><p>指定したIDの記事を更新するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>article_id</strong> (<em>int</em>) – 記事のID</p></li>
-<li><p><strong>blog</strong> (<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><em>ArticleBase</em></a>) – 更新する記事の内容</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-<li><p><strong>current_user</strong> (<a class="reference internal" href="schemas.html#schemas.User" title="schemas.User"><em>User</em></a>) – 現在のユーザー</p></li>
+<li><p><strong>article_id</strong> (<em>int</em>) -- 記事のID</p></li>
+<li><p><strong>blog</strong> (<a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase"><em>ArticleBase</em></a>) -- 更新する記事の内容</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
+<li><p><strong>current_user</strong> (<a class="reference internal" href="models.html#models.User" title="models.User"><em>User</em></a>) -- 現在のユーザー</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>更新された記事</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="schemas.html#schemas.ArticleBase" title="schemas.ArticleBase">ArticleBase</a></p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dt class="field-even">例外<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>HTTPException</strong> – 記事が見つからない場合</p></li>
-<li><p><strong>ValueError</strong> – データベースのクエリに失敗した場合</p></li>
+<li><p><strong>HTTPException</strong> -- 記事が見つからない場合</p></li>
+<li><p><strong>ValueError</strong> -- データベースのクエリに失敗した場合</p></li>
 </ul>
 </dd>
 </dl>
@@ -303,14 +326,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="routers.html" class="btn btn-neutral float-left" title="routers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="routers.auth.html" class="btn btn-neutral float-right" title="routers.auth module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="routers.user.html" class="btn btn-neutral float-left" title="routers.user module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="routers.html" class="btn btn-neutral float-right" title="routers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

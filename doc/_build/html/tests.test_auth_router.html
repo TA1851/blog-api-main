@@ -1,24 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tests.test_auth_router module &mdash; blog-api-main  documentation</title>
+  <title>tests.test_auth_router module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
     <link rel="next" title="tests.test_custom_token module" href="tests.test_custom_token.html" />
     <link rel="prev" title="tests.test_article_router module" href="tests.test_article_router.html" /> 
 </head>
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,26 +43,44 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tests.bug_tracker.html">tests.bug_tracker module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tests.test_article_router.html">tests.test_article_router module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tests.test_auth_router module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestAuthRouter"><code class="docutils literal notranslate"><span class="pre">TestAuthRouter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestChangePasswordAuthenticationRequired"><code class="docutils literal notranslate"><span class="pre">TestChangePasswordAuthenticationRequired</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestChangePasswordEndpoint"><code class="docutils literal notranslate"><span class="pre">TestChangePasswordEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestGetAllBlogsEndpoint"><code class="docutils literal notranslate"><span class="pre">TestGetAllBlogsEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestLoginEndpoint"><code class="docutils literal notranslate"><span class="pre">TestLoginEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestLogoutEndpoint"><code class="docutils literal notranslate"><span class="pre">TestLogoutEndpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tests.test_auth_router.TestTokenVerification"><code class="docutils literal notranslate"><span class="pre">TestTokenVerification</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tests.test_custom_token.html">tests.test_custom_token module</a></li>
@@ -92,7 +111,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -113,249 +132,207 @@
              
   <section id="module-tests.test_auth_router">
 <span id="tests-test-auth-router-module"></span><h1>tests.test_auth_router module<a class="headerlink" href="#module-tests.test_auth_router" title="Link to this heading"></a></h1>
-<p>Auth Routerの包括的テストスイート
-カバレッジ100%を目指してAuth Router(routers/auth.py)をテストする</p>
-<p>修正内容:
-- FastAPIの依存性注入システムを正しく使用
-- app.dependency_overridesでget_dbをオーバーライド
-- 実際のトークン生成/検証ロジックをテスト</p>
+<p>routers/auth.pyの包括的な単体テスト</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestAuthRouter</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Auth Routerの包括的テストスイート</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordAuthenticationRequired">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestChangePasswordAuthenticationRequired</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordAuthenticationRequired"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordAuthenticationRequired" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>パスワード変更エンドポイントの認証必須機能テスト</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.mock_db">
-<span class="sig-name descname"><span class="pre">mock_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.mock_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.mock_db" title="Link to this definition"></a></dt>
-<dd><p>モックデータベースセッション</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordAuthenticationRequired.mock_current_user">
+<span class="sig-name descname"><span class="pre">mock_current_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordAuthenticationRequired.mock_current_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordAuthenticationRequired.mock_current_user" title="Link to this definition"></a></dt>
+<dd><p>認証されたユーザーのモック</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.sample_article">
-<span class="sig-name descname"><span class="pre">sample_article</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.sample_article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.sample_article" title="Link to this definition"></a></dt>
-<dd><p>テスト用記事データ</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordAuthenticationRequired.password_change_request_auth">
+<span class="sig-name descname"><span class="pre">password_change_request_auth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordAuthenticationRequired.password_change_request_auth"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordAuthenticationRequired.password_change_request_auth" title="Link to this definition"></a></dt>
+<dd><p>認証ユーザー用パスワード変更リクエスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.sample_user">
-<span class="sig-name descname"><span class="pre">sample_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.sample_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.sample_user" title="Link to this definition"></a></dt>
-<dd><p>テスト用ユーザーデータ</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordAuthenticationRequired.test_change_password_unauthorized_user_attempt">
+<span class="sig-name descname"><span class="pre">test_change_password_unauthorized_user_attempt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request_auth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordAuthenticationRequired.test_change_password_unauthorized_user_attempt"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordAuthenticationRequired.test_change_password_unauthorized_user_attempt" title="Link to this definition"></a></dt>
+<dd><p>認証ユーザーが他のユーザーのパスワード変更を試行するテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.setup_and_teardown">
-<span class="sig-name descname"><span class="pre">setup_and_teardown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.setup_and_teardown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.setup_and_teardown" title="Link to this definition"></a></dt>
-<dd><p>各テスト前後でトークンブラックリストとdependency_overridesをクリア</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordAuthenticationRequired.test_change_password_with_authentication_success">
+<span class="sig-name descname"><span class="pre">test_change_password_with_authentication_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request_auth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_current_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordAuthenticationRequired.test_change_password_with_authentication_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordAuthenticationRequired.test_change_password_with_authentication_success" title="Link to this definition"></a></dt>
+<dd><p>認証済みユーザーのパスワード変更成功テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestChangePasswordEndpoint</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>パスワード変更エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.mock_user">
+<span class="sig-name descname"><span class="pre">mock_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.mock_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.mock_user" title="Link to this definition"></a></dt>
+<dd><p>テスト用ユーザーモック</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_database_error">
-<span class="sig-name descname"><span class="pre">test_change_password_database_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_database_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_database_error" title="Link to this definition"></a></dt>
-<dd><p>データベースエラーでのパスワード変更失敗テスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.mock_user_no_email">
+<span class="sig-name descname"><span class="pre">mock_user_no_email</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.mock_user_no_email"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.mock_user_no_email" title="Link to this definition"></a></dt>
+<dd><p>メールアドレスなしのテスト用ユーザーモック</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_email_failure">
-<span class="sig-name descname"><span class="pre">test_change_password_email_failure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_email_failure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_email_failure" title="Link to this definition"></a></dt>
-<dd><p>メール送信失敗でもパスワード変更は成功するテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.password_change_request">
+<span class="sig-name descname"><span class="pre">password_change_request</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.password_change_request"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.password_change_request" title="Link to this definition"></a></dt>
+<dd><p>テスト用パスワード変更リクエスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_invalid_format">
-<span class="sig-name descname"><span class="pre">test_change_password_invalid_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_invalid_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_invalid_format" title="Link to this definition"></a></dt>
-<dd><p>不正なリクエスト形式でのパスワード変更失敗テスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_connection_error">
+<span class="sig-name descname"><span class="pre">test_change_password_email_connection_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_email_connection_error"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_connection_error" title="Link to this definition"></a></dt>
+<dd><p>メール送信コネクションエラーのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_invalid_temp_password">
-<span class="sig-name descname"><span class="pre">test_change_password_invalid_temp_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_invalid_temp_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_invalid_temp_password" title="Link to this definition"></a></dt>
-<dd><p>無効な仮パスワードでのパスワード変更失敗テスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_general_error">
+<span class="sig-name descname"><span class="pre">test_change_password_email_general_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_email_general_error"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_general_error" title="Link to this definition"></a></dt>
+<dd><p>メール送信一般エラーのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_short_password">
-<span class="sig-name descname"><span class="pre">test_change_password_short_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_short_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_short_password" title="Link to this definition"></a></dt>
-<dd><p>短すぎる新パスワードのテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_timeout_error">
+<span class="sig-name descname"><span class="pre">test_change_password_email_timeout_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_email_timeout_error"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_timeout_error" title="Link to this definition"></a></dt>
+<dd><p>メール送信タイムアウトエラーのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_success">
-<span class="sig-name descname"><span class="pre">test_change_password_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_success" title="Link to this definition"></a></dt>
-<dd><p>パスワード変更成功のテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_value_error">
+<span class="sig-name descname"><span class="pre">test_change_password_email_value_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_email_value_error"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_email_value_error" title="Link to this definition"></a></dt>
+<dd><p>メール送信バリューエラーのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_user_name_none">
-<span class="sig-name descname"><span class="pre">test_change_password_user_name_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_user_name_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_user_name_none" title="Link to this definition"></a></dt>
-<dd><p>ユーザー名がNoneの場合のメール送信テスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_invalid_temp_password">
+<span class="sig-name descname"><span class="pre">test_change_password_invalid_temp_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_invalid_temp_password"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_invalid_temp_password" title="Link to this definition"></a></dt>
+<dd><p>無効な仮パスワードの場合のテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_change_password_user_not_found">
-<span class="sig-name descname"><span class="pre">test_change_password_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_change_password_user_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_change_password_user_not_found" title="Link to this definition"></a></dt>
-<dd><p>存在しないユーザーでのパスワード変更失敗テスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_no_email">
+<span class="sig-name descname"><span class="pre">test_change_password_no_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user_no_email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_no_email"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_no_email" title="Link to this definition"></a></dt>
+<dd><p>ユーザーにメールアドレスがない場合のテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_client">
-<span class="sig-name descname"><span class="pre">test_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_client" title="Link to this definition"></a></dt>
-<dd><p>dependency_overridesを設定したテストクライアント</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_success">
+<span class="sig-name descname"><span class="pre">test_change_password_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_bcrypt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_send_email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_success" title="Link to this definition"></a></dt>
+<dd><p>パスワード変更成功テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_full_auth_flow">
-<span class="sig-name descname"><span class="pre">test_full_auth_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_full_auth_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_full_auth_flow" title="Link to this definition"></a></dt>
-<dd><p>認証の完全フローテスト（ログイン→認証→ログアウト）</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_user_not_found">
+<span class="sig-name descname"><span class="pre">test_change_password_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password_change_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestChangePasswordEndpoint.test_change_password_user_not_found"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestChangePasswordEndpoint.test_change_password_user_not_found" title="Link to this definition"></a></dt>
+<dd><p>ユーザーが見つからない場合のテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestGetAllBlogsEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestGetAllBlogsEndpoint</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestGetAllBlogsEndpoint"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestGetAllBlogsEndpoint" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>全記事取得エンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestGetAllBlogsEndpoint.mock_articles">
+<span class="sig-name descname"><span class="pre">mock_articles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestGetAllBlogsEndpoint.mock_articles"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestGetAllBlogsEndpoint.mock_articles" title="Link to this definition"></a></dt>
+<dd><p>テスト用記事リスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_get_all_articles_empty">
-<span class="sig-name descname"><span class="pre">test_get_all_articles_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_get_all_articles_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_get_all_articles_empty" title="Link to this definition"></a></dt>
-<dd><p>記事が存在しない場合のテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestGetAllBlogsEndpoint.test_get_all_blogs_success">
+<span class="sig-name descname"><span class="pre">test_get_all_blogs_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_articles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestGetAllBlogsEndpoint.test_get_all_blogs_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestGetAllBlogsEndpoint.test_get_all_blogs_success" title="Link to this definition"></a></dt>
+<dd><p>全記事取得成功テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLoginEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestLoginEndpoint</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLoginEndpoint"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLoginEndpoint" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ログインエンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLoginEndpoint.login_request_form">
+<span class="sig-name descname"><span class="pre">login_request_form</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLoginEndpoint.login_request_form"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLoginEndpoint.login_request_form" title="Link to this definition"></a></dt>
+<dd><p>テスト用ログインフォーム</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_get_all_articles_multiple">
-<span class="sig-name descname"><span class="pre">test_get_all_articles_multiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_get_all_articles_multiple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_get_all_articles_multiple" title="Link to this definition"></a></dt>
-<dd><p>複数記事取得のテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLoginEndpoint.mock_user">
+<span class="sig-name descname"><span class="pre">mock_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLoginEndpoint.mock_user"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLoginEndpoint.mock_user" title="Link to this definition"></a></dt>
+<dd><p>テスト用ユーザーモック</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_get_all_articles_success">
-<span class="sig-name descname"><span class="pre">test_get_all_articles_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_article</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_get_all_articles_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_get_all_articles_success" title="Link to this definition"></a></dt>
-<dd><p>全記事取得成功のテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLoginEndpoint.test_login_invalid_password">
+<span class="sig-name descname"><span class="pre">test_login_invalid_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">login_request_form</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLoginEndpoint.test_login_invalid_password"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLoginEndpoint.test_login_invalid_password" title="Link to this definition"></a></dt>
+<dd><p>無効なパスワードの場合のテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_get_db_success">
-<span class="sig-name descname"><span class="pre">test_get_db_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_get_db_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_get_db_success" title="Link to this definition"></a></dt>
-<dd><p>get_db正常動作のテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLoginEndpoint.test_login_success">
+<span class="sig-name descname"><span class="pre">test_login_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_create_token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">login_request_form</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLoginEndpoint.test_login_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLoginEndpoint.test_login_success" title="Link to this definition"></a></dt>
+<dd><p>ログイン成功テスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_get_db_with_exception">
-<span class="sig-name descname"><span class="pre">test_get_db_with_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_session</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_get_db_with_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_get_db_with_exception" title="Link to this definition"></a></dt>
-<dd><p>get_db例外発生時のテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLoginEndpoint.test_login_user_not_found">
+<span class="sig-name descname"><span class="pre">test_login_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login_request_form</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLoginEndpoint.test_login_user_not_found"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLoginEndpoint.test_login_user_not_found" title="Link to this definition"></a></dt>
+<dd><p>ユーザーが見つからない場合のテスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLogoutEndpoint">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestLogoutEndpoint</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLogoutEndpoint"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLogoutEndpoint" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ログアウトエンドポイントのテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestLogoutEndpoint.test_logout_success">
+<span class="sig-name descname"><span class="pre">test_logout_success</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestLogoutEndpoint.test_logout_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestLogoutEndpoint.test_logout_success" title="Link to this definition"></a></dt>
+<dd><p>ログアウト成功テスト</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestTokenVerification">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_auth_router.</span></span><span class="sig-name descname"><span class="pre">TestTokenVerification</span></span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestTokenVerification"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestTokenVerification" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>トークン検証機能のテスト</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_auth_router.TestTokenVerification.test_verify_token_blacklisted">
+<span class="sig-name descname"><span class="pre">test_verify_token_blacklisted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestTokenVerification.test_verify_token_blacklisted"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestTokenVerification.test_verify_token_blacklisted" title="Link to this definition"></a></dt>
+<dd><p>ブラックリストに登録されたトークンのテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_jwt_token_security">
-<span class="sig-name descname"><span class="pre">test_jwt_token_security</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_jwt_token_security"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_jwt_token_security" title="Link to this definition"></a></dt>
-<dd><p>JWTトークンのセキュリティテスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestTokenVerification.test_verify_token_jwt_error">
+<span class="sig-name descname"><span class="pre">test_verify_token_jwt_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_jwt_decode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestTokenVerification.test_verify_token_jwt_error"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestTokenVerification.test_verify_token_jwt_error" title="Link to this definition"></a></dt>
+<dd><p>JWT例外が発生した場合のテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_invalid_password">
-<span class="sig-name descname"><span class="pre">test_login_invalid_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_invalid_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_invalid_password" title="Link to this definition"></a></dt>
-<dd><p>無効なパスワードでのログイン失敗テスト</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestTokenVerification.test_verify_token_no_subject">
+<span class="sig-name descname"><span class="pre">test_verify_token_no_subject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_jwt_decode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestTokenVerification.test_verify_token_no_subject"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestTokenVerification.test_verify_token_no_subject" title="Link to this definition"></a></dt>
+<dd><p>トークンにsubjectがない場合のテスト</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_missing_password">
-<span class="sig-name descname"><span class="pre">test_login_missing_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_missing_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_missing_password" title="Link to this definition"></a></dt>
-<dd><p>パスワードなしでのログイン失敗テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_missing_username">
-<span class="sig-name descname"><span class="pre">test_login_missing_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_missing_username"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_missing_username" title="Link to this definition"></a></dt>
-<dd><p>ユーザー名なしでのログイン失敗テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_null_password_user">
-<span class="sig-name descname"><span class="pre">test_login_null_password_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_null_password_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_null_password_user" title="Link to this definition"></a></dt>
-<dd><p>パスワードがNullのユーザーでのログイン失敗テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_response_type">
-<span class="sig-name descname"><span class="pre">test_login_response_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_response_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_response_type" title="Link to this definition"></a></dt>
-<dd><p>LoginResponse型定義のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_success">
-<span class="sig-name descname"><span class="pre">test_login_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_success" title="Link to this definition"></a></dt>
-<dd><p>ログイン成功のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_login_user_not_found">
-<span class="sig-name descname"><span class="pre">test_login_user_not_found</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock_db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_login_user_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_login_user_not_found" title="Link to this definition"></a></dt>
-<dd><p>存在しないユーザーでのログイン失敗テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_logout_invalid_token">
-<span class="sig-name descname"><span class="pre">test_logout_invalid_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_logout_invalid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_logout_invalid_token" title="Link to this definition"></a></dt>
-<dd><p>無効なトークンでのログアウトテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_logout_malformed_header">
-<span class="sig-name descname"><span class="pre">test_logout_malformed_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_logout_malformed_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_logout_malformed_header" title="Link to this definition"></a></dt>
-<dd><p>不正な形式のAuthorizationヘッダーテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_logout_missing_token">
-<span class="sig-name descname"><span class="pre">test_logout_missing_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_logout_missing_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_logout_missing_token" title="Link to this definition"></a></dt>
-<dd><p>トークンなしでのログアウト失敗テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_logout_success">
-<span class="sig-name descname"><span class="pre">test_logout_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_logout_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_logout_success" title="Link to this definition"></a></dt>
-<dd><p>ログアウト成功のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_password_change_response_type">
-<span class="sig-name descname"><span class="pre">test_password_change_response_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_password_change_response_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_password_change_response_type" title="Link to this definition"></a></dt>
-<dd><p>PasswordChangeResponse型定義のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_password_hashing_security">
-<span class="sig-name descname"><span class="pre">test_password_hashing_security</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_password_hashing_security"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_password_hashing_security" title="Link to this definition"></a></dt>
-<dd><p>パスワードハッシュ化のセキュリティテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_verify_token_blacklisted">
-<span class="sig-name descname"><span class="pre">test_verify_token_blacklisted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_verify_token_blacklisted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_verify_token_blacklisted" title="Link to this definition"></a></dt>
-<dd><p>ブラックリストに登録されたトークンの検証テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_verify_token_invalid_signature">
-<span class="sig-name descname"><span class="pre">test_verify_token_invalid_signature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_verify_token_invalid_signature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_verify_token_invalid_signature" title="Link to this definition"></a></dt>
-<dd><p>無効な署名のトークン検証テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_verify_token_malformed">
-<span class="sig-name descname"><span class="pre">test_verify_token_malformed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_verify_token_malformed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_verify_token_malformed" title="Link to this definition"></a></dt>
-<dd><p>不正な形式のトークン検証テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_verify_token_missing_subject">
-<span class="sig-name descname"><span class="pre">test_verify_token_missing_subject</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_verify_token_missing_subject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_verify_token_missing_subject" title="Link to this definition"></a></dt>
-<dd><p>subjectが欠けているトークンの検証テスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.test_verify_token_success">
-<span class="sig-name descname"><span class="pre">test_verify_token_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid_token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.test_verify_token_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.test_verify_token_success" title="Link to this definition"></a></dt>
-<dd><p>トークン検証成功のテスト</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tests.test_auth_router.TestAuthRouter.valid_token">
-<span class="sig-name descname"><span class="pre">valid_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestAuthRouter.valid_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestAuthRouter.valid_token" title="Link to this definition"></a></dt>
-<dd><p>有効なJWTトークン</p>
+<dt class="sig sig-object py" id="tests.test_auth_router.TestTokenVerification.test_verify_token_success">
+<span class="sig-name descname"><span class="pre">test_verify_token_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_jwt_decode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_auth_router.html#TestTokenVerification.test_verify_token_success"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.test_auth_router.TestTokenVerification.test_verify_token_success" title="Link to this definition"></a></dt>
+<dd><p>トークン検証成功テスト</p>
 </dd></dl>
 
 </dd></dl>
@@ -373,7 +350,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

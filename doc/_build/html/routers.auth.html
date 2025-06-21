@@ -1,26 +1,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>routers.auth module &mdash; blog-api-main  documentation</title>
+  <title>routers.auth module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="routers.user module" href="routers.user.html" />
-    <link rel="prev" title="routers.article module" href="routers.article.html" /> 
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="oauth2 module" href="oauth2.html" />
+    <link rel="prev" title="Blog API ドキュメント" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,17 +43,44 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">routers.auth module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.LoginResponse"><code class="docutils literal notranslate"><span class="pre">LoginResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.LoginResponse.access_token"><code class="docutils literal notranslate"><span class="pre">LoginResponse.access_token</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.LoginResponse.token_type"><code class="docutils literal notranslate"><span class="pre">LoginResponse.token_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.PasswordChangeResponse"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.PasswordChangeResponse.access_token"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.access_token</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.PasswordChangeResponse.email_error"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.email_error</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.PasswordChangeResponse.email_sent"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.email_sent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.PasswordChangeResponse.message"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.message</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.PasswordChangeResponse.token_type"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.token_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.PasswordChangeResponse.user_id"><code class="docutils literal notranslate"><span class="pre">PasswordChangeResponse.user_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.TokenResponse"><code class="docutils literal notranslate"><span class="pre">TokenResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.TokenResponse.access_token"><code class="docutils literal notranslate"><span class="pre">TokenResponse.access_token</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.TokenResponse.token_type"><code class="docutils literal notranslate"><span class="pre">TokenResponse.token_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#routers.auth.TokenResponse.user_id"><code class="docutils literal notranslate"><span class="pre">TokenResponse.user_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.change_password"><code class="docutils literal notranslate"><span class="pre">change_password()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.get_all_blogs"><code class="docutils literal notranslate"><span class="pre">get_all_blogs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#routers.auth.verify_token"><code class="docutils literal notranslate"><span class="pre">verify_token()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="routers.html">routers package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="routers.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
@@ -62,7 +90,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#routers.auth.TokenResponse"><code class="docutils literal notranslate"><span class="pre">TokenResponse</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#routers.auth.change_password"><code class="docutils literal notranslate"><span class="pre">change_password()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#routers.auth.get_all_blogs"><code class="docutils literal notranslate"><span class="pre">get_all_blogs()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#routers.auth.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#routers.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#routers.auth.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#routers.auth.verify_token"><code class="docutils literal notranslate"><span class="pre">verify_token()</span></code></a></li>
@@ -74,8 +101,21 @@
 <li class="toctree-l2"><a class="reference internal" href="routers.html#module-routers">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
@@ -87,7 +127,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -95,7 +135,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="routers.html">routers package</a></li>
       <li class="breadcrumb-item active">routers.auth module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/routers.auth.rst.txt" rel="nofollow"> View page source</a>
@@ -111,8 +150,8 @@
 <p>認証機能を実装するためのルーターモジュール</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="routers.auth.LoginResponse">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">LoginResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#LoginResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.LoginResponse" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">LoginResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#LoginResponse"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.LoginResponse" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
 <p>ログインレスポンスの型定義</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="routers.auth.LoginResponse.access_token">
@@ -128,12 +167,32 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">PasswordChangeResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#PasswordChangeResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.PasswordChangeResponse" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">PasswordChangeResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#PasswordChangeResponse"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.PasswordChangeResponse" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
 <p>パスワード変更レスポンスの型定義</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.access_token">
+<span class="sig-name descname"><span class="pre">access_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.access_token" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.email_error">
+<span class="sig-name descname"><span class="pre">email_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.email_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.email_sent">
+<span class="sig-name descname"><span class="pre">email_sent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.email_sent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.message">
 <span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="routers.auth.PasswordChangeResponse.token_type">
+<span class="sig-name descname"><span class="pre">token_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#routers.auth.PasswordChangeResponse.token_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -145,8 +204,8 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="routers.auth.TokenResponse">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">TokenResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#TokenResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.TokenResponse" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">TokenResponse</span></span><a class="reference internal" href="_modules/routers/auth.html#TokenResponse"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.TokenResponse" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
 <p>トークンレスポンスの型定義</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="routers.auth.TokenResponse.access_token">
@@ -167,78 +226,37 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.change_password">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">change_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="schemas.html#schemas.PasswordChange" title="schemas.PasswordChange"><span class="pre">PasswordChange</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#routers.auth.PasswordChangeResponse" title="routers.auth.PasswordChangeResponse"><span class="pre">PasswordChangeResponse</span></a></span></span><a class="reference internal" href="_modules/routers/auth.html#change_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.change_password" title="Link to this definition"></a></dt>
-<dd><p>仮パスワードから新パスワードへの変更を行うエンドポイント</p>
-<p>パスワード変更エンドポイント：
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">http://127.0.0.1:8080/api/v1/change-password</span>
-<span class="pre">`</span></code></p>
-<p>パラメータ:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>username: ユーザー名（メールアドレス）
-temp_password: 現在の仮パスワード
-new_password: 新しいパスワード
-</pre></div>
-</div>
-<p>レスポンス：成功時(200 OK), 失敗時(404 Not Found/400 Bad Request):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;パスワードが正常に変更されました。&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="s2">&quot;ユーザーID&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>注意：パスワード変更成功後、登録完了メールが自動的に送信されます。</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>request</strong> (<a class="reference internal" href="schemas.html#schemas.PasswordChange" title="schemas.PasswordChange"><em>PasswordChange</em></a>) – PasswordChange</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>パスワード変更結果とユーザーIDを返します</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – ユーザー名または仮パスワードが無効な場合</p>
-</dd>
-</dl>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">change_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="schemas.html#schemas.PasswordChange" title="schemas.PasswordChange"><span class="pre">PasswordChange</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#routers.auth.PasswordChangeResponse" title="routers.auth.PasswordChangeResponse"><span class="pre">PasswordChangeResponse</span></a></span></span><a class="reference internal" href="_modules/routers/auth.html#change_password"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.change_password" title="Link to this definition"></a></dt>
+<dd><p>仮パスワードから新パスワードへの変更を行うエンドポイント（認証不要）</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.get_all_blogs">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">get_all_blogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.ShowArticle" title="schemas.ShowArticle"><span class="pre">ShowArticle</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#get_all_blogs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.get_all_blogs" title="Link to this definition"></a></dt>
-<dd><p>全てのブログ記事を取得するエンドポイント</p>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">get_all_blogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="schemas.html#schemas.ShowArticle" title="schemas.ShowArticle"><span class="pre">ShowArticle</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#get_all_blogs"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.get_all_blogs" title="Link to this definition"></a></dt>
+<dd><p>ログインユーザの全ての記事を取得するエンドポイント</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>記事のリスト</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="schemas.html#schemas.ShowArticle" title="schemas.ShowArticle">ShowArticle</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="routers.auth.get_db">
-<span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Session</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#get_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.get_db" title="Link to this definition"></a></dt>
-<dd><p>データベースセッションを取得するための依存関数</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.login">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OAuth2PasswordRequestForm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(NoneType)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#routers.auth.LoginResponse" title="routers.auth.LoginResponse"><span class="pre">LoginResponse</span></a></span></span><a class="reference internal" href="_modules/routers/auth.html#login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.login" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OAuth2PasswordRequestForm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(NoneType)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(get_db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#routers.auth.LoginResponse" title="routers.auth.LoginResponse"><span class="pre">LoginResponse</span></a></span></span><a class="reference internal" href="_modules/routers/auth.html#login"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.login" title="Link to this definition"></a></dt>
 <dd><p>ユーザー認証を行い、ログインする</p>
 <p>ログインエンドポイント：
 <code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">http://127.0.0.1:8080/api/v1/login</span>
+<span class="pre">http://&lt;環境のURL&gt;/api/v1/login</span>
 <span class="pre">`</span></code></p>
 <p>注意：仮パスワードから新パスワードへの変更は以下のエンドポイントを使用してください:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">password</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">環境のURL</span><span class="o">&gt;/</span><span class="n">api</span><span class="o">/</span><span class="n">v1</span><span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">password</span>
 </pre></div>
 </div>
 <p>パラメータ:</p>
@@ -254,28 +272,28 @@ password: パスワード
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>request</strong> (<em>OAuth2PasswordRequestForm</em>) – OAuth2PasswordRequestForm</p></li>
-<li><p><strong>db</strong> (<em>Session</em>) – データベースセッション</p></li>
+<li><p><strong>request</strong> (<em>OAuth2PasswordRequestForm</em>) -- OAuth2PasswordRequestForm</p></li>
+<li><p><strong>db</strong> (<em>Session</em>) -- データベースセッション</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">戻り値<span class="colon">:</span></dt>
 <dd class="field-even"><p>アクセストークンを返します。token_type:bearer</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – ユーザー名またはパスワードが無効な場合</p>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- ユーザー名またはパスワードが無効な場合</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.logout">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.logout" title="Link to this definition"></a></dt>
-<dd><p>ログアウトエンドポイント:<a class="reference external" href="https://127.0.0.1:8000/api/v1/logout">https://127.0.0.1:8000/api/v1/logout</a></p>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#logout"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.logout" title="Link to this definition"></a></dt>
+<dd><p>ログアウトエンドポイント:<a class="reference external" href="http:/">http:/</a>/&lt;環境のURL&gt;/api/v1/logout</p>
 <p>リクエストヘッダー:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Authorization</span><span class="p">:</span> <span class="n">Bearer</span> <span class="o">&lt;</span><span class="n">token</span><span class="o">&gt;</span>
 <span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span>
@@ -300,16 +318,16 @@ password: パスワード
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>token</strong> (<em>str</em>) – 認証トークン（ヘッダーから自動取得）</p>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>) -- 認証トークン（ヘッダーから自動取得）</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>HTTPException</strong> – トークンが無効な場合</p>
+<dt class="field-even">例外<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> -- トークンが無効な場合</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ログアウト結果メッセージ</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -317,22 +335,22 @@ password: パスワード
 
 <dl class="py function">
 <dt class="sig sig-object py" id="routers.auth.verify_token">
-<span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">verify_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#verify_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#routers.auth.verify_token" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">routers.auth.</span></span><span class="sig-name descname"><span class="pre">verify_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Depends(OAuth2PasswordBearer)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/routers/auth.html#verify_token"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#routers.auth.verify_token" title="Link to this definition"></a></dt>
 <dd><p>トークンを検証し、無効化されたトークンを拒否する</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>token</strong> (<em>str</em>) – 認証トークン（ヘッダーから自動取得）</p>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>) -- 認証トークン（ヘッダーから自動取得）</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dt class="field-even">例外<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>HTTPException</strong> – トークンが無効な場合</p></li>
-<li><p><strong>HTTPException</strong> – トークンが無効化されている場合</p></li>
+<li><p><strong>HTTPException</strong> -- トークンが無効な場合</p></li>
+<li><p><strong>HTTPException</strong> -- トークンが無効化されている場合</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値<span class="colon">:</span></dt>
 <dd class="field-odd"><p>トークンのペイロード</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -344,14 +362,14 @@ password: パスワード
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="routers.article.html" class="btn btn-neutral float-left" title="routers.article module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="routers.user.html" class="btn btn-neutral float-right" title="routers.user module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Blog API ドキュメント" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="oauth2.html" class="btn btn-neutral float-right" title="oauth2 module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

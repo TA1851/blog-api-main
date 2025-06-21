@@ -1,26 +1,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>exceptions module &mdash; blog-api-main  documentation</title>
+  <title>exceptions module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="generate_summary_report module" href="generate_summary_report.html" />
-    <link rel="prev" title="database module" href="database.html" /> 
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="logger package" href="logger.html" />
+    <link rel="prev" title="utils.email_validator module" href="utils.email_validator.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,25 +43,50 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">exceptions module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#exceptions.AuthenticationError"><code class="docutils literal notranslate"><span class="pre">AuthenticationError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exceptions.DatabaseConnectionError"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exceptions.ValidationError"><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.AuthenticationError"><code class="docutils literal notranslate"><span class="pre">AuthenticationError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions.AuthenticationError.message"><code class="docutils literal notranslate"><span class="pre">AuthenticationError.message</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.DatabaseConnectionError"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions.DatabaseConnectionError.message"><code class="docutils literal notranslate"><span class="pre">DatabaseConnectionError.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.DatabaseError"><code class="docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.EmailVerificationError"><code class="docutils literal notranslate"><span class="pre">EmailVerificationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.UserNotFoundError"><code class="docutils literal notranslate"><span class="pre">UserNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions.ValidationError"><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions.ValidationError.message"><code class="docutils literal notranslate"><span class="pre">ValidationError.message</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
@@ -72,7 +98,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -93,48 +119,88 @@
   <section id="module-exceptions">
 <span id="exceptions-module"></span><h1>exceptions module<a class="headerlink" href="#module-exceptions" title="Link to this heading"></a></h1>
 <p>カスタム例外クラスの定義モジュール</p>
-<p>このモジュールは、アプリケーション全体で使用される
-カスタム例外クラスを定義しています。</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.AuthenticationError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">AuthenticationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'認証に失敗しました'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#AuthenticationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#exceptions.AuthenticationError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">AuthenticationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'認証に失敗しました'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#AuthenticationError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#exceptions.AuthenticationError" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>認証エラーを表すカスタム例外</p>
 <p>ユーザー認証に失敗した場合に発生させる例外クラスです。</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>message (str): エラーメッセージ</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="exceptions.AuthenticationError.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#exceptions.AuthenticationError.message" title="Link to this definition"></a></dt>
+<dd><p>エラーメッセージ</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.DatabaseConnectionError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">DatabaseConnectionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'データベース接続エラーが発生しました'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#DatabaseConnectionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#exceptions.DatabaseConnectionError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">DatabaseConnectionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'データベース接続エラーが発生しました'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#DatabaseConnectionError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#exceptions.DatabaseConnectionError" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>データベース接続エラーを表すカスタム例外</p>
 <p>データベースへの接続が失敗した場合、または
 データベース操作中に予期しないエラーが発生した場合に
 発生させる例外クラスです。</p>
-<dl>
-<dt>Attributes:</dt><dd><p>message (str): エラーメッセージ</p>
-</dd>
-<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="s2">&quot;データベースに接続できません&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="exceptions.DatabaseConnectionError.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#exceptions.DatabaseConnectionError.message" title="Link to this definition"></a></dt>
+<dd><p>エラーメッセージ</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">DatabaseConnectionError</span><span class="p">(</span><span class="s2">&quot;データベースに接続できません&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="exceptions.DatabaseError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">DatabaseError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#DatabaseError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#exceptions.DatabaseError" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>データベース関連の例外</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="exceptions.EmailVerificationError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">EmailVerificationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#EmailVerificationError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#exceptions.EmailVerificationError" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>メール確認に関する例外</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="exceptions.UserNotFoundError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">UserNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#UserNotFoundError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#exceptions.UserNotFoundError" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>ユーザーが見つからない場合の例外</p>
+</dd></dl>
+
 <dl class="py exception">
 <dt class="sig sig-object py" id="exceptions.ValidationError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'バリデーションエラーが発生しました'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#ValidationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#exceptions.ValidationError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">exceptions.</span></span><span class="sig-name descname"><span class="pre">ValidationError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'バリデーションエラーが発生しました'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/exceptions.html#ValidationError"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#exceptions.ValidationError" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>バリデーションエラーを表すカスタム例外</p>
 <p>入力データの検証に失敗した場合に発生させる例外クラスです。</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>message (str): エラーメッセージ</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="exceptions.ValidationError.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#exceptions.ValidationError.message" title="Link to this definition"></a></dt>
+<dd><p>エラーメッセージ</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -143,14 +209,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="database.html" class="btn btn-neutral float-left" title="database module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="generate_summary_report.html" class="btn btn-neutral float-right" title="generate_summary_report module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="utils.email_validator.html" class="btn btn-neutral float-left" title="utils.email_validator module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="logger.html" class="btn btn-neutral float-right" title="logger package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

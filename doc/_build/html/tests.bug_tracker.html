@@ -1,24 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tests.bug_tracker module &mdash; blog-api-main  documentation</title>
+  <title>tests.bug_tracker module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
     <link rel="next" title="tests.test_article_router module" href="tests.test_article_router.html" />
     <link rel="prev" title="tests package" href="tests.html" /> 
 </head>
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,20 +43,33 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="tests.html">tests package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="tests.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tests.bug_tracker module</a><ul>
@@ -93,7 +107,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -118,29 +132,29 @@
 pytestの結果を解析して、バグの履歴を管理し、レポートを生成します。</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tests.bug_tracker.BugTracker">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.bug_tracker.</span></span><span class="sig-name descname"><span class="pre">BugTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bug_history.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.bug_tracker.</span></span><span class="sig-name descname"><span class="pre">BugTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bug_history.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.bug_tracker.BugTracker.add_test_result">
-<span class="sig-name descname"><span class="pre">add_test_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.add_test_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.add_test_result" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_test_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.add_test_result"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.add_test_result" title="Link to this definition"></a></dt>
 <dd><p>新しいテスト結果を履歴に追加</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.bug_tracker.BugTracker.generate_report">
-<span class="sig-name descname"><span class="pre">generate_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'console'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.generate_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.generate_report" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'console'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.generate_report"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.generate_report" title="Link to this definition"></a></dt>
 <dd><p>レポートを生成</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.bug_tracker.BugTracker.get_bug_trends">
-<span class="sig-name descname"><span class="pre">get_bug_trends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.get_bug_trends"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.get_bug_trends" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_bug_trends</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.get_bug_trends"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.get_bug_trends" title="Link to this definition"></a></dt>
 <dd><p>指定期間内のバグトレンドを分析</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.bug_tracker.BugTracker.parse_junit_xml">
-<span class="sig-name descname"><span class="pre">parse_junit_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.parse_junit_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.parse_junit_xml" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">parse_junit_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#BugTracker.parse_junit_xml"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.bug_tracker.BugTracker.parse_junit_xml" title="Link to this definition"></a></dt>
 <dd><p>JUnit XMLファイルを解析してテスト結果を抽出</p>
 </dd></dl>
 
@@ -148,7 +162,7 @@ pytestの結果を解析して、バグの履歴を管理し、レポートを�
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.bug_tracker.main">
-<span class="sig-prename descclassname"><span class="pre">tests.bug_tracker.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.bug_tracker.main" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">tests.bug_tracker.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/bug_tracker.html#main"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#tests.bug_tracker.main" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -164,7 +178,7 @@ pytestの結果を解析して、バグの履歴を管理し、レポートを�
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

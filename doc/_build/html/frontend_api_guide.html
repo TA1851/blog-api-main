@@ -1,0 +1,550 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>フロントエンド開発者向けAPI ガイド &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="routers.auth module" href="routers.auth.html" />
+    <link rel="prev" title="Blog API ドキュメント" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Blog API Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">🚀 クイックスタート</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">フロントエンド開発者向けAPI ガイド</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#url">ベースURL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">認証</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">認証方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">ログイン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">ログアウト</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">ユーザー管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">ユーザー登録</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">パスワード変更</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">記事管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">記事一覧取得（認証付き）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">記事作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">パブリック記事一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">記事検索</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">エラーハンドリング</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#http">HTTPステータスコード</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">エラーレスポンス例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">実装サンプル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#react">React フック例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#typescript">TypeScript 型定義</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">開発のベストプラクティス</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id19">トークン管理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">エラーハンドリング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">パフォーマンス</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id22">関連リンク</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Blog API Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">フロントエンド開発者向けAPI ガイド</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/frontend_api_guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api">
+<h1>フロントエンド開発者向けAPI ガイド<a class="headerlink" href="#api" title="Link to this heading"></a></h1>
+<nav class="contents local" id="id1">
+<p class="topic-title">目次</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id2" id="id23">概要</a></p></li>
+<li><p><a class="reference internal" href="#url" id="id24">ベースURL</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id25">認証</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id26">認証方式</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id27">ログイン</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id28">ログアウト</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id29">ユーザー管理</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id8" id="id30">ユーザー登録</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id31">パスワード変更</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id10" id="id32">記事管理</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id11" id="id33">記事一覧取得（認証付き）</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id34">記事作成</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id35">パブリック記事一覧</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id36">記事検索</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id15" id="id37">エラーハンドリング</a></p>
+<ul>
+<li><p><a class="reference internal" href="#http" id="id38">HTTPステータスコード</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id39">エラーレスポンス例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id17" id="id40">実装サンプル</a></p>
+<ul>
+<li><p><a class="reference internal" href="#react" id="id41">React フック例</a></p></li>
+<li><p><a class="reference internal" href="#typescript" id="id42">TypeScript 型定義</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id18" id="id43">開発のベストプラクティス</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id19" id="id44">トークン管理</a></p></li>
+<li><p><a class="reference internal" href="#id20" id="id45">エラーハンドリング</a></p></li>
+<li><p><a class="reference internal" href="#id21" id="id46">パフォーマンス</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id22" id="id47">関連リンク</a></p></li>
+</ul>
+</nav>
+<section id="id2">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">概要</a><a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>このガイドは、Blog APIを利用するフロントエンド開発者向けに、実用的なAPI使用方法を説明します。</p>
+</section>
+<section id="url">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">ベースURL</a><a class="headerlink" href="#url" title="Link to this heading"></a></h2>
+<p><strong>開発環境:</strong> <code class="docutils literal notranslate"><span class="pre">http://localhost:8000/api/v1</span></code>
+<strong>本番環境:</strong> <code class="docutils literal notranslate"><span class="pre">https://your-production-domain.com/api/v1</span></code></p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">認証</a><a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<section id="id4">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">認証方式</a><a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>Blog APIはJWT（JSON Web Token）による Bearer認証を使用します。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Authorization: Bearer &lt;access_token&gt;
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">ログイン</a><a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/login</span></code></p>
+<p><strong>Content-Type:</strong> <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/login&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">URLSearchParams</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">username</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;password123&#39;</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">});</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">access_token</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>レスポンス例:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;access_token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;token_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bearer&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">ログアウト</a><a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/logout</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">);</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/logout&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;Authorization&#39;</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">ユーザー管理</a><a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<section id="id8">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">ユーザー登録</a><a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/user</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/user&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;newuser@example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;New User&#39;</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">パスワード変更</a><a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/change-password</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/change-password&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">username</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">temp_password</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;temp_password_123&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">new_password</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;new_secure_password&#39;</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id32" role="doc-backlink">記事管理</a><a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<section id="id11">
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">記事一覧取得（認証付き）</a><a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/articles</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">);</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/articles&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;Authorization&#39;</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">articles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h3><a class="toc-backref" href="#id34" role="doc-backlink">記事作成</a><a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/articles</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">);</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/articles&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;Authorization&#39;</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">title</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;新しい記事のタイトル&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;# 記事の内容\n\nMarkdown形式で記述&#39;</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">パブリック記事一覧</a><a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/public/articles</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// 認証不要</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/public/articles?limit=10&amp;skip=0&#39;</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">articles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">記事検索</a><a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p><strong>エンドポイント:</strong> <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/public/articles/search</span></code></p>
+<p><strong>リクエスト例:</strong></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">keyword</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s1">&#39;検索キーワード&#39;</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="sb">`/api/v1/public/articles/search?q=</span><span class="si">${</span><span class="nx">keyword</span><span class="si">}</span><span class="sb">&amp;limit=10`</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">searchResults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id37" role="doc-backlink">エラーハンドリング</a><a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<section id="http">
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">HTTPステータスコード</a><a class="headerlink" href="#http" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ステータス</p></th>
+<th class="head"><p>説明</p></th>
+<th class="head"><p>対応</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>200</p></td>
+<td><p>成功</p></td>
+<td><p>正常処理</p></td>
+</tr>
+<tr class="row-odd"><td><p>401</p></td>
+<td><p>認証エラー</p></td>
+<td><p>ログイン画面にリダイレクト</p></td>
+</tr>
+<tr class="row-even"><td><p>403</p></td>
+<td><p>権限エラー</p></td>
+<td><p>アクセス権限なしメッセージ</p></td>
+</tr>
+<tr class="row-odd"><td><p>404</p></td>
+<td><p>見つからない</p></td>
+<td><p>該当データなしメッセージ</p></td>
+</tr>
+<tr class="row-even"><td><p>503</p></td>
+<td><p>サービス利用不可</p></td>
+<td><p>一時的なエラー、再試行推奨</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id16">
+<h3><a class="toc-backref" href="#id39" role="doc-backlink">エラーレスポンス例</a><a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;エラーメッセージ&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id17">
+<h2><a class="toc-backref" href="#id40" role="doc-backlink">実装サンプル</a><a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<section id="react">
+<h3><a class="toc-backref" href="#id41" role="doc-backlink">React フック例</a><a class="headerlink" href="#react" title="Link to this heading"></a></h3>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// hooks/useAuth.js</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="p">,</span><span class="w"> </span><span class="nx">useEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">useAuth</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">setUser</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">setLoading</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">login</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">email</span><span class="p">,</span><span class="w"> </span><span class="nx">password</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/login&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">URLSearchParams</span><span class="p">({</span><span class="w"> </span><span class="nx">username</span><span class="o">:</span><span class="w"> </span><span class="nx">email</span><span class="p">,</span><span class="w"> </span><span class="nx">password</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="p">});</span>
+
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">        </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">access_token</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">setUser</span><span class="p">({</span><span class="w"> </span><span class="nx">email</span><span class="w"> </span><span class="p">});</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Login failed:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">logout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">token</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;/api/v1/logout&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s1">&#39;Authorization&#39;</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">removeItem</span><span class="p">(</span><span class="s1">&#39;access_token&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">setUser</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">login</span><span class="p">,</span><span class="w"> </span><span class="nx">logout</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="typescript">
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">TypeScript 型定義</a><a class="headerlink" href="#typescript" title="Link to this heading"></a></h3>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="c1">// types/api.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">LoginResponse</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">access_token</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">token_type</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">Article</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">article_id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">title</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">user_id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">PublicArticle</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">article_id</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">title</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">body_html</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">User</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">name?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">is_active</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id18">
+<h2><a class="toc-backref" href="#id43" role="doc-backlink">開発のベストプラクティス</a><a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<section id="id19">
+<h3><a class="toc-backref" href="#id44" role="doc-backlink">トークン管理</a><a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>アクセストークンは <code class="docutils literal notranslate"><span class="pre">localStorage</span></code> に保存</p></li>
+<li><p>401エラー時は自動ログアウト</p></li>
+<li><p>セキュリティを考慮して適切な有効期限設定</p></li>
+</ul>
+</section>
+<section id="id20">
+<h3><a class="toc-backref" href="#id45" role="doc-backlink">エラーハンドリング</a><a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>全てのAPIコールで適切なエラーハンドリング</p></li>
+<li><p>ユーザーフレンドリーなエラーメッセージ表示</p></li>
+<li><p>ネットワークエラーに対する再試行機能</p></li>
+</ul>
+</section>
+<section id="id21">
+<h3><a class="toc-backref" href="#id46" role="doc-backlink">パフォーマンス</a><a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>ページネーションの活用</p></li>
+<li><p>必要なデータのみを取得</p></li>
+<li><p>適切なキャッシュ戦略</p></li>
+</ul>
+</section>
+</section>
+<section id="id22">
+<h2><a class="toc-backref" href="#id47" role="doc-backlink">関連リンク</a><a class="headerlink" href="#id22" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="routers.auth.html"><span class="doc">routers.auth module</span></a> - 認証エンドポイントの詳細</p></li>
+<li><p><a class="reference internal" href="routers.user.html"><span class="doc">routers.user module</span></a> - ユーザー管理エンドポイント</p></li>
+<li><p><a class="reference internal" href="routers.article.html"><span class="doc">routers.article module</span></a> - 記事管理エンドポイント</p></li>
+<li><p><a class="reference internal" href="schemas.html"><span class="doc">schemas module</span></a> - データモデル定義</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Blog API ドキュメント" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="routers.auth.html" class="btn btn-neutral float-right" title="routers.auth module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Blog API Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

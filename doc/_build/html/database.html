@@ -1,26 +1,27 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="ja" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>database module &mdash; blog-api-main  documentation</title>
+  <title>database module &mdash; Blog API Documentation 1.0.0 ドキュメント</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/documentation_options.js?v=144c8c96"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="exceptions module" href="exceptions.html" />
-    <link rel="prev" title="custom_token module" href="custom_token.html" /> 
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="models module" href="models.html" />
+    <link rel="prev" title="routers package" href="routers.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            blog-api-main
+            Blog API Documentation
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,9 +43,21 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">🔐 認証システム</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.auth.html">routers.auth module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_token.html">custom_token module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">📝 APIエンドポイント</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="routers.user.html">routers.user module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.article.html">routers.article module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">💾 データベース</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">database module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#database.Base"><code class="docutils literal notranslate"><span class="pre">Base</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#database.Base.metadata"><code class="docutils literal notranslate"><span class="pre">Base.metadata</span></code></a></li>
@@ -66,16 +79,17 @@
 <li class="toctree-l2"><a class="reference internal" href="#database.read_env_var"><code class="docutils literal notranslate"><span class="pre">read_env_var()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generate_summary_report.html">generate_summary_report module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashing.html">hashing module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="oauth2.html">oauth2 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="routers.html">routers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_continuous_tests.html">run_continuous_tests module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">schemas module</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🛠️ ユーティリティ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">🧪 テスト</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">tests package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="update_main_bug_history.html">update_main_bug_history module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
@@ -87,7 +101,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">blog-api-main</a>
+          <a href="index.html">Blog API Documentation</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -110,8 +124,8 @@
 <p>データベース接続モジュール</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="database.Base">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#Base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.Base" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeclarativeBase</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/database.html#Base"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.Base" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeclarativeBase</span></code></p>
 <p>SQLAlchemyのベースクラス</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="database.Base.metadata">
@@ -119,7 +133,7 @@
 <dd><p>Refers to the <code class="xref py py-class docutils literal notranslate"><span class="pre">_schema.MetaData</span></code> collection that will be used
 for new <code class="xref py py-class docutils literal notranslate"><span class="pre">_schema.Table</span></code> objects.</p>
 <div class="admonition seealso">
-<p class="admonition-title">See also</p>
+<p class="admonition-title">参考</p>
 <p><span class="xref std std-ref">orm_declarative_metadata</span></p>
 </div>
 </dd></dl>
@@ -135,8 +149,8 @@ for new <code class="xref py py-class docutils literal notranslate"><span class=
 
 <dl class="py class">
 <dt class="sig sig-object py" id="database.EnvironmentConfig">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">EnvironmentConfig</span></span><a class="reference internal" href="_modules/database.html#EnvironmentConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.EnvironmentConfig" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">EnvironmentConfig</span></span><a class="reference internal" href="_modules/database.html#EnvironmentConfig"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.EnvironmentConfig" title="Link to this definition"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
 <p>環境変数設定の型定義</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="database.EnvironmentConfig.algo">
@@ -167,34 +181,34 @@ for new <code class="xref py py-class docutils literal notranslate"><span class=
 
 <dl class="py function">
 <dt class="sig sig-object py" id="database.check_env_file">
-<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">check_env_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_env_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database.html#check_env_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.check_env_file" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">check_env_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_env_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/database.html#check_env_file"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.check_env_file" title="Link to this definition"></a></dt>
 <dd><p>・開発環境：.envファイルを使用する。</p>
 <p>・本番環境：Renderから環境変数を取得する。</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="database.create_database_engine">
-<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_database_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Engine</span></span></span><a class="reference internal" href="_modules/database.html#create_database_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.create_database_engine" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_database_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Engine</span></span></span><a class="reference internal" href="_modules/database.html#create_database_engine"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.create_database_engine" title="Link to this definition"></a></dt>
 <dd><p>データベースエンジンを作成する。</p>
 <p>・開発環境ではSQLite、本番環境ではPostgreSQLを使用します。</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="database.create_session">
-<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">sessionmaker</span><span class="p"><span class="pre">[</span></span><span class="pre">Session</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/database.html#create_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.create_session" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">create_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">sessionmaker</span><span class="p"><span class="pre">[</span></span><span class="pre">Session</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/database.html#create_session"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.create_session" title="Link to this definition"></a></dt>
 <dd><p>SQLAlchemyのセッションを作成する。</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">パラメータ<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>engine</strong> – SQLAlchemyのエンジンオブジェクト</p></li>
-<li><p><strong>autocommit=False（デフォルト値）</strong> – <p>CRUD操作をグループ化して、全ての処理が成功した場合、
+<li><p><strong>engine</strong> -- SQLAlchemyのエンジンオブジェクト</p></li>
+<li><p><strong>autocommit=False（デフォルト値）</strong> -- <p>CRUD操作をグループ化して、全ての処理が成功した場合、
 データベースに反映されるようにできます。</p>
 <p>エラーが発生した場合はrollback()を呼び出して全ての変更を取り消せます。</p>
 </p></li>
-<li><p><strong>autoflush=False</strong> – 大量のオブジェクトを追加/更新する場合、
+<li><p><strong>autoflush=False</strong> -- 大量のオブジェクトを追加/更新する場合、
 各オペレーションでフラッシュが発生するのを避けられます。
 デフォルト値はTrueです。</p></li>
-<li><p><strong>bind=engine</strong> – エンジンを生成する呼び出し可能オブジェクト</p></li>
+<li><p><strong>bind=engine</strong> -- エンジンを生成する呼び出し可能オブジェクト</p></li>
 </ul>
 </dd>
 </dl>
@@ -202,13 +216,13 @@ for new <code class="xref py py-class docutils literal notranslate"><span class=
 
 <dl class="py function">
 <dt class="sig sig-object py" id="database.get_db">
-<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Session</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/database.html#get_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.get_db" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Session</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/database.html#get_db"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.get_db" title="Link to this definition"></a></dt>
 <dd><p>データベースセッションを取得する</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">戻り値<span class="colon">:</span></dt>
 <dd class="field-odd"><p>データベースセッション</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">戻り値の型<span class="colon">:</span></dt>
 <dd class="field-even"><p>Session</p>
 </dd>
 </dl>
@@ -216,7 +230,7 @@ for new <code class="xref py py-class docutils literal notranslate"><span class=
 
 <dl class="py function">
 <dt class="sig sig-object py" id="database.read_env_var">
-<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">read_env_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#database.EnvironmentConfig" title="database.EnvironmentConfig"><span class="pre">EnvironmentConfig</span></a></span></span><a class="reference internal" href="_modules/database.html#read_env_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#database.read_env_var" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">database.</span></span><span class="sig-name descname"><span class="pre">read_env_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#database.EnvironmentConfig" title="database.EnvironmentConfig"><span class="pre">EnvironmentConfig</span></a></span></span><a class="reference internal" href="_modules/database.html#read_env_var"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#database.read_env_var" title="Link to this definition"></a></dt>
 <dd><p>環境変数の取得</p>
 </dd></dl>
 
@@ -226,14 +240,14 @@ for new <code class="xref py py-class docutils literal notranslate"><span class=
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="custom_token.html" class="btn btn-neutral float-left" title="custom_token module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="exceptions.html" class="btn btn-neutral float-right" title="exceptions module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="routers.html" class="btn btn-neutral float-left" title="routers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="models.html" class="btn btn-neutral float-right" title="models module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Author.</p>
+    <p>&#169; Copyright 2025, Blog API Team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
